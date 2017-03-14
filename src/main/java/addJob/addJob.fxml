@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="addJob.AddJobController">
+   <children>
+      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="682.0" prefWidth="981.0">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Files:">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ListView fx:id="fileList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </ListView>
+                  <HBox fx:id="selectFileButton" alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="611.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Button mnemonicParsing="false" prefWidth="100.0" text="Select files">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox maxWidth="350.0" prefHeight="200.0" prefWidth="300.0" style="-fx-border-width: 1; -fx-border-style: solid inside;" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="490.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Separator prefWidth="10.0" visible="false" />
+                        <Label text="Type">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                        <Separator prefWidth="30.0" visible="false" />
+                        <ComboBox fx:id="jobTypeComboBox" maxWidth="1.7976931348623157E308" promptText="Type of job" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </ComboBox>
+                        <Separator prefWidth="10.0" visible="false" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="Parameters" />
+                        <TableView fx:id="jobPropertiesList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="okButton" mnemonicParsing="false" prefWidth="100.0" text="Ok" />
+            <Separator prefWidth="20.0" visible="false" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
+            <Separator prefWidth="10.0" visible="false" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
