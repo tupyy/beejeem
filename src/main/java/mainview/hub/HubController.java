@@ -16,7 +16,6 @@ public class HubController implements Initializable {
     @FXML
     private TableView hubTable;
 
-    @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         setupTable();

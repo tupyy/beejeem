@@ -49,18 +49,17 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <BorderPane id="rootPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-            <VBox.margin>
-                <Insets bottom="10.0" />
-            </VBox.margin>
-            <top>
-                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                    <items>
-                        <Button fx:id="addJobButton" mnemonicParsing="false" text="Add job" />
-                    </items>
-                </ToolBar>
-            </top>
-        </BorderPane>
+          <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button fx:id="addJobButton" mnemonicParsing="false" text="Add job" />
+              </items>
+          </ToolBar>
+      <SplitPane fx:id="splitPane" dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <items>
+            <VBox fx:id="splitPaneVBox" />
+            <VBox fx:id="splitPaneHub" />
+         </items>
+      </SplitPane>
+      <HBox fx:id="statusBarPane" prefHeight="50.0" prefWidth="200.0" VBox.vgrow="NEVER" />
     </children>
 </VBox>
-
