@@ -30,7 +30,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
     //temp
     private int finishedJobs = 0;
 
-    private Core coreInstance = null;
+    private static Core coreInstance = null;
 
     /**
      * Private constructor to restrict to only one instance of this class
@@ -44,6 +44,18 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
         //init the states
         JobState jobState = new JobState();
+    }
+
+    /**
+     * Get the instance of CoreEngine
+     * @return instance of coreEngine
+     */
+    public static Core getInstance() {
+        if (coreInstance == null) {
+            coreInstance = new CoreEngine();
+        }
+
+        return coreInstance;
     }
 
     //<editor-fold desc="CORE INTERFACE">
