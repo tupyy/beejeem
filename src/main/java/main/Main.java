@@ -1,8 +1,7 @@
 package main;
 
-import jobexcore.StesJLCore;
 import javafx.application.Application;
-import mainview.MainApp;
+import gui.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +14,9 @@ public class Main {
             .getLogger(Main.class);
 
 
-
     public static void main(String[] args) {
 
-        StesJLCore stesJLCore = new StesJLCore();
+        JStesCore stesJLCore = new JStesCore();
 
         Application.launch(MainApp.class,args);
     }
