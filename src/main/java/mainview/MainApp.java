@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 
 public class MainApp extends Application {
@@ -19,7 +18,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception{
         BorderPane rootLayout = null;
 
-        Parent root = FXMLLoader.load(getClass().getResource("mainView.fxml"));
+        Parent root = FXMLLoader.load(MainApp.class.getClassLoader().getResource("mainView.fxml"));
 
         for(Node node: root.getChildrenUnmodifiable()) {
             if (node instanceof BorderPane) {
@@ -47,7 +46,7 @@ public class MainApp extends Application {
     private void showHubView(BorderPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("hub/hub.fxml"));
+            loader.setLocation(MainApp.class.getClassLoader().getResource("hub/hub.fxml"));
             BorderPane hubPane = (BorderPane) loader.load();
             parentNode.setCenter(hubPane);
         }
@@ -63,7 +62,7 @@ public class MainApp extends Application {
     private void showInfoView(BorderPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("jobDetail/jobDetail.fxml"));
+            loader.setLocation(MainApp.class.getClassLoader().getResource("jobDetail/jobDetail.fxml"));
             VBox infoPane = (VBox) loader.load();
 
             parentNode.setRight(infoPane);
@@ -80,7 +79,7 @@ public class MainApp extends Application {
     private void showCommandView(BorderPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("command/command.fxml"));
+            loader.setLocation(MainApp.class.getClassLoader().getResource("command/command.fxml"));
             VBox command = (VBox) loader.load();
 
             parentNode.setLeft(command);
@@ -97,7 +96,7 @@ public class MainApp extends Application {
     private void showStatusBar(BorderPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("statusBar/statusBar.fxml"));
+            loader.setLocation(MainApp.class.getClassLoader().getResource("statusBar/statusBar.fxml"));
             HBox statusBar = (HBox) loader.load();
 
             parentNode.setBottom(statusBar);
