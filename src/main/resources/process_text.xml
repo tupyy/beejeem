@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job name="Spectre job" type="spectre" aircraft="XWB900">
+    <description>Spectre job</description>
+    <parameters>
+        <parameter name="name" type="string" source="internal">
+            <label>Job name</label>
+            <description>The name of the job</description>
+            <value></value>
+        </parameter>
+        <parameter name="filename" type="string" source="external">
+            <value>Useless</value>
+        </parameter>
+        <parameter name="materialName" type="string" source="external">
+            <label>Material Name</label>
+            <description>The name of the material</description>
+            <category>material</category>
+        </parameter>
+        <parameter name="materialReference" type="string" source="external">
+            <label>Reference</label>
+            <description>The reference of the material</description>
+            <category>material</category>
+        </parameter>
+        <parameter name="fatigueConfiguration" type="string" source="external">
+            <label>Fatigue configuration</label>
+            <description>Fatigue configuration</description>
+            <category>material</category>
+        </parameter>
+        <parameter name="propaConfiguration" type="string" source="external">
+            <label>DT configuration</label>
+            <description>DT configuration</description>
+            <category>material</category>
+        </parameter>
+        <parameter name="isamiVersion" type="string">
+            <description>Isami used version</description>
+            <label>Isami version</label>
+            <value>v7.2.1_a350</value>
+        </parameter>
+        <parameter name="traceFile" type="boolean" source="external">
+            <description>Save the trace files</description>
+            <label>Trace files</label>
+            <category>Spectre</category>
+            <value>false</value>
+        </parameter>
+        <parameter name="czmFile" type="boolean" source="external">
+            <description>Save the czm file</description>
+            <label>Czm file</label>
+            <category>job</category>
+            <value>false</value>
+        </parameter>
+        <parameter name="queue" type="string" source="external">
+            <label>Queue</label>
+            <value>medium</value>
+            <description>Batch queue</description>
+        </parameter>
+        <parameter name="destinationFolder" type="string" source="external">
+            <label>Destination folder</label>
+            <value>/home/tupangiu/tmp</value>
+            <description>Remote folder</description>
+        </parameter>
+    </parameters>
+    <code name="pythonCode" source="internal">
+        <value>
+import shutil
+
+print("#########################")
+print("#######START SESSION ####")
+print("#########################")
+
+url_stress_file = os.getcwd() + '/@filename@'
+url_session = os.getcwd() + '/@basename@.czm'
+save_trace = True
+
+#execfile('/Stf_to_Isami_v6.py')
+execfile('/cae/aif/04310/SERIAL_PYLON/06_XWB/02_Spectres/Stf_to_Isami_v6.py')
+
+MS=IASession()
+MS.ClearAll()
+
+IA_SPEC = ''
+
+# MATERIAU
+MS.LoadMaterial("@materialName@","@materialName@","@materialReference@","Referenced")
+
+# Sequence Loading Definition
+SeqList=[]
+LCDTtmp=""
+isStress=1
+is1D=1
+InfoMsg="You"
+(InfoMsg,LCDTtmp) = importStf(LCDTtmp,MyUrl(url_stress_file,IA_SPEC),"SE_Stringer",InfoMsg)
+for LCDTtmp_j in LCDTtmp:
+    SeqList.append(LCDTtmp_j)
+print 'Sequence Loading:',SeqList
+
+MS.CreateObject('Job_Sequence1','AirbusEO_DSequenceLoading',[
+['/LoadingSequenceType','Enum_LoadingSequenceType:CLASS LOAD CASES LOADING'],
+['/EO_CLASS_LOAD_CASES_LOADING/SpectrumName','S:@basename@'],
+['/EO_CLASS_LOAD_CASES_LOADING/SequenceFile','Caesam_File:'],
+['/EO_CLASS_LOAD_CASES_LOADING/SequenceFile/MimeType','S:spectrum/fls'],
+['/EO_CLASS_LOAD_CASES_LOADING/SequenceFile/MimeTypeFilter','Caesam_StringArray:TRUE:1::"spectrum/fls"'],
+['/EO_CLASS_LOAD_CASES_LOADING/SequenceFile/Url','Caesam_Url:file:/cae/aif/04310/SERIAL_PYLON/06_XWB/02_Spectres/A350XWB900CS-111PYLON-@mission@3.fls'],
+['/EO_CLASS_LOAD_CASES_LOADING/OrderFile','Caesam_File:'],
+['/EO_CLASS_LOAD_CASES_LOADING/OrderFile/MimeType','S:spectrum/ana'],
+['/EO_CLASS_LOAD_CASES_LOADING/OrderFile/MimeTypeFilter','Caesam_StringArray:TRUE:1::"spectrum/ana"'],
+['/EO_CLASS_LOAD_CASES_LOADING/OrderFile/Url','Caesam_Url:file:/cae/aif/04310/SERIAL_PYLON/06_XWB/02_Spectres/A350XWB900CS-111PYLON-@mission@3.ana'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseFile','Caesam_File:'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseFile/MimeType','S:spectrum/cvt'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseFile/MimeTypeFilter','Caesam_StringArray:TRUE:1::"spectrum/cvt"'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseFile/Url','Caesam_Url:file:/cae/aif/04310/SERIAL_PYLON/06_XWB/02_Spectres/A350XWB900CS-111PYLON-@mission@3.cvt'],
+['/EO_CLASS_LOAD_CASES_LOADING/PressureMagnitude','CaesamQty_PRESSURE:100;MPa'],
+['/EO_CLASS_LOAD_CASES_LOADING/PeakMultiplicativeCoefficient','CaesamQty_DIMENSIONLESS:1;none'],
+['/EO_CLASS_LOAD_CASES_LOADING/RFortAdditionnal','CaesamQty_PRESSURE:0;MPa'],
+['/EO_CLASS_LOAD_CASES_LOADING/DamageAngle','Enum_DamageAngle:MAXIMUM DAMAGE ANGLE'],
+['/EO_CLASS_LOAD_CASES_LOADING/ResolveStressType','Enum_ClassResolveStressType:MAXIMUM PRINCIPAL STRESS'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseDefinition/CPType','Enum_CPType:SE_Stringer'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseDefinition/SEName','S:@basename@'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseDefinition/ExtractionParameters/Location2D','Enum_2DLocation:Z1 LEVEL'],
+['/EO_CLASS_LOAD_CASES_LOADING/LoadCaseDefinition/ExtractionParameters/Location1D','Enum_1DLocation:EXTREMITY 1'],
+])
+MS.UpdateObject('Job_Sequence1','AirbusEO_DSequenceLoading',SeqList)
+
+# Fatigue_Law_Parameters
+
+MS.CreateObject('Fatigue_Law_Parameters','AirbusEO_DFatigueLawGeoIndependent',[
+['/LawType','Enum_ToggleLawType:Fatigue and Propagation Laws'],
+['/DamageCalculationMethod','Enum_ToggleDamageCalculationMethodGeoIndependent:AFI USER DEFINED'],
+['/UserDefinedAFI','CaesamQty_PRESSURE:100;MPa'],
+['/StressLimit','CaesamEnum_YesNo:No'],
+['/FatigueLaw','Enum_ToggleFatigueLaw:AFI LAW'],
+['/PropagationLaw','Enum_PropagationLaw:Elber'],
+['/RetardationModel','Enum_RetardationModel:Preffas'],# Default: None
+['/ConsideredCompression','CaesamEnum_YesNo:Yes'],
+['/PropagationOmission','CaesamEnum_YesNo:No'],
+['/Orientation_init','Enum_Orientation:LT'],
+['/Configuration_init','S:Configuration:AFI/@fatigueConfiguration@'],
+['/ConfigurationList_init','Caesam_StringArray:4::"Referenced-@materialName@-@material_reference_AFI_LT_";"Configuration_init";"None";"Configuration:AFI/@fatigueConfiguration@"'],
+['/Orientation_propa','Enum_Orientation:LT'],
+['/Configuration_propa','Caesam_String:Configuration:ELBER (AF)/@propaConfiguration@'],
+['/ConfigurationList_propa','Caesam_StringArray:4::"Referenced-@materialName@-@materialReference@_Elber_LT_";"Configuration_propa";"None";"Configuration:ELBER (AF)/@propaConfiguration@"'],
+['/StructureMaterial','AirbusEO_TMaterial:@materialName@'],
+])
+
+# Analysis_Parameters
+MS.CreateObject('Analysis_Parameters1','AirbusEO_DFatigueAnalysisParametersGeoIndependent',[
+['/ResultsLevel','Enum_ToggleResultsLevel:2'],# Default: 2
+['/NumberCyclesCalculation','CaesamEnum_YesNo:No'],# Default: No
+['/CycleRules','Enum_ToggleCycleRules:1'],# Default: 1 (KSNUL=1)
+['/GeneratePlotFiles','CaesamEnum_YesNo:Yes'],
+['/PlotFilesSelection','Enum_PlotSelection:All'],
+])
+
+    # Spectrum Analysis
+MS.CreateStandaloneAnalysis('spectrum_analysis',None,[
+'/CsmMbr_Name S:@basename@',
+'EO[SequenceLoading] AirbusEO_DSequenceLoading:Job_Sequence1',
+'EO[FatigueLaw] AirbusEO_DFatigueLawGeoIndependent:Fatigue_Law_Parameters',
+'EO[AnalysisParameters] AirbusEO_DFatigueAnalysisParametersGeoIndependent:Analysis_Parameters1',
+'/CsmMbr_MapProcessParameterSet/CsmMbr_ProcessParameterMap[CaesamStd_StepProcessParameter]/Execute BA:TRUE:4::FALSE;TRUE;TRUE;FALSE',
+],'@basename@')
+
+MS.RunAnalysisByName('@basename@')
+
+print("####################################################")
+print("####### RECUPERATION A PARTIR REPERTOIRE TEMP ######")
+print("####################################################")
+
+myModel = MS.GetModel()
+myTempRepository = myModel.GetCsmContext().Resolve(Caesam_Url("csm:documenttmp")).GetSystemPath()
+myInitHtml = myTempRepository +'documentczm/spectrum_analysis/@basename@/@basename@.html'
+myFinalHtml = '@basename@.html'
+shutil.copyfile(myInitHtml,myFinalHtml)
+#myInitSigma = myTempRepository +'documentczm/spectrum_analysis/LR_AXE_MSN5_RHS_220D_stbd/A350XWB900CS-111PYLON-@mission3R3.sigma'
+#myFinalSigma = '/cae/aif/04310/SERIAL_PYLON/06_XWB/01_Etude_param_LO/SIGMA/LR_AXE_MSN5_RHS_220D_stbd.sigma'
+#shutil.copyfile(myInitSigma,myFinalSigma)
+
+if save_trace == True:
+    myInitTrace1 = myTempRepository +'documentczm/spectrum_analysis/@basename@/A350XWB900CS-111PYLON-@mission@3_HIST1_MIXMISSION_N.trace'
+    myFinalTrace1 = '@basename@_Hist1.trace'
+    shutil.copyfile(myInitTrace1,myFinalTrace1)
+    myInitTrace2 = myTempRepository +'documentczm/spectrum_analysis/@basename@/A350XWB900CS-111PYLON-@mission@3_HIST2_MIXMISSION_N.trace'
+    myFinalTrace2 = '@basename@_Hist2.trace'
+    shutil.copyfile(myInitTrace2,myFinalTrace2)
+    MS.Save(url_session)
+        </value>
+    </code>
+    <modules>
+        <module>
+            <name>core.modules.preprocessing.PreprocessingModule</name>
+        </module>
+        <module>
+            <name>core.modules.processing.ProcessingModule</name>
+        </module>
+        <module>
+            <name>core.modules.postprocessing.PostprocessingModule</name>
+            <trigger type="status">Processing</trigger>
+        </module>
+    </modules>
+</job>
