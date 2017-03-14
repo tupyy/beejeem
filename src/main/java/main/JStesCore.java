@@ -1,4 +1,4 @@
-package jobexcore;
+package main;
 
 import core.Core;
 import core.CoreEngine;
@@ -6,11 +6,11 @@ import core.CoreEngine;
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class StesJLCore {
+public class JStesCore {
 
     private final static Core coreEngine = CoreEngine.getInstance();
 
-    public StesJLCore() {
+    public JStesCore() {
 
     }
 

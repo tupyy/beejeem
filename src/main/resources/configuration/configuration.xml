@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <user>tupangiu</user>
+    <password>Parola014.</password>
+    <host>172.28.50.94</host>
+    <lastVisitedFolder>C:\Users\tctupangiu\Documents\100_H\IW\test3</lastVisitedFolder>
+    <lastJobType>spectreStes</lastJobType>
+
+    <jobs>
+        <types>
+            <type>
+                <name>spectreStes</name>
+                <description>Spectre Stes</description>
+            </type>
+        </types>
+        <spectreStes>
+            <job>
+                <name>XWB900 Stes spectre</name>
+                <file>spectreStes/XWB900.xml</file>
+                <creator>StesSpectreCreator</creator>
+                <aircraft>XWB900</aircraft>
+                <destinationFolder>/home/tupangiu/tmp</destinationFolder>
+            </job>
+        </spectreStes>
+    </jobs>
+</configuration>

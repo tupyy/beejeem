@@ -1,4 +1,4 @@
-package mainview.hub.table;
+package gui.mainview.hub.table;
 
 import javafx.beans.property.SimpleStringProperty;
 

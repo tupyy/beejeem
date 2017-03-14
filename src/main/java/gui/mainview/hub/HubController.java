@@ -1,4 +1,4 @@
-package mainview.hub;
+package gui.mainview.hub;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -1,6 +1,6 @@
-package mainview;
+package gui;
 
-import addJob.AddJobController;
+import gui.creator.AddJobController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -51,7 +51,7 @@ public class MainController implements Initializable{
 
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader();
-                    Pane root  = fxmlLoader.load(MainController.class.getClassLoader().getResource("addJob/addJob.fxml"));
+                    Pane root  = fxmlLoader.load(MainController.class.getClassLoader().getResource("gui/creator/addJob.fxml"));
                     Scene scene = new Scene(root);
                     AddJobController controller = fxmlLoader.getController();
                     dialog.setScene(scene);
