@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Implement the basic method for executing a command on the remote host
+ * Implement the basic method for executing a sidepanel on the remote host
  */
 public class SshSessionMethod {
 
@@ -43,7 +43,7 @@ public class SshSessionMethod {
 
                 in.close();
                 sshSession.close();
-                logger.debug("Output command: {}", new String(out.toByteArray()));
+                logger.debug("Output sidepanel: {}", new String(out.toByteArray()));
                 return new String(out.toByteArray());
             }
             else {

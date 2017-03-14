@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * This method runs the qstat command and return the output
+ * This method runs the qstat sidepanel and return the output
  */
 public class QStatMethod extends SshSessionMethod implements Method {
 

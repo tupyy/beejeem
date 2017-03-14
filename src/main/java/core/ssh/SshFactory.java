@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Base interface for creating SSH sessions. Sessions are created through the getSshClient methods.
- * Once a session has been obtained the session will not be active until you either call executeCommand(String command) or startShell().
+ * Once a session has been obtained the session will not be active until you either call executeCommand(String sidepanel) or startShell().
  * Once activated you can use the IO streams to read and write to the remote process.
  */
 public interface SshFactory {

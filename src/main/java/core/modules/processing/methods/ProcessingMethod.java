@@ -106,7 +106,7 @@ public class ProcessingMethod extends SshSessionMethod implements Method {
                 ;
             }
 
-            logger.debug("Executing command for ID: {}",jobID);
+            logger.debug("Executing sidepanel for ID: {}",jobID);
             String outString = submitJob(getBatchCommand(parameters));
             String batchID = parseBatchID(outString);
 
@@ -144,13 +144,13 @@ public class ProcessingMethod extends SshSessionMethod implements Method {
 
     /**
      * Submit the job to batch system.
-     * <br>The command is: runIsami.sh -l jobFile pythonFile
-     * @param command batch command to be executed
+     * <br>The sidepanel is: runIsami.sh -l jobFile pythonFile
+     * @param command batch sidepanel to be executed
      * @return the error message or empty string if there is no error
      */
     public String submitJob(String command)  {
         try {
-            logger.debug("Executing command: ".concat(command));
+            logger.debug("Executing sidepanel: ".concat(command));
             String outString = executeSessionCommand(command);
             return outString;
         }
@@ -179,7 +179,7 @@ public class ProcessingMethod extends SshSessionMethod implements Method {
     }
 
     /**
-     * Get the sumitting batch command
+     * Get the sumitting batch sidepanel
      * @param parameters
      * @return
      */
