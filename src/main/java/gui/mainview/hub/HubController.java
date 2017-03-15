@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the hubView
+ * CreatorController for the hubView
  */
 public class HubController implements Initializable {
 

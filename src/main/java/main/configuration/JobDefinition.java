@@ -25,25 +25,25 @@ public class JobDefinition {
     }
 
 
-    public java.lang.String getName() {
+    public StringParameter getName() {
 
         try {
             StringParameter nameParameter = parameters.getParameter("name");
-            return nameParameter.getValue();
+            return nameParameter;
         }
         catch (IllegalArgumentException e) {
-            return "";
+            return null;
         }
     }
 
-    public java.lang.String getType() {
+    public StringParameter getType() {
 
         try {
             StringParameter nameParameter = parameters.getParameter("type");
-            return nameParameter.getValue();
+            return nameParameter;
         }
         catch (IllegalArgumentException e) {
-            return "";
+            return null;
         }
     }
 

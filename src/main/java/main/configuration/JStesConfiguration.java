@@ -1,6 +1,8 @@
 package main.configuration;
 
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.Aircraft;
+import core.parameters.parametertypes.AircraftParameter;
 import core.parameters.parametertypes.CodeParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;

@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller class for the CommandView
+ * CreatorController class for the CommandView
  */
 public class SidePanelController implements Initializable{
 

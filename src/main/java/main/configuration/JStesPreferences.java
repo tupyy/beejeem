@@ -72,9 +72,13 @@ public final class JStesPreferences  {
      * @return list of job types
      */
     public List<String> getJobTypes() {
+
         List<String> retJobTypes = new ArrayList<>();
         for (JobDefinition jd: jobs) {
-            retJobTypes.add(jd.getType());
+            StringParameter jobType = jd.getType();
+            if (jobType != null) {
+                retJobTypes.add(jobType.getLabel());
+            }
         }
 
         return retJobTypes;

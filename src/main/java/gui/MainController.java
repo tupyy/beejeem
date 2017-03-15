@@ -1,8 +1,6 @@
 package gui;
 
 import gui.creator.CreatorController;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,6 +13,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +23,8 @@ import java.util.ResourceBundle;
 
 
 public class MainController implements Initializable{
+    private static final Logger logger = LoggerFactory
+            .getLogger(Main.class);
 
     @FXML
     private Button addJobButton;
@@ -49,7 +52,8 @@ public class MainController implements Initializable{
 
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                Pane root  = fxmlLoader.load(MainController.class.getClassLoader().getResource("gui/creator/addJob.fxml"));
+                URL url = getClass().getClassLoader().getResource("views/creator.fxml");
+                Pane root  = fxmlLoader.load(url);
                 Scene scene = new Scene(root);
                 CreatorController controller = fxmlLoader.getController();
                 dialog.setScene(scene);
@@ -61,7 +65,7 @@ public class MainController implements Initializable{
                 dialog.showAndWait();
             }
             catch (IOException e) {
-
+                logger.error(e.getMessage());
             }
 
         });
