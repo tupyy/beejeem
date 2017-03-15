@@ -43,5 +43,10 @@
             <artifactId>slf4j-api</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>stes.isami</groupId>
+            <artifactId>controlfx</artifactId>
+            <version>8.40.12</version>
+        </dependency>
     </dependencies>
 </project>

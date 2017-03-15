@@ -9,36 +9,36 @@
         </parameter>
         <parameter name="type" type="string" source="internal">
             <label>Spectre stes XWB900</label>
-            <description>Spectre job designed for Stes Pylon XWB900</description>
+            <description>Spectre job designed for Stes XWB900 Pylon</description>
             <value>stesSpectreXWB900</value>
         </parameter>
         <parameter name="aircraft" type="aircraft" source="internal">
             <value>XWB900</value>
         </parameter>
-        <parameter name="filename" type="string" source="external">
+        <parameter name="filename" type="string" source="internal">
             <value>Useless</value>
         </parameter>
         <parameter name="materialName" type="string" source="external">
             <label>Material Name</label>
             <description>The name of the material</description>
-            <category>material</category>
+            <category>Material</category>
         </parameter>
         <parameter name="materialReference" type="string" source="external">
             <label>Reference</label>
             <description>The reference of the material</description>
-            <category>material</category>
+            <category>Material</category>
         </parameter>
         <parameter name="fatigueConfiguration" type="string" source="external">
             <label>Fatigue configuration</label>
             <description>Fatigue configuration</description>
-            <category>material</category>
+            <category>Material</category>
         </parameter>
         <parameter name="propaConfiguration" type="string" source="external">
             <label>DT configuration</label>
             <description>DT configuration</description>
-            <category>material</category>
+            <category>Material</category>
         </parameter>
-        <parameter name="isamiVersion" type="string">
+        <parameter name="isamiVersion" type="string" source="external">
             <description>Isami used version</description>
             <label>Isami version</label>
             <value>v7.2.1_a350</value>
@@ -52,17 +52,19 @@
         <parameter name="czmFile" type="boolean" source="external">
             <description>Save the czm file</description>
             <label>Czm file</label>
-            <category>job</category>
+            <category>Job</category>
             <value>false</value>
         </parameter>
         <parameter name="queue" type="string" source="external">
             <label>Queue</label>
             <value>medium</value>
+            <category>Job</category>
             <description>Batch queue</description>
         </parameter>
         <parameter name="destinationFolder" type="string" source="external">
             <label>Destination folder</label>
             <value>/home/tupangiu/tmp</value>
+            <category>Job</category>
             <description>Remote folder</description>
         </parameter>
     </parameters>

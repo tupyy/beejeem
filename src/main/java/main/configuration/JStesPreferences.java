@@ -105,4 +105,7 @@ public final class JStesPreferences  {
     }
 
 
+    public List<JobDefinition> getJobs() {
+        return jobs;
+    }
 }
