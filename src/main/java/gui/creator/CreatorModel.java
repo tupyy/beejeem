@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by tctupangiu on 15/03/2017.
+ * Model class for the creator view
  */
 public class CreatorModel {
 

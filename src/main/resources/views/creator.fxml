@@ -45,7 +45,7 @@
                            </HBox.margin>
                         </Label>
                         <Separator prefWidth="30.0" visible="false" />
-                        <ComboBox fx:id="jobTypeComboBox" maxWidth="1.7976931348623157E308" promptText="Type of job" HBox.hgrow="ALWAYS">
+                        <ComboBox fx:id="jobTypeComboBox" maxWidth="1.7976931348623157E308" promptText="Select the job type" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
