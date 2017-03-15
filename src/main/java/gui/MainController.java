@@ -1,6 +1,6 @@
 package gui;
 
-import gui.creator.AddJobController;
+import gui.creator.CreatorController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -44,29 +44,26 @@ public class MainController implements Initializable{
         showHubView(splitPaneHub);
         showStatusBar(statusBarPane);
         //
-        addJobButton.setOnAction(new EventHandler<ActionEvent>() {
+        addJobButton.setOnAction(event -> {
+            Stage dialog = new Stage();
 
-            public void handle(ActionEvent event) {
-                Stage dialog = new Stage();
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                Pane root  = fxmlLoader.load(MainController.class.getClassLoader().getResource("gui/creator/addJob.fxml"));
+                Scene scene = new Scene(root);
+                CreatorController controller = fxmlLoader.getController();
+                dialog.setScene(scene);
+                dialog.setTitle("Add jobs");
+                dialog.setResizable(false);
 
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader();
-                    Pane root  = fxmlLoader.load(MainController.class.getClassLoader().getResource("gui/creator/addJob.fxml"));
-                    Scene scene = new Scene(root);
-                    AddJobController controller = fxmlLoader.getController();
-                    dialog.setScene(scene);
-                    dialog.setTitle("Add jobs");
-                    dialog.setResizable(false);
-
-                    dialog.initOwner((Stage) addJobButton.getScene().getWindow());
-                    dialog.initModality(Modality.APPLICATION_MODAL);
-                    dialog.showAndWait();
-                }
-                catch (IOException e) {
-
-                }
+                dialog.initOwner((Stage) addJobButton.getScene().getWindow());
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.showAndWait();
+            }
+            catch (IOException e) {
 
             }
+
         });
     }
 

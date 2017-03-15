@@ -8,14 +8,17 @@ import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
+import java.util.List;
+import java.util.Observable;
 import java.util.ResourceBundle;
 
 /**
  * Created by tctupangiu on 10/03/2017.
  */
 
-public class AddJobController implements Initializable {
+public class CreatorController implements Initializable {
 
     @FXML
     private Button okButton;
@@ -29,7 +32,14 @@ public class AddJobController implements Initializable {
     @FXML
     private Button cancelButton;
 
+    private CreatorModel model = new CreatorModel();
+
+     public CreatorController() {
+
+     }
      public void initialize(URL location, ResourceBundle resources) {
+
+         listView.setItems(model.getObservableList());
 
          cancelButton.setOnAction((event) -> {
              // close the dialog.
@@ -46,7 +56,10 @@ public class AddJobController implements Initializable {
 
              Node  source = (Node)  event.getSource();
              Stage stage  = (Stage) source.getScene().getWindow();
-             fileChooser.showOpenDialog(stage);
+             List<File> files = fileChooser.showOpenMultipleDialog(stage);
+             if (files != null) {
+                model.addFiles(files);
+             }
          });
     }
 }
