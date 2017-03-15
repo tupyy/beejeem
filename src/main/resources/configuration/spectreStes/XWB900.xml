@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<job name="Spectre job" type="spectreStes" aircraft="XWB900">
+<job name="XWB900 Stes spectre" type="spectreStes" aircraft="XWB900">
     <description>Spectre job</description>
     <parameters>
         <parameter name="name" type="string" source="internal">
