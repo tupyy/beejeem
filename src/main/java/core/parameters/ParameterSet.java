@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import core.parameters.parametertypes.*;
+import core.util.XMLWorker;
 import org.w3c.dom.Element;
 
 /**
@@ -153,6 +154,7 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
      * @param parameterElements list of xml elements which define the parameters
      */
     public void loadDefinitionFromXML(ArrayList<Element> parameterElements) {
+        XMLWorker xmlWorker = new XMLWorker();
 
         for (Element parameterElement: parameterElements) {
             String sourceType = parameterElement.getAttribute("source");
@@ -162,28 +164,49 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
 
             String paramType = parameterElement.getAttribute("type");
             Parameter<?> parameter = null;
+
             if (paramType.equalsIgnoreCase("string")) {
-                parameter = new StringParameter(parameterElement.getAttribute("name"), null, null, null, null,sourceType);
-                parameter.loadValueFromXML(parameterElement);
-                this.addParameter(parameter);
+                parameter = new StringParameter(parameterElement.getAttribute("name"),
+                        xmlWorker.getChildrenValue(parameterElement, "description"),
+                        xmlWorker.getChildrenValue(parameterElement, "category"),
+                        null,
+                        xmlWorker.getChildrenValue(parameterElement, "label"),
+                        sourceType);
+
             } else if (paramType.equalsIgnoreCase("boolean")) {
-                parameter = new BooleanParameter(parameterElement.getAttribute("name"), null, null,sourceType);
-                parameter.loadValueFromXML(parameterElement);
-                this.addParameter(parameter);
+                parameter = new BooleanParameter(parameterElement.getAttribute("name"),
+                        xmlWorker.getChildrenValue(parameterElement, "description"),
+                        xmlWorker.getChildrenValue(parameterElement, "category"),
+                        null,
+                        xmlWorker.getChildrenValue(parameterElement, "label"),
+                        sourceType);
+
             } else if (paramType.equalsIgnoreCase("double")) {
-                parameter = new DoubleParameter(parameterElement.getAttribute("name"), null, null, sourceType);
-                parameter.loadValueFromXML(parameterElement);
-                this.addParameter(parameter);
-            }
-             else if (paramType.equalsIgnoreCase("integer")) {
-                parameter = new IntegerParameter(parameterElement.getAttribute("name"), null, null,sourceType);
-                parameter.loadValueFromXML(parameterElement);
-                this.addParameter(parameter);
+                parameter = new DoubleParameter(parameterElement.getAttribute("name"),
+                        xmlWorker.getChildrenValue(parameterElement, "description"),
+                        xmlWorker.getChildrenValue(parameterElement, "category"),
+                        null,
+                        xmlWorker.getChildrenValue(parameterElement, "label"),
+                        sourceType);
+
+            } else if (paramType.equalsIgnoreCase("integer")) {
+                parameter = new IntegerParameter(parameterElement.getAttribute("name"),
+                        xmlWorker.getChildrenValue(parameterElement, "description"),
+                        xmlWorker.getChildrenValue(parameterElement, "category"),
+                        null,
+                        xmlWorker.getChildrenValue(parameterElement, "label"),
+                        sourceType);
+
             } else if (paramType.equalsIgnoreCase("aircraft")) {
                 parameter = new AircraftParameter(Aircraft.XWB900);
-                parameter.loadValueFromXML(parameterElement);
-                this.addParameter(parameter);
             }
+
+            Element valueElement = xmlWorker.getElementByName(parameterElement, "value");
+            if (valueElement != null) {
+                parameter.loadValueFromXML(valueElement);
+            }
+            this.addParameter(parameter);
+
 
         }
     }

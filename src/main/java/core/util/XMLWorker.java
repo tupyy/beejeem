@@ -1,5 +1,7 @@
 package core.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,6 +23,7 @@ import java.util.List;
  */
 public class XMLWorker {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public XMLWorker() {
 
@@ -84,6 +87,22 @@ public class XMLWorker {
         }
 
         return elements;
+    }
+
+    /**
+     * Get the value of the child element of the parent element {@code element}
+     * @param element parent element
+     * @param childName child tag name
+     * @return value of the children
+     */
+    public String getChildrenValue(Element element,String childName) {
+        Element child = getElementByName(element,childName);
+        if (child == null) {
+            return "";
+        }
+
+        logger.debug("Child element {} value {}",childName,child.getTextContent());
+        return child.getTextContent();
     }
 
     /**
