@@ -1,6 +1,8 @@
 package core.parameters.parametertypes;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.text.NumberFormat;
 
@@ -41,11 +43,26 @@ public class IntegerParameter extends AbstractParameter<Integer> {
 
     @Override
     public void loadValueFromXML(Element xmlElement) {
-//        final String textValue = xmlElement.getTextContent();
-//        if (Strings.isNullOrEmpty(textValue))
-//            return;
-//        final Double content = Double.parseDouble(textValue);
-//        setValue(content);
+        NodeList nodeList = xmlElement.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeName().equalsIgnoreCase("description")) {
+                setDescription(node.getTextContent());
+            }
+            if (node.getNodeName().equalsIgnoreCase("label")) {
+                setLabel(node.getTextContent());
+            }
+            if (node.getNodeName().equalsIgnoreCase("category")) {
+                setCategory(node.getTextContent());
+            }
+            if (node.getNodeName().equalsIgnoreCase("value")) {
+                try {
+                    setValue(Integer.parseInt(node.getTextContent()));
+                }
+                catch (NumberFormatException ex) {
+                }
+            }
+        }
     }
 
     @SuppressWarnings("null")

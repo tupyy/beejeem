@@ -24,9 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import core.parameters.parametertypes.BooleanParameter;
-import core.parameters.parametertypes.DoubleParameter;
-import core.parameters.parametertypes.StringParameter;
+import core.parameters.parametertypes.*;
 import org.w3c.dom.Element;
 
 /**
@@ -118,6 +116,16 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
         parameters.add(parameter);
     }
 
+    /**
+     * Add parameter set
+     * @param newSet
+     */
+    public void addParameters(ParameterSet newSet) {
+        for (Parameter p: newSet) {
+            addParameter(p);
+        }
+    }
+
     @Override
     public Iterator<Parameter<?>> iterator() {
         return parameters.iterator();
@@ -163,7 +171,16 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
                 parameter.loadValueFromXML(parameterElement);
                 this.addParameter(parameter);
             } else if (paramType.equalsIgnoreCase("double")) {
-                parameter = new DoubleParameter(parameterElement.getAttribute("name"), null, null,sourceType);
+                parameter = new DoubleParameter(parameterElement.getAttribute("name"), null, null, sourceType);
+                parameter.loadValueFromXML(parameterElement);
+                this.addParameter(parameter);
+            }
+             else if (paramType.equalsIgnoreCase("integer")) {
+                parameter = new IntegerParameter(parameterElement.getAttribute("name"), null, null,sourceType);
+                parameter.loadValueFromXML(parameterElement);
+                this.addParameter(parameter);
+            } else if (paramType.equalsIgnoreCase("aircraft")) {
+                parameter = new AircraftParameter(Aircraft.XWB900);
                 parameter.loadValueFromXML(parameterElement);
                 this.addParameter(parameter);
             }
