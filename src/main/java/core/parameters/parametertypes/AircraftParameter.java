@@ -1,6 +1,8 @@
 package core.parameters.parametertypes;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class AircraftParameter extends AbstractParameter<Aircraft> {
 
@@ -26,7 +28,13 @@ public class AircraftParameter extends AbstractParameter<Aircraft> {
 
     @Override
     public void loadValueFromXML(Element xmlElement) {
-
+        NodeList nodeList = xmlElement.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeName().equalsIgnoreCase("value")) {
+                setValue(Aircraft.valueOf(node.getTextContent()));
+            }
+        }
     }
 
     @SuppressWarnings("null")
