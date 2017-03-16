@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It contains the basic functions to work with a xml file.
@@ -32,11 +33,11 @@ public class XMLWorker {
      * @throws ParserConfigurationException if the file is corrupted
      * @throws IOException if the file cannot be read
      */
-    public Document readFile(String filename) throws ParserConfigurationException, IOException, SAXException {
+    public Document readFile(File filename) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = null;
         db = dbf.newDocumentBuilder();
-        return db.parse(new File(filename));
+        return db.parse(filename);
     }
 
     /**
@@ -60,6 +61,29 @@ public class XMLWorker {
 
         return null;
 
+    }
+
+    /**
+     * Get the element describing the tasks
+     * @param name Element to be parsed
+     * @return element found.
+     *         Null if the tasks cannot be found or the document is empty.
+     */
+    public List<Element> getElementsByName(Element element, String name) {
+        List<Element> elements = new ArrayList<>();
+
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element elem = (Element) node;
+                if (elem.getTagName().equals(name)) {
+                    elements.add(elem);
+                }
+            }
+        }
+
+        return elements;
     }
 
     /**
