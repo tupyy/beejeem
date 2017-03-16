@@ -67,6 +67,12 @@
             <category>Job</category>
             <description>Remote folder</description>
         </parameter>
+        <parameter name="ksnull" type="integer" source="external">
+            <label>Ksnull</label>
+            <value>1</value>
+            <category>Spectre</category>
+            <description>The value of the KSNULL </description>
+        </parameter>
     </parameters>
     <code name="pythonCode" source="internal">
         <value>

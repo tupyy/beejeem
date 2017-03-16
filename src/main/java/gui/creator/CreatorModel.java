@@ -2,6 +2,10 @@ package gui.creator;
 
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.AircraftParameter;
+import core.parameters.parametertypes.BooleanParameter;
+import core.parameters.parametertypes.DoubleParameter;
+import core.parameters.parametertypes.IntegerParameter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -90,7 +94,19 @@ public class CreatorModel {
 
         @Override
         public Class<?> getType() {
-            return parameter.getClass();
+
+            if (parameter instanceof BooleanParameter) {
+                return Boolean.class;
+            }
+            else if(parameter instanceof IntegerParameter) {
+                return Integer.class;
+            }
+            else if (parameter instanceof AircraftParameter) {
+                return parameter.getClass();
+            }
+            else {
+                return String.class;
+            }
         }
 
         @Override
@@ -124,7 +140,7 @@ public class CreatorModel {
 
         @Override
         public Optional<ObservableValue<? extends Object>> getObservableValue() {
-            return null;
+            return Optional.empty();
         }
     }
 }

@@ -137,7 +137,7 @@ public class JStesConfiguration {
                 jobDefinition.getParameters().addParameters(newSet);
                 jobDefinition.setModuleManagers(createModuleParameter(modules));
         }
-        catch (NullPointerException e) {
+        catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
