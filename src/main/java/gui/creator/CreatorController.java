@@ -1,5 +1,6 @@
 package gui.creator;
 
+import gui.propertySheet.PropertyController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -44,14 +45,18 @@ public class CreatorController implements Initializable {
     private PropertySheet properySheet;
 
     private CreatorModel model = new CreatorModel();
+    private PropertyController propertyController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         jobTypeComboBox.setItems(model.getObsJobType());
 
-        properySheet = new PropertySheet(model.getPropertySheetItems());
+        propertyController = new PropertyController(model.getPropertyModel());
+        properySheet = propertyController.getPropertySheet();
+
         propertyVBox.getChildren().add(properySheet);
+
         cancelButton.setOnAction((event) -> {
             // close the dialog.
             Node source = (Node)  event.getSource();
@@ -74,14 +79,9 @@ public class CreatorController implements Initializable {
             }
         });
 
-        jobTypeComboBox.valueProperty().addListener(new ChangeListener() {
-
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                String newJobType = (String) newValue;
-                model.loadParameters(newJobType);
-
-            }
+        jobTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            String newJobType = (String) newValue;
+            model.loadParameters(newJobType);
         });
     }
 }
