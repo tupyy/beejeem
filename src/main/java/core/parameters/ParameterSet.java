@@ -196,7 +196,18 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
                         null,
                         xmlWorker.getChildrenValue(parameterElement, "label"),
                         sourceType);
-
+            } else if (paramType.equalsIgnoreCase("list")) {
+                    String valueType = parameterElement.getAttribute("valuetype");
+                    if (valueType.equals("string")) {
+                        parameter = new ListParameter<String>(parameterElement.getAttribute("name"),
+                                xmlWorker.getChildrenValue(parameterElement, "description"),
+                                xmlWorker.getChildrenValue(parameterElement, "category"),
+                                xmlWorker.getChildrenValue(parameterElement, "label"),
+                                sourceType,
+                                xmlWorker.getOptionsList(parameterElement),
+                                null
+                                );
+                    }
             } else if (paramType.equalsIgnoreCase("aircraft")) {
                 parameter = new AircraftParameter(Aircraft.XWB900);
             }

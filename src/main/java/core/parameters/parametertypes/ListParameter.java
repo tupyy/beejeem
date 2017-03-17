@@ -25,7 +25,7 @@ public class ListParameter<ValueType> extends AbstractParameter<ValueType> {
 
     @Override
     public void loadValueFromXML(Element xmlElement) {
-
+         setValue(xmlElement.getTextContent());
     }
 
     @Override

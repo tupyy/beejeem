@@ -101,8 +101,43 @@ public class XMLWorker {
             return "";
         }
 
-        logger.debug("Child element {} value {}",childName,child.getTextContent());
+        if (child.getTextContent() == null) {
+            return "";
+        }
+
         return child.getTextContent();
+    }
+
+    /**
+     * Get the options list of the list element. The options are defined as:
+     * <pre
+     *  <options>
+     *      <option>Value</option>
+     *      <options>value</options>
+     *  </options>
+     *  </pre
+     * @param element parent element
+     * @return value of the children
+     */
+    public List<String> getOptionsList(Element element) {
+
+        List<String> stringList = new ArrayList<>();
+        Element options = getElementByName(element,"options");
+        if (options == null) {
+            return stringList;
+        }
+
+        for (int i = 0; i < options.getChildNodes().getLength(); i++) {
+            Node node = options.getChildNodes().item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element elem = (Element) node;
+                if (elem.getTagName().equals("option")) {
+                    stringList.add(elem.getTextContent());
+                }
+            }
+        }
+
+        return stringList;
     }
 
     /**
@@ -150,50 +185,6 @@ public class XMLWorker {
     }
 
 
-    /**
-     * Count the elements in the document
-     * @param document
-     * @return the number of element {@code<parameter>} and {@code<code>} found in the document
-     */
-    public int countElements(Document document) {
-        int count = 0;
-
-        NodeList nodeList = document.getDocumentElement().getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element elem = (Element) node;
-                if ( elem.getParentNode().getNodeName().equals("job")) {
-                    if (elem.getNodeName().equals("parameter") || elem.getNodeName().equals("code")) {
-                        count++;
-                    }
-                }
-            }
-        }
-
-        return count;
-
-    }
-
-    /**
-     * Return an attribute of the job
-     * @param document xml job definition document
-     * @param attributeName
-     * @return
-     */
-
-    public String getJobAttribute(Document document,String attributeName) {
-
-        if (document == null) {
-            return "";
-        }
-
-        if (attributeName.isEmpty()) {
-            return "";
-        }
-
-        return document.getDocumentElement().getAttribute(attributeName);
-    }
 
     /**********************************
      *
@@ -201,13 +192,6 @@ public class XMLWorker {
      *
      **********************************/
 
-    private boolean isValid(Element element) {
-        if (element.getAttribute("name").isEmpty() || element.getAttribute("type").isEmpty() ) {
-            return false;
-        }
-
-        return true;
-    }
 
 
 
