@@ -17,21 +17,17 @@ public class PropertyController {
         this.model = model;
         propertySheet = new PropertySheet(model.getPropertySheetItems());
 
-        getPropertySheet().setPropertyEditorFactory(new Callback<PropertySheet.Item, PropertyEditor<?>>() {
+        getPropertySheet().setPropertyEditorFactory(param -> {
+            PropertyModel.SimpleItem simpleItem = (PropertyModel.SimpleItem) param;
 
-            @Override
-            public PropertyEditor<?> call(PropertySheet.Item param) {
-                SimpleItem simpleItem = (SimpleItem) param;
-
-                if(simpleItem.getType().toString().contains("java.util.List")) {
-                    return Editors.createChoiceEditor(simpleItem,simpleItem.getOptions());
-                } else if (simpleItem.getValue() instanceof Boolean) {
-                    return Editors.createCheckEditor(simpleItem);
-                } else if (simpleItem.getValue() instanceof Integer) {
-                    return Editors.createNumericEditor(simpleItem);
-                } else {
-                    return Editors.createTextEditor(simpleItem);
-                }
+            if(simpleItem.getType().toString().contains("java.util.List")) {
+                return Editors.createChoiceEditor(simpleItem,simpleItem.getOptions());
+            } else if (simpleItem.getValue() instanceof Boolean) {
+                return Editors.createCheckEditor(simpleItem);
+            } else if (simpleItem.getValue() instanceof Integer) {
+                return Editors.createNumericEditor(simpleItem);
+            } else {
+                return Editors.createTextEditor(simpleItem);
             }
         });
 

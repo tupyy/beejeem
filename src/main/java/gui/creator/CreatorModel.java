@@ -38,6 +38,10 @@ public class CreatorModel {
         }
     }
 
+    /**
+     * Add files to fileListView
+     * @param fileList
+     */
     public void addFiles(List<File> fileList) {
         for (File f: fileList) {
             obsFileNameList.add(f.getName());
@@ -45,6 +49,10 @@ public class CreatorModel {
         }
     }
 
+    /**
+     * Load the parameters of the selected job type
+     * @param jobType the type of the job
+     */
     public void loadParameters(String jobType) {
 
         JStesPreferences preferences = JStesConfiguration.getPreferences();
@@ -57,18 +65,26 @@ public class CreatorModel {
 
     }
 
+    /**
+     * Get the list of the files
+     * @return {@code ObservableList<String> containing the list of files}
+     */
     public ObservableList<String> getObsFileNameList() {
         return obsFileNameList;
     }
 
+    /**
+     * Get the list of the files
+     * @return {@code ObservableList<String> containing the list of job types}
+     */
     public ObservableList<String> getObsJobType() {
         return obsJobType;
     }
 
-    public ObservableList<PropertySheet.Item> getPropertySheetItems() {
-        return getPropertyModel().getPropertySheetItems();
-    }
-
+    /**
+     * Get the propertySheet model
+     * @return the model of the property sheet
+     */
     public PropertyModel getPropertyModel() {
         return propertyModel;
     }
