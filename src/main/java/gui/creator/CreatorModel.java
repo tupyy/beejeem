@@ -56,6 +56,7 @@ public class CreatorModel {
     public void loadParameters(String jobType) {
 
         JStesPreferences preferences = JStesConfiguration.getPreferences();
+        getPropertyModel().clear();
 
          for(JobDefinition jobDefinition: preferences.getJobs()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {

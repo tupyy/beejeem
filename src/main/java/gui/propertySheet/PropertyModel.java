@@ -42,6 +42,10 @@ public class PropertyModel {
         addItems(parameterSet);
     }
 
+    public void clear() {
+        getPropertySheetItems().clear();
+    }
+
     /**
      * Add simple items to observable list
      *
