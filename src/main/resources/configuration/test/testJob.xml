@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job name="Test job">
+    <parameters>
+        <parameter name="param1" type="String" source="external">
+            <label>Parameter 1</label>
+            <description>Parameter 1</description>
+            <value>test</value>
+        </parameter>
+        <parameter name="type" type="string" source="internal">
+            <label>Test job</label>
+            <description>Test job</description>
+            <value>test</value>
+        </parameter>
+    </parameters>
+    <code name="pythonCode" source="internal">
+        <value>
+test
+        </value>
+    </code>
+    <modules>
+        <module>
+            <name>core.modules.preprocessing.PreprocessingModule</name>
+        </module>
+    </modules>
+</job>

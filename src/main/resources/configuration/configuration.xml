@@ -10,9 +10,7 @@
     </user>
 
     <jobs>
-        <job>
-            <file>configuration/spectreStes/XWB900.xml</file>
-            <destinationFolder>/home/tupangiu/tmp</destinationFolder>
-        </job>
+        <job_definition>configuration/spectreStes/XWB900.xml</job_definition>
+        <job_definition>configuration/test/testJob.xml</job_definition>
     </jobs>
 </configuration>
