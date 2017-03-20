@@ -1,6 +1,8 @@
 package core;
 
 import com.sshtools.ssh.SshException;
+import core.job.AbstractJob;
+import core.job.Job;
 import core.job.SimpleJob;
 import core.modules.MethodResult;
 import core.modules.ModuleException;
@@ -93,8 +95,8 @@ public class QStatManager {
         //rise the flag
         qstatFlag = true;
         for (UUID id: core.getJobIDList()) {
-            SimpleJob job = core.getStandardJob(id);
-            job.setMethodResult(qstatOutput);
+            Job job = core.getJob(id);
+            job.setQstatResult(qstatOutput);
         }
 
         //check the content

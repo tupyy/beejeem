@@ -173,7 +173,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
     //</editor-fold>
 
-    //<editor-fold desc="QStat fire miss section">
+    //<editor-fold desc="QStat section">
     /**
      * Counts how many qstat miss fired the job allows before
      * considering that the batch finished running the job.
@@ -197,6 +197,12 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     public void setQstatMissFire(int newValue) {
         qstatMissFire = newValue;
     }
+
+    @Override
+    public void setQstatResult(MethodResult qStatMethodResult) {
+
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Observable interface">

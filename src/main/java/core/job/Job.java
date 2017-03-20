@@ -1,5 +1,6 @@
 package core.job;
 
+import core.modules.MethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 
@@ -94,4 +95,9 @@ public interface Job extends Executable {
      */
     public int getStatus();
 
+    /**
+     * Set the output from the qstat command
+     * @param qstatOutput
+     */
+    public void setQstatResult(MethodResult qstatOutput);
 }

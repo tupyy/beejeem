@@ -64,7 +64,7 @@ public class ModuleController extends Observable implements Executable {
      *
      * @param name module name
      */
-    public ModuleController(SimpleJob parent, String name, int triggerJobState) {
+    public ModuleController(AbstractJob parent, String name, int triggerJobState) {
         this.name = name;
         this.parent = parent;
 
@@ -83,7 +83,6 @@ public class ModuleController extends Observable implements Executable {
      */
     public ModuleController(String name, int triggerJobState) {
         this.name = name;
-        this.parent = parent;
 
         if (triggerJobState == JobState.NONE) {
             changeState(ModuleController.STATE_STARTABLE);
@@ -129,10 +128,8 @@ public class ModuleController extends Observable implements Executable {
             CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(moduleTask,executor)
                                                                 .thenApply(methodResult -> {
 
-                                                                    if (parent instanceof SimpleJob) {
-                                                                        SimpleJob p = (SimpleJob) parent;
-                                                                        p.setMethodResult(methodResult);
-                                                                    }
+                                                                    parent.updateParametersFromResult(methodResult);
+                                                                    setMethodResult(methodResult);
 
                                                                     return null;
                                                                 });

@@ -30,34 +30,6 @@ public class SimpleJob extends AbstractJob {
         }
     }
 
-
-    /**
-     * This methods is called when a result from a method is available. It is called by the ComptableFuture callback
-     * defined in {@link ModuleController}
-     * <p>
-     * It checks if the method created/modified same parameters and updated them if
-     * it finds one.
-     * @param methodResult
-     */
-    public void setMethodResult(MethodResult methodResult) {
-
-        if (getModuleManager(methodResult.getModuleName()) != null) {
-            logger.debug("SimpleJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
-            ModuleController moduleController = getModuleManager(methodResult.getModuleName());
-            updateParametersFromResult(methodResult);
-            moduleController.setMethodResult(methodResult);
-        }
-        else {
-            if (methodResult.getMethodName().toLowerCase().equals("qstatmethod")) {
-                if (getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING) {
-                    logger.debug("SimpleJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
-                    StringParameter qstatOutput = methodResult.getResultParameters().getParameter("qstatOutput");
-                    setQstatResult(qstatOutput.getValue());
-                }
-            }
-        }
-    }
-
     //<editor-fold desc="Observable implementation">
     @Override
     public synchronized void update(Observable o, Object arg) {
@@ -287,26 +259,29 @@ public class SimpleJob extends AbstractJob {
      *
      * @param qstatOutput
      */
-    private void setQstatResult(String qstatOutput) {
+    public void setQstatResult(MethodResult qstatOutput) {
 
-        String statusString = parseQStatOutput(qstatOutput);
-        if (! statusString.isEmpty() ) {
-            updateStatus(getBatchStatus(statusString));
-        }
-        else {
-            logger.debug("Job ID:{} Name:{} BatchID not found in qstat output");
-            if (getQstatMissFire() == 0) {
-                if (isMarkedForDeletion()) {
-                    logger.info("Job ID:{} Name:{} is marked for deletion and it will deleted",getID(),getName());
-                    updateStatus(JobState.DELETED);
+        if (getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING) {
+            logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getID(), qstatOutput.getMethodName());
+
+            StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
+            String statusString = parseQStatOutput(qstatOutputS.getValue());
+
+            if (!statusString.isEmpty()) {
+                updateStatus(getBatchStatus(statusString));
+            } else {
+                logger.debug("Job ID:{} Name:{} BatchID not found in qstat output");
+                if (getQstatMissFire() == 0) {
+                    if (isMarkedForDeletion()) {
+                        logger.info("Job ID:{} Name:{} is marked for deletion and it will deleted", getID(), getName());
+                        updateStatus(JobState.DELETED);
+                    } else {
+                        updateStatus(JobState.DONE);
+                    }
+                } else {
+                    logger.debug("Job ID:{} Name:{} -- QStat fire missed.Set value to: {}", getID(), getName(), getQstatMissFire() - 1);
+                    setQstatMissFire(getQstatMissFire() - 1);
                 }
-                else {
-                    updateStatus(JobState.DONE);
-                }
-            }
-            else {
-                logger.debug("Job ID:{} Name:{} -- QStat fire missed.Set value to: {}",getID(),getName(),getQstatMissFire()-1);
-                setQstatMissFire(getQstatMissFire()-1);
             }
         }
     }
