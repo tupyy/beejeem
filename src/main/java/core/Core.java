@@ -3,12 +3,10 @@ package core;
 import core.job.Job;
 import core.job.JobException;
 import core.job.JobExecutionProgress;
-import core.job.ModuleManager;
+import core.job.ModuleController;
 import core.parameters.ParameterSet;
 import core.ssh.SshFactory;
-import org.w3c.dom.Element;
 
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +24,7 @@ public interface Core {
      * @throws JobException
      * @throws JobException
      */
-    public void createJob(ParameterSet parameterSet,List<ModuleManager> modules) throws JobException, JobException;
+    public void createJob(ParameterSet parameterSet,List<ModuleController> modules) throws JobException, JobException;
 
     /**
      * Add a new job

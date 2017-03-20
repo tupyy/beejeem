@@ -18,9 +18,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  * This class keeps all the information about a module: the methods to be executed,
  * the methods executed and their result.
  */
-public class ModuleManager extends Observable implements Executable {
+public class ModuleController extends Observable implements Executable {
 
-    private final Logger logger = LoggerFactory.getLogger(ModuleManager.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(ModuleController.class.getName());
     /*
     * Not started state
      */
@@ -64,16 +64,16 @@ public class ModuleManager extends Observable implements Executable {
      *
      * @param name module name
      */
-    public ModuleManager(SimpleJob parent, String name, int triggerJobState) {
+    public ModuleController(SimpleJob parent, String name, int triggerJobState) {
         this.name = name;
         this.parent = parent;
 
         if (triggerJobState == JobState.NONE) {
-            changeState(ModuleManager.STATE_STARTABLE);
+            changeState(ModuleController.STATE_STARTABLE);
         }
         else {
             this.triggerJobState = triggerJobState;
-            changeState(ModuleManager.STATE_IDLE);
+            changeState(ModuleController.STATE_IDLE);
         }
     }
 
@@ -81,16 +81,16 @@ public class ModuleManager extends Observable implements Executable {
      *
      * @param name module name
      */
-    public ModuleManager(String name,int triggerJobState) {
+    public ModuleController(String name, int triggerJobState) {
         this.name = name;
         this.parent = parent;
 
         if (triggerJobState == JobState.NONE) {
-            changeState(ModuleManager.STATE_STARTABLE);
+            changeState(ModuleController.STATE_STARTABLE);
         }
         else {
             this.triggerJobState = triggerJobState;
-            changeState(ModuleManager.STATE_IDLE);
+            changeState(ModuleController.STATE_IDLE);
         }
     }
 
@@ -187,7 +187,7 @@ public class ModuleManager extends Observable implements Executable {
         successful = checkResults();
 
         if (isFinished()) {
-            changeState(ModuleManager.STATE_DONE);
+            changeState(ModuleController.STATE_DONE);
         }
 
     }
@@ -196,7 +196,7 @@ public class ModuleManager extends Observable implements Executable {
      * Start the module
      */
     public void start() {
-        changeState(ModuleManager.STATE_INPROGRESS);
+        changeState(ModuleController.STATE_INPROGRESS);
     }
 
     /**
@@ -223,7 +223,7 @@ public class ModuleManager extends Observable implements Executable {
      */
     public void onJobStatusChange(int newJobStatus) {
         if (newJobStatus == triggerJobState && this.getState() == STATE_IDLE) {
-            changeState(ModuleManager.STATE_STARTABLE);
+            changeState(ModuleController.STATE_STARTABLE);
             logger.debug("Module {} has become startable",this.getName());
         }
     }

@@ -1,6 +1,6 @@
 package core.creator;
 
-import core.job.ModuleManager;
+import core.job.ModuleController;
 import core.parameters.ParameterSet;
 
 import java.io.IOException;
@@ -28,5 +28,5 @@ public interface Creator {
      * Return a list of module manager for all jobs
      * @return
      */
-    public List<ModuleManager> getModules();
+    public List<ModuleController> getModules();
 }

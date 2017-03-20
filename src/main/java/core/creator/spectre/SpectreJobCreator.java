@@ -2,7 +2,7 @@ package core.creator.spectre;
 
 import core.creator.Creator;
 import core.job.JobState;
-import core.job.ModuleManager;;
+import core.job.ModuleController;;
 import core.modules.*;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
@@ -55,7 +55,7 @@ public class SpectreJobCreator implements Creator {
     /**
      * Holds the list of the module created
      */
-    List<ModuleManager> moduleManagers = new ArrayList<>();
+    List<ModuleController> moduleControllers = new ArrayList<>();
 
     XMLWorker xmlWorker = new XMLWorker();
 
@@ -76,8 +76,8 @@ public class SpectreJobCreator implements Creator {
     }
 
     @Override
-    public List<ModuleManager> getModules() {
-        return moduleManagers;
+    public List<ModuleController> getModules() {
+        return moduleControllers;
     }
 
     @Override
@@ -125,7 +125,7 @@ public class SpectreJobCreator implements Creator {
             }
 
 
-        moduleManagers = createModuleParameter(modules);
+        moduleControllers = createModuleParameter(modules);
     }
 
 
@@ -201,8 +201,8 @@ public class SpectreJobCreator implements Creator {
      * Create the module parameters
      * @param modulesElement
      */
-    private List<ModuleManager> createModuleParameter(Element modulesElement) {
-        List<ModuleManager> moduleSet = new ArrayList<>();
+    private List<ModuleController> createModuleParameter(Element modulesElement) {
+        List<ModuleController> moduleSet = new ArrayList<>();
 
         NodeList nodeList = modulesElement.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -211,20 +211,20 @@ public class SpectreJobCreator implements Creator {
                 Element elem = (Element) node;
                 if (elem.getNodeName().equals("module")) {
                     try {
-                        ModuleManager moduleManager;
+                        ModuleController moduleController;
                         if (getElement(elem,"trigger") != null) {
-                            moduleManager = new ModuleManager(getElement(elem,"name").getTextContent(),getStatus(getElement(elem,"trigger").getTextContent()));
+                            moduleController = new ModuleController(getElement(elem,"name").getTextContent(),getStatus(getElement(elem,"trigger").getTextContent()));
                         }
                         else {
-                            moduleManager = new ModuleManager(getElement(elem,"name").getTextContent(),JobState.NONE);
+                            moduleController = new ModuleController(getElement(elem,"name").getTextContent(),JobState.NONE);
                         }
 
                         Class<? extends Module> className = (Class<? extends Module>) Class.forName(getElement(elem,"name").getTextContent());
                         Module module = ModuleStarter.getModuleInstance(className);
                         for(String methodName: module.getMethodsName()) {
-                            moduleManager.addMethod(methodName);
+                            moduleController.addMethod(methodName);
                         }
-                        moduleSet.add(moduleManager);
+                        moduleSet.add(moduleController);
                     } catch (ClassNotFoundException e) {
 
                     }

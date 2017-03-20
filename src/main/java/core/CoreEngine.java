@@ -60,7 +60,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     //<editor-fold desc="CORE INTERFACE">
     @Override
-    public void createJob(ParameterSet parameterSet,List<ModuleManager> modules) throws JobException {
+    public void createJob(ParameterSet parameterSet,List<ModuleController> modules) throws JobException {
 
         String jobName = parameterSet.getParameter("name").getValue().toString();
         SimpleJob job = new SimpleJob(parameterSet,modules);

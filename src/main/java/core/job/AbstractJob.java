@@ -11,9 +11,9 @@ import java.util.*;
 
 /**
  * This class implements the basic job.
- * <br>The user has to keep in mind that the {@link ModuleManager#setParent(AbstractJob)} have to be implemented in the
+ * <br>The user has to keep in mind that the {@link ModuleController#setParent(AbstractJob)} have to be implemented in the
  * class which extends {@link AbstractJob} because the module will call {@code SetMethodResult(MethodResuult methodResult}
- * <br>The same thing is valid for the {@link ModuleManager#addObserver(Observer)}
+ * <br>The same thing is valid for the {@link ModuleController#addObserver(Observer)}
  */
 
 public abstract class AbstractJob extends Observable implements Job,Observer{
@@ -30,7 +30,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     private ParameterSet parameterSet = new ParameterSet();
 
     //keeps the modules manager
-    private List<ModuleManager> modules;
+    private List<ModuleController> modules;
 
     /**
      * Keeps track of the job execution progress
@@ -51,7 +51,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      *
      * @param parameterSet
      */
-    public AbstractJob(ParameterSet parameterSet,List<ModuleManager> modules) {
+    public AbstractJob(ParameterSet parameterSet,List<ModuleController> modules) {
         this.status = JobState.IDLE;
         this.editable = true;
 
@@ -153,7 +153,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * Set module list
      * @param modules ArrayList of modules
      */
-    public void setModules(List<ModuleManager> modules) {
+    public void setModules(List<ModuleController> modules) {
         this.modules = modules;
     }
 
@@ -161,7 +161,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * Get the list of modules
      * @return list of module
      */
-    public List<ModuleManager> getModules() {
+    public List<ModuleController> getModules() {
         return modules;
     }
 

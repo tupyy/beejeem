@@ -20,11 +20,11 @@ public class SimpleJob extends AbstractJob {
     private final Logger logger = LoggerFactory.getLogger(SimpleJob.class);
     private JobExecutionProgress jobProgress;
 
-    public SimpleJob(ParameterSet parameterSet, List<ModuleManager> modules) {
+    public SimpleJob(ParameterSet parameterSet, List<ModuleController> modules) {
 
        super(parameterSet,modules);
 
-        for (ModuleManager mm : modules) {
+        for (ModuleController mm : modules) {
             mm.setParent(this);
             mm.addObserver(this);
         }
@@ -33,7 +33,7 @@ public class SimpleJob extends AbstractJob {
 
     /**
      * This methods is called when a result from a method is available. It is called by the ComptableFuture callback
-     * defined in {@link ModuleManager}
+     * defined in {@link ModuleController}
      * <p>
      * It checks if the method created/modified same parameters and updated them if
      * it finds one.
@@ -43,9 +43,9 @@ public class SimpleJob extends AbstractJob {
 
         if (getModuleManager(methodResult.getModuleName()) != null) {
             logger.debug("SimpleJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
-            ModuleManager moduleManager = getModuleManager(methodResult.getModuleName());
+            ModuleController moduleController = getModuleManager(methodResult.getModuleName());
             updateParametersFromResult(methodResult);
-            moduleManager.setMethodResult(methodResult);
+            moduleController.setMethodResult(methodResult);
         }
         else {
             if (methodResult.getMethodName().toLowerCase().equals("qstatmethod")) {
@@ -61,11 +61,11 @@ public class SimpleJob extends AbstractJob {
     //<editor-fold desc="Observable implementation">
     @Override
     public synchronized void update(Observable o, Object arg) {
-        ModuleManager moduleManager = (ModuleManager) o;
+        ModuleController moduleController = (ModuleController) o;
 
-        if ((int) arg == ModuleManager.STATE_DONE) {
-            if (moduleManager.isSuccessful()) {
-                logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(),moduleManager.getName());
+        if ((int) arg == ModuleController.STATE_DONE) {
+            if (moduleController.isSuccessful()) {
+                logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
 
                 //run next module
                 String nextModule = getNextModuleName();
@@ -77,8 +77,8 @@ public class SimpleJob extends AbstractJob {
                 updateStatus(JobState.ERROR);
             }
         }
-        else if ( (int) arg == ModuleManager.STATE_STARTABLE && canExecute()) {
-            moduleManager.execute(this.jobProgress);
+        else if ( (int) arg == ModuleController.STATE_STARTABLE && canExecute()) {
+            moduleController.execute(this.jobProgress);
         }
 
         if(isJobFinished()) {
@@ -218,8 +218,8 @@ public class SimpleJob extends AbstractJob {
             return false;
         }
 
-        for(ModuleManager mm: getModules()) {
-            if (mm.getState() != ModuleManager.STATE_DONE) {
+        for(ModuleController mm: getModules()) {
+            if (mm.getState() != ModuleController.STATE_DONE) {
                 return false;
             }
         }
@@ -319,7 +319,7 @@ public class SimpleJob extends AbstractJob {
      * @param name
      * @return moduleManager if found, null otherwise
      */
-    private ModuleManager getModuleManager(String name) {
+    private ModuleController getModuleManager(String name) {
 
         //FIX FOR NOW
         //TODO
@@ -327,9 +327,9 @@ public class SimpleJob extends AbstractJob {
             name = stripModuleName(name);
         }
 
-        for(ModuleManager moduleManager: getModules()) {
-            if (stripModuleName(moduleManager.getName()).equals(name)) {
-                return moduleManager;
+        for(ModuleController moduleController : getModules()) {
+            if (stripModuleName(moduleController.getName()).equals(name)) {
+                return moduleController;
             }
         }
 
@@ -348,8 +348,8 @@ public class SimpleJob extends AbstractJob {
 //            updateStatus(JobState.SUBMITTING);
 //        }
 
-        for(ModuleManager mm: getModules()) {
-            if (mm.getState() == ModuleManager.STATE_STARTABLE) {
+        for(ModuleController mm: getModules()) {
+            if (mm.getState() == ModuleController.STATE_STARTABLE) {
                 mm.start();
                 return mm.getName();
             }
@@ -363,9 +363,9 @@ public class SimpleJob extends AbstractJob {
      * @return
      */
     private boolean verifyModuleResult(String name) {
-        ModuleManager moduleManager = getModuleManager(name);
-        if (moduleManager != null) {
-            return moduleManager.isSuccessful();
+        ModuleController moduleController = getModuleManager(name);
+        if (moduleController != null) {
+            return moduleController.isSuccessful();
         }
 
         return false;
@@ -394,7 +394,7 @@ public class SimpleJob extends AbstractJob {
      */
     private void notifyModules(int status) {
         //notify modules about the state change
-        for (ModuleManager mm : getModules()) {
+        for (ModuleController mm : getModules()) {
             mm.onJobStatusChange(status);
         }
     }
