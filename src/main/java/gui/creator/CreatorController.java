@@ -68,7 +68,6 @@ public class CreatorController implements Initializable {
         selectFileButton.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Choose input files");
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Stf files","stf","dat"));
 
             Node  source = (Node)  event.getSource();
             Stage stage  = (Stage) source.getScene().getWindow();
