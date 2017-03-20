@@ -29,6 +29,12 @@ public interface Core {
     public void createJob(ParameterSet parameterSet,List<ModuleManager> modules) throws JobException, JobException;
 
     /**
+     * Add a new job
+     * @param job
+     */
+    public void addJob(Job job) throws JobException;
+
+    /**
      * Delete the job. A job which is running cannot be deleted immediately.
      * <br>The job is marked for deletion and a QDel module is executed with the id of the job.
      * <br>Once the job have been deleted from the batch system, the job can be safely deleted from jobList.

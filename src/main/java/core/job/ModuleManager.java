@@ -64,7 +64,7 @@ public class ModuleManager extends Observable implements Executable {
      *
      * @param name module name
      */
-    public ModuleManager(StandardJob parent,String name,int triggerJobState) {
+    public ModuleManager(SimpleJob parent, String name, int triggerJobState) {
         this.name = name;
         this.parent = parent;
 
@@ -129,8 +129,8 @@ public class ModuleManager extends Observable implements Executable {
             CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(moduleTask,executor)
                                                                 .thenApply(methodResult -> {
 
-                                                                    if (parent instanceof StandardJob) {
-                                                                        StandardJob p = (StandardJob) parent;
+                                                                    if (parent instanceof SimpleJob) {
+                                                                        SimpleJob p = (SimpleJob) parent;
                                                                         p.setMethodResult(methodResult);
                                                                     }
 

@@ -15,12 +15,12 @@ import java.util.Observable;
  * In the v2 of the Job implementation, the type of the job is set by the user in the xml definition file and,
  * it can be whatever the user wants.
  */
-public class StandardJob extends AbstractJob {
+public class SimpleJob extends AbstractJob {
 
-    private final Logger logger = LoggerFactory.getLogger(StandardJob.class);
+    private final Logger logger = LoggerFactory.getLogger(SimpleJob.class);
     private JobExecutionProgress jobProgress;
 
-    public StandardJob(ParameterSet parameterSet,List<ModuleManager> modules) {
+    public SimpleJob(ParameterSet parameterSet, List<ModuleManager> modules) {
 
        super(parameterSet,modules);
 
@@ -42,7 +42,7 @@ public class StandardJob extends AbstractJob {
     public void setMethodResult(MethodResult methodResult) {
 
         if (getModuleManager(methodResult.getModuleName()) != null) {
-            logger.debug("StandardJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
+            logger.debug("SimpleJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
             ModuleManager moduleManager = getModuleManager(methodResult.getModuleName());
             updateParametersFromResult(methodResult);
             moduleManager.setMethodResult(methodResult);
@@ -50,7 +50,7 @@ public class StandardJob extends AbstractJob {
         else {
             if (methodResult.getMethodName().toLowerCase().equals("qstatmethod")) {
                 if (getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING) {
-                    logger.debug("StandardJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
+                    logger.debug("SimpleJob ID:{} Name:{} :Method name: {}",getName(),getID(),methodResult.getMethodName());
                     StringParameter qstatOutput = methodResult.getResultParameters().getParameter("qstatOutput");
                     setQstatResult(qstatOutput.getValue());
                 }
@@ -65,7 +65,7 @@ public class StandardJob extends AbstractJob {
 
         if ((int) arg == ModuleManager.STATE_DONE) {
             if (moduleManager.isSuccessful()) {
-                logger.debug("StandardJob ID:{} Name:{} : Module {} done",getName(),getID(),moduleManager.getName());
+                logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(),moduleManager.getName());
 
                 //run next module
                 String nextModule = getNextModuleName();
@@ -122,7 +122,7 @@ public class StandardJob extends AbstractJob {
     /**
      * Update the status of the job.
      * <p>
-     *     Notify the observer (e.g. {@link core.CoreEngine} and all the module {@link StandardJob#notifyModules(int)}
+     *     Notify the observer (e.g. {@link core.CoreEngine} and all the module {@link SimpleJob#notifyModules(int)}
      * </p>
      * @param newState new state
      */

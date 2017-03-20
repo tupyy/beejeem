@@ -1,9 +1,7 @@
 package core;
 
-import com.sshtools.sftp.SftpStatusException;
-import com.sshtools.ssh.ChannelOpenException;
 import com.sshtools.ssh.SshException;
-import core.job.StandardJob;
+import core.job.SimpleJob;
 import core.modules.MethodResult;
 import core.modules.ModuleException;
 import core.modules.qstat.QStatModule;
@@ -18,7 +16,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -96,7 +93,7 @@ public class QStatManager {
         //rise the flag
         qstatFlag = true;
         for (UUID id: core.getJobIDList()) {
-            StandardJob job = core.getStandardJob(id);
+            SimpleJob job = core.getStandardJob(id);
             job.setMethodResult(qstatOutput);
         }
 

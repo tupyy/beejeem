@@ -25,7 +25,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
 
     private final ModuleExecutor executor;
-    List<StandardJob> jobList = new ArrayList<>();
+    List<Job> jobList = new ArrayList<>();
 
     //temp
     private int finishedJobs = 0;
@@ -63,7 +63,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
     public void createJob(ParameterSet parameterSet,List<ModuleManager> modules) throws JobException {
 
         String jobName = parameterSet.getParameter("name").getValue().toString();
-        StandardJob job = new StandardJob(parameterSet,modules);
+        SimpleJob job = new SimpleJob(parameterSet,modules);
         jobList.add(job);
         job.addObserver(this);
 
@@ -73,13 +73,21 @@ public final class CoreEngine extends Observable implements Core, Observer {
     }
 
     @Override
+    public void addJob(Job j) throws JobException{
+        if (jobExists(j.getID())) {
+            throw new JobException(JobException.JOB_EXISTS,"Job ".concat(j.getID().toString()).concat(" already exists"));
+        }
+        jobList.add(j);
+    }
+
+    @Override
     public void deleteJob(UUID id) throws JobException {
 
     }
 
     @Override
     public Job getJob(UUID id) {
-        for (StandardJob j : jobList) {
+        for (Job j : jobList) {
             if (j.getID().equals(id)) {
                 return j;
             }
@@ -93,7 +101,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
         //check if the ssh client is connected before executing jobs
         if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
             qstatManager.start();
-            StandardJob job = getStandardJob(id);
+            Job job = getJob(id);
             try {
                 job.execute(progress);
             } catch (JobException e) {
@@ -107,8 +115,8 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public void runAll() {
-        for (StandardJob standardJob : jobList) {
-            executeJob(standardJob.getID(),null);
+        for (Job job : jobList) {
+            executeJob(job.getID(),null);
         }
     }
 
@@ -124,7 +132,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        StandardJob j = (StandardJob) o;
+        SimpleJob j = (SimpleJob) o;
         fireCoreEvent(CoreEventType.JOB_STATUS_CHANGED, j.getID());
 
         if (j.getStatus() == JobState.FINISHED) {
@@ -137,7 +145,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
     public ArrayList<UUID> getJobIDList() {
         ArrayList<UUID> idList = new ArrayList<>();
 
-        for (StandardJob job: jobList) {
+        for (Job job: jobList) {
             idList.add(job.getID());
         }
 
@@ -169,8 +177,8 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     //</editor-fold>
 
-    public StandardJob getStandardJob(UUID id) {
-        return (StandardJob) getJob(id);
+    public SimpleJob getStandardJob(UUID id) {
+        return (SimpleJob) getJob(id);
     }
 
     /**
@@ -180,8 +188,8 @@ public final class CoreEngine extends Observable implements Core, Observer {
      * @return
      */
     public boolean jobExists(UUID jobID) {
-        for (StandardJob standardJob : jobList) {
-            if (standardJob.getID().equals(jobID)) {
+        for (Job job : jobList) {
+            if (job.getID().equals(jobID)) {
                 return true;
             }
         }

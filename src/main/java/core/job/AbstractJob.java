@@ -22,7 +22,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
 
     private int qstatMissFire = 1;
 
-    private final Logger logger = LoggerFactory.getLogger(StandardJob.class);
+    private final Logger logger = LoggerFactory.getLogger(SimpleJob.class);
 
     private UUID id = UUID.randomUUID();
 

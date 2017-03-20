@@ -21,9 +21,14 @@ public class JobException extends Exception {
     public static final int DELETE_EXCEPTION = 1002;
 
     /**
-     * Error deleting the job
+     * Error executing the job
      */
     public static final int EXECUTION_EXCEPTION = 1004;
+
+    /**
+     * Error adding the job
+     */
+    public static final int JOB_EXISTS = 1005;
 
     private Throwable cause=null;
     private int reason;
