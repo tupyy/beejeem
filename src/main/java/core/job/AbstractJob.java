@@ -52,26 +52,39 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * @param parameterSet
      */
     public AbstractJob(ParameterSet parameterSet,List<ModuleController> modules) {
-        this.status = JobState.IDLE;
-        this.editable = true;
+        this(parameterSet);
+        this.setModules(modules);
+
+        //check the parameter set
+        if (modules.size() == 0) {
+            setStatus(JobState.ERROR);
+        }
+
+    }
+
+    public AbstractJob(ParameterSet parameterSet) {
+        this();
 
         for (Parameter p: parameterSet) {
             this.parameterSet.addParameter(p);
         }
 
-        //create the temporary folder parameter
-        StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
-        temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(id.toString().substring(0,7)));
-        this.parameterSet.addParameter(temporaryParameter);
-
-        this.setModules(modules);
-
         //check the parameter set
-        if (!parameterSet.isValid() || modules.size() == 0) {
+        if (!parameterSet.isValid()) {
             setStatus(JobState.ERROR);
         }
 
     }
+    public AbstractJob() {
+        this.status = JobState.IDLE;
+        this.editable = true;
+
+        //create the temporary folder parameter
+        StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
+        temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(id.toString().substring(0,7)));
+        this.parameterSet.addParameter(temporaryParameter);
+    }
+
 
     //<editor-fold desc="Job interface">
     @Override

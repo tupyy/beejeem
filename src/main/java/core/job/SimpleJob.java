@@ -30,6 +30,19 @@ public class SimpleJob extends AbstractJob {
         }
     }
 
+    public SimpleJob(ParameterSet parameterSet) {
+        super(parameterSet);
+    }
+
+    @Override
+    public void setModules(List<ModuleController> modules) {
+        super.setModules(modules);
+
+        for (ModuleController mm : modules) {
+            mm.setParent(this);
+            mm.addObserver(this);
+        }
+    }
     //<editor-fold desc="Observable implementation">
     @Override
     public synchronized void update(Observable o, Object arg) {
