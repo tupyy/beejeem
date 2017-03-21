@@ -94,7 +94,7 @@ public class PropertyModel {
 
         @Override
         public String getCategory() {
-            if (parameter.getCategory() == null) {
+            if (parameter.getCategory().isEmpty()) {
                 return "General";
             }
 

@@ -1,8 +1,6 @@
-package main.configuration;
+package core.configuration;
 
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.Aircraft;
-import core.parameters.parametertypes.AircraftParameter;
 import core.parameters.parametertypes.CodeParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;
@@ -49,6 +47,11 @@ public class JStesConfiguration {
         return preferences;
     }
 
+    /**
+     * Load the configuration file
+     * @param file
+     * @throws IOException
+     */
     public void loadConfiguration(File file) throws IOException {
         XMLWorker xmlWorker = new XMLWorker();
 

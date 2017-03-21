@@ -3,10 +3,9 @@ package gui.creator;
 import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import main.configuration.JStesConfiguration;
-import main.configuration.JStesPreferences;
-import main.configuration.JobDefinition;
-import org.controlsfx.control.PropertySheet;
+import core.configuration.JStesConfiguration;
+import core.configuration.JStesPreferences;
+import core.configuration.JobDefinition;
 
 import java.io.File;
 import java.util.ArrayList;
