@@ -28,6 +28,7 @@ public class CreatorModel {
      * Property sheet model
      */
     private PropertyModel propertyModel = new PropertyModel();
+    private JobDefinition currentJobDefition;
 
     public CreatorModel() {
 
@@ -35,6 +36,10 @@ public class CreatorModel {
         for(String jt: preferences.getJobTypes()) {
             getObsJobType().add(jt);
         }
+    }
+
+    public JobDefinition getCurrentJobDefintion() {
+        return currentJobDefition;
     }
 
     /**
@@ -46,6 +51,10 @@ public class CreatorModel {
             obsFileNameList.add(f.getName());
             files.add(f);
         }
+    }
+
+    public List<File> getFiles() {
+        return files;
     }
 
     /**
@@ -60,6 +69,7 @@ public class CreatorModel {
          for(JobDefinition jobDefinition: preferences.getJobs()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {
                 getPropertyModel().setParameterSet(jobDefinition.getParameters());
+                currentJobDefition = jobDefinition;
             }
         }
 

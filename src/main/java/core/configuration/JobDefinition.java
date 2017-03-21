@@ -13,7 +13,7 @@ import java.util.List;
 public class JobDefinition {
 
     private ParameterSet parameters = new ParameterSet();
-    private List<Element> moduleManagers = new ArrayList<>();
+    private List<Element> moduleElements = new ArrayList<>();
 
     public JobDefinition() {
 
@@ -21,7 +21,7 @@ public class JobDefinition {
 
     public JobDefinition(ParameterSet parameters,List<Element> modules) {
         this.setParameters(parameters);
-        this.setModuleManagers(modules);
+        this.setModuleElements(modules);
     }
 
 
@@ -51,15 +51,15 @@ public class JobDefinition {
         return parameters;
     }
 
-    public List<Element> getModuleManagers() {
-        return moduleManagers;
+    public List<Element> getModuleElements() {
+        return moduleElements;
     }
 
     public void setParameters(ParameterSet parameters) {
         this.parameters = parameters;
     }
 
-    public void setModuleManagers(List<Element> moduleManagers) {
-        this.moduleManagers = moduleManagers;
+    public void setModuleElements(List<Element> moduleElements) {
+        this.moduleElements = moduleElements;
     }
 }

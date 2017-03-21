@@ -144,7 +144,7 @@ public class JStesConfiguration {
         ParameterSet newSet = createParameters(parameters);
         newSet.addParameter(createCodeParameter(code));
         jobDefinition.getParameters().addParameters(newSet);
-        jobDefinition.setModuleManagers(createModuleParameter(modules));
+        jobDefinition.setModuleElements(createModuleParameter(modules));
 
 
     }

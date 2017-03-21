@@ -3,6 +3,7 @@ package core.creator;
 import core.job.Job;
 import core.job.ModuleController;
 import core.parameters.ParameterSet;
+import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,5 +28,5 @@ public interface Creator {
      * @param parameterSet
      * @return
      */
-    public List<Job> createJobs(List<File> inputFiles,ParameterSet parameterSet,CreatorLog creatorLog) throws IOException;
+    public List<Job> createJobs(List<File> inputFiles, ParameterSet parameterSet, List<Element> moduleElements,CreatorLog creatorLog) throws IOException;
 }

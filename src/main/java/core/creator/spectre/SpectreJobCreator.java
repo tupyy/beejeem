@@ -1,22 +1,26 @@
 package core.creator.spectre;
 
+import core.creator.AbstractCreator;
 import core.creator.Creator;
 import core.creator.CreatorLog;
 import core.job.Job;
 import core.job.JobState;
+import core.job.ModuleController;
 import core.job.SimpleJob;
+import core.modules.Module;
+import core.modules.ModuleStarter;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.*;
 import core.util.XMLWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This method creates the parameter set for a spectre job.
@@ -24,16 +28,17 @@ import java.util.Map;
  * <br>For the job entries which generated an error, a StringParameter will be returned with the description of the error.
  * The name of the StringParameter will be set to the name of the stf file.
  */
-public class SpectreJobCreator implements Creator {
+public class SpectreJobCreator extends AbstractCreator {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /**
      * Number of columns of the SG_data_file.txt file
      */
-    private final int COLUMNS_COUNT = 14;
+    private final int COLUMNS_COUNT = 15;
     private final String spectreParamNames="name,materialName,materialReference,materialOrientation,fatigueConfiguration,propaConfiguration," +
-            "ksnul,compression,useless,useless,useless,spectrumFile,spectrumType,fue";
+            "ksnul,compression,traceFile,sigmaFile,nameClass,spectrumType";
+    private final List<Integer> columnIndex = Collections.unmodifiableList(Arrays.asList(0,1,2,3,4,5,7,8,9,10,12,14));
 
     XMLWorker xmlWorker = new XMLWorker();
 
@@ -47,14 +52,18 @@ public class SpectreJobCreator implements Creator {
     }
 
     @Override
-    public List<Job> createJobs(List<File> inputFiles, ParameterSet parameterSet,CreatorLog creatorLog) throws IllegalArgumentException, IOException {
+    public List<Job> createJobs(List<File> inputFiles, ParameterSet parameterSet, List<Element> moduleElements, CreatorLog creatorLog) throws IllegalArgumentException, IOException {
         List<Job> jobs = new ArrayList<>();
 
         //create the array of value maps
             ArrayList<HashMap<String,String>> paramValues = new ArrayList<>();
 
             for (File f: inputFiles) {
-                if (f.getName().endsWith("txt") && checkSpectrumGeneratorFile(f,creatorLog) > 0) {
+                if (f.getName().endsWith("txt")) {
+                    if (checkSpectrumGeneratorFile(f,creatorLog) > 0 ) {
+                        creatorLog.error(String.format("File %s is not a input file for spectrum jobs",f.getName()));
+                    }
+
                     try {
                         getSpectreData(f, paramValues);
                     } catch (IOException e) {
@@ -64,6 +73,10 @@ public class SpectreJobCreator implements Creator {
                 }
             }
 
+            if ( paramValues.size() == 0) {
+                creatorLog.fatalError("Cannot extract spectre values from the spectrum text file");
+
+            }
             //create a map with filenames
             HashMap<String,String> filesMap = createFileMap(inputFiles,creatorLog);
 
@@ -81,7 +94,7 @@ public class SpectreJobCreator implements Creator {
                         updateParameterSet(parameterSet, paramMap,creatorLog);
                     }
                 }
-                SimpleJob job = new SimpleJob(parameterSet);
+                SimpleJob job = new SimpleJob(parameterSet,createModuleParameter(moduleElements,creatorLog));
                 jobs.add(job);
             }
 
@@ -89,45 +102,42 @@ public class SpectreJobCreator implements Creator {
 
     }
 
-    /**
-     * Map the name of the status to its value in the Jobstate
-     * @param triggerName
-     * @return
-     */
-    private int getStatus(String triggerName) {
 
-        return JobState.getStatusCode(triggerName);
-
-    }
 
     /**
      * Read the dat file and create an entry for each line. For each entry a hashmap is returned with the key as
      * the name of the parameter and the value as the value of the parameter
-     * @param datFile
+     * @param spectrumTextFile
      * @return
      * @throws IOException
      */
-    private void getSpectreData(File datFile,ArrayList<HashMap<String,String>> values) throws IOException {
+    private void getSpectreData(File spectrumTextFile,ArrayList<HashMap<String,String>> values) throws IOException {
 
         String line;
         String[] spectreParameterNames = spectreParamNames.split(",");
+        HashMap<String, String> entry = new HashMap<>();
 
-        BufferedReader br = new BufferedReader(new FileReader(datFile));
-            while (( line = br.readLine()) != null ) {
-                if ( ! line.startsWith("Point_name")) {
-                    HashMap<String, String> entry = new HashMap<>();
-                    String[] buffer = line.split("\\s+");
+        BufferedReader br = new BufferedReader(new FileReader(spectrumTextFile));
+        while (( line = br.readLine()) != null ) {
+            if ( ! line.startsWith("Point_name")) {
 
-                    try {
-                        for (int i = 0; i < buffer.length; i++) {
-                            entry.put(spectreParameterNames[i], buffer[i]);
-                        }
-                        values.add(entry);
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                String[] buffer = line.split("\\s+");
+
+                try {
+                    int j = 0;
+                    for (Integer i: columnIndex) {
+                        entry.put(spectreParameterNames[j], buffer[i]);
+                        j++;
                     }
+                values.add(entry);
+                } catch (ArrayIndexOutOfBoundsException e) {
                 }
             }
+        }
+
     }
+
+
 
     /**
      * Creates a map of filenames having as key the name of file without extention
@@ -147,57 +157,6 @@ public class SpectreJobCreator implements Creator {
         }
 
         return map;
-    }
-
-    /**
-     * Update the whole set
-     * @param parameterSet
-     * @param valuesMap
-     */
-    private void updateParameterSet(ParameterSet parameterSet,HashMap<String,String> valuesMap,CreatorLog creatorLog) {
-
-        for(Parameter p: parameterSet) {
-            if (valuesMap.containsKey(p.getName())) {
-                String value = valuesMap.get(p.getName());
-                    updateParameter(p, value);
-                    creatorLog.info(String.format("Parameter %s updated with value %s",p.getName(),value));
-            }
-        }
-    }
-
-    /**
-     * Update parameter from String value.
-     * The method is casting the value to the ValueType of the parameter.
-     * @param p
-     * @param value
-     */
-    private void updateParameter(Parameter p, String value) {
-        if (p instanceof BooleanParameter) {
-            if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                p.setValue(Boolean.parseBoolean(value));
-            }
-        }
-        else if (p instanceof IntegerParameter) {
-            try {
-                int valueInt = Integer.parseInt(value);
-                p.setValue(valueInt);
-            }
-            catch (NumberFormatException e) {
-                ;
-            }
-        }
-        else if (p instanceof DoubleParameter) {
-            try {
-                double valueDouble = Double.parseDouble(value);
-                p.setValue(valueDouble);
-            }
-            catch (NumberFormatException e) {
-                ;
-            }
-        }
-        else if (p instanceof StringParameter) {
-            p.setValue(value);
-        }
     }
 
     /**
