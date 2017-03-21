@@ -1,20 +1,15 @@
 package gui.creator;
 
-import core.parameters.Parameter;
-import core.parameters.ParameterSet;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
+import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import main.configuration.JStesConfiguration;
-import main.configuration.JStesPreferences;
-import main.configuration.JobDefinition;
-import org.controlsfx.control.PropertySheet;
+import core.configuration.JStesConfiguration;
+import core.configuration.JStesPreferences;
+import core.configuration.JobDefinition;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Model class for the creator view
@@ -29,8 +24,10 @@ public class CreatorModel {
 
     List<File> files = new ArrayList<>();
 
-    private List<SimpleItem> paramList = new ArrayList<>();
-    private ObservableList<PropertySheet.Item> propertySheetItems = FXCollections.observableArrayList();
+    /**
+     * Property sheet model
+     */
+    private PropertyModel propertyModel = new PropertyModel();
 
     public CreatorModel() {
 
@@ -40,6 +37,10 @@ public class CreatorModel {
         }
     }
 
+    /**
+     * Add files to fileListView
+     * @param fileList
+     */
     public void addFiles(List<File> fileList) {
         for (File f: fileList) {
             obsFileNameList.add(f.getName());
@@ -47,84 +48,44 @@ public class CreatorModel {
         }
     }
 
+    /**
+     * Load the parameters of the selected job type
+     * @param jobType the type of the job
+     */
     public void loadParameters(String jobType) {
 
         JStesPreferences preferences = JStesConfiguration.getPreferences();
+        getPropertyModel().clear();
 
-        propertySheetItems.clear();
-        for(JobDefinition jobDefinition: preferences.getJobs()) {
+         for(JobDefinition jobDefinition: preferences.getJobs()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {
-                for (Parameter p: jobDefinition.getParameters().getParameters()) {
-                    if (p.getSource().equals("external")) {
-                        propertySheetItems.add(new SimpleItem(p));
-                    }
-                }
-
+                getPropertyModel().setParameterSet(jobDefinition.getParameters());
             }
         }
 
     }
 
+    /**
+     * Get the list of the files
+     * @return {@code ObservableList<String> containing the list of files}
+     */
     public ObservableList<String> getObsFileNameList() {
         return obsFileNameList;
     }
 
+    /**
+     * Get the list of the files
+     * @return {@code ObservableList<String> containing the list of job types}
+     */
     public ObservableList<String> getObsJobType() {
         return obsJobType;
     }
 
-    public ObservableList<PropertySheet.Item> getPropertySheetItems() {
-        return propertySheetItems;
-    }
-
     /**
-     * Class which holds the parameters for the parameterTable
+     * Get the propertySheet model
+     * @return the model of the property sheet
      */
-    private class SimpleItem implements PropertySheet.Item {
-
-        Parameter parameter;
-
-        public SimpleItem(Parameter p) {
-            this.parameter = p;
-        }
-
-        @Override
-        public Class<?> getType() {
-            return parameter.getClass();
-        }
-
-        @Override
-        public String getCategory() {
-            if (parameter.getCategory() == null) {
-                return "General";
-            }
-
-            return parameter.getCategory();
-        }
-
-        @Override
-        public String getName() {
-            return parameter.getLabel();
-        }
-
-        @Override
-        public String getDescription() {
-            return parameter.getDescription();
-        }
-
-        @Override
-        public Object getValue() {
-            return parameter.getValue();
-        }
-
-        @Override
-        public void setValue(Object o) {
-
-        }
-
-        @Override
-        public Optional<ObservableValue<? extends Object>> getObservableValue() {
-            return null;
-        }
+    public PropertyModel getPropertyModel() {
+        return propertyModel;
     }
 }

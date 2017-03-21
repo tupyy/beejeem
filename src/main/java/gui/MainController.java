@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Main;
+import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class MainController implements Initializable{
     private void showCommandView(VBox parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("sidepanel/sidePanel.fxml"));
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidePanel.fxml"));
             VBox command = (VBox) loader.load();
 
             parentNode.getChildren().add(command);
@@ -95,7 +96,7 @@ public class MainController implements Initializable{
     private void showHubView(VBox parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("hub/hub.fxml"));
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
             VBox hubPane = (VBox) loader.load();
             parentNode.getChildren().add(hubPane);
         }
@@ -111,7 +112,7 @@ public class MainController implements Initializable{
     private void showInfoView(BorderPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("jobDetail/jobDetail.fxml"));
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/jobDetail.fxml"));
             VBox infoPane = (VBox) loader.load();
 
             parentNode.setRight(infoPane);
@@ -128,7 +129,7 @@ public class MainController implements Initializable{
     private void showStatusBar(HBox parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getClassLoader().getResource("statusBar/statusBar.fxml"));
+            loader.setLocation(MainApp.class.getClassLoader().getResource("views/statusBar.fxml"));
             HBox statusBar = (HBox) loader.load();
 
             parentNode.getChildren().add(statusBar);

@@ -38,10 +38,14 @@
             <description>DT configuration</description>
             <category>Material</category>
         </parameter>
-        <parameter name="isamiVersion" type="string" source="external">
+        <parameter name="isamiVersion" type="list" valuetype="string"  source="external">
             <description>Isami used version</description>
             <label>Isami version</label>
             <value>v7.2.1_a350</value>
+            <options>
+                <option>v8.2.1</option>
+                <option>v7.2.1_a350</option>
+            </options>
         </parameter>
         <parameter name="traceFile" type="boolean" source="external">
             <description>Save the trace files</description>
@@ -53,11 +57,16 @@
             <description>Save the czm file</description>
             <label>Czm file</label>
             <category>Job</category>
-            <value>false</value>
+            <value>true</value>
         </parameter>
-        <parameter name="queue" type="string" source="external">
+        <parameter name="queue" type="list" valuetype="string" source="external">
             <label>Queue</label>
             <value>medium</value>
+            <options>
+                <option>short</option>
+                <option>medium</option>
+                <option>long</option>
+            </options>
             <category>Job</category>
             <description>Batch queue</description>
         </parameter>
@@ -66,6 +75,17 @@
             <value>/home/tupangiu/tmp</value>
             <category>Job</category>
             <description>Remote folder</description>
+        </parameter>
+        <parameter name="ksnull" type="list" valuetype="string" source="external">
+            <label>Ksnull</label>
+            <value>1</value>
+            <options>
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+            </options>
+            <category>Spectre</category>
+            <description>The value of the KSNULL </description>
         </parameter>
     </parameters>
     <code name="pythonCode" source="internal">
