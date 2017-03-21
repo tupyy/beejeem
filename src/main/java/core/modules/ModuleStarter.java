@@ -10,6 +10,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -17,9 +19,7 @@ import java.util.*;
  */
 public class ModuleStarter implements Runnable{
 
-    private static final File MODULES_FILE = new File("resources/modules.xml");
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     private static Map<Class<? extends Module>, Module> initializedModules = Collections
@@ -31,11 +31,14 @@ public class ModuleStarter implements Runnable{
         logger.info("Loading modules");
 
         try {
+            ClassLoader classLoader = ModuleStarter.class.getClassLoader();
+            FileInputStream fis = new FileInputStream(classLoader.getResource("modules.xml").getFile());
+
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory
                     .newInstance();
             Document modulesDocument = null;
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            modulesDocument = dBuilder.parse(MODULES_FILE);
+            modulesDocument = dBuilder.parse(fis);
             Element rootElement = modulesDocument.getDocumentElement();
             NodeList moduleNodes = rootElement.getChildNodes();
             for (int i = 0; i < moduleNodes.getLength(); i++) {
@@ -56,7 +59,7 @@ public class ModuleStarter implements Runnable{
             }
 
         } catch (Exception e) {
-            logger.error("Could not load modules from " + MODULES_FILE);
+            logger.error("Could not load modules from module file");
             System.exit(1);
         }
 

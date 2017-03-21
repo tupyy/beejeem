@@ -4,6 +4,7 @@ import core.job.Job;
 import core.job.JobException;
 import core.job.JobExecutionProgress;
 import core.job.ModuleController;
+import core.modules.ModuleStarter;
 import core.parameters.ParameterSet;
 import core.ssh.SshFactory;
 
@@ -89,5 +90,11 @@ public interface Core {
      * @param l
      */
     public void removeCoreEventListener(CoreListener l);
+
+    /**
+     * Return the module starter
+     * @return
+     */
+    public ModuleStarter getModuleStarter();
 
 }

@@ -1,6 +1,7 @@
 package core;
 
 import core.job.*;
+import core.modules.ModuleStarter;
 import core.parameters.ParameterSet;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
@@ -18,6 +19,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
 
     private final QStatManager qstatManager;
+    private final ModuleStarter moduleStarter;
 
     private transient Vector listeners;
     private SshRemoteFactory sshRemoteFactory;
@@ -44,6 +46,13 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
         //init the states
         JobState jobState = new JobState();
+
+        /**
+         * Load modules on a new thread after the GUI has started
+         */
+        moduleStarter = new ModuleStarter();
+        Thread readModuleThread = new Thread(moduleStarter);
+        readModuleThread.start();
     }
 
     /**
@@ -77,7 +86,14 @@ public final class CoreEngine extends Observable implements Core, Observer {
         if (jobExists(j.getID())) {
             throw new JobException(JobException.JOB_EXISTS,"Job ".concat(j.getID().toString()).concat(" already exists"));
         }
+
         jobList.add(j);
+
+        AbstractJob aj = (AbstractJob) j;
+        aj.addObserver(this);
+
+        fireCoreEvent(CoreEventType.JOB_CREATED, j.getID());
+        logger.info("Job created: {}",j.getName());
     }
 
     @Override
@@ -172,6 +188,11 @@ public final class CoreEngine extends Observable implements Core, Observer {
             listeners = new Vector();
         }
         listeners.removeElement(l);
+    }
+
+    @Override
+    public ModuleStarter getModuleStarter() {
+        return moduleStarter;
     }
 
 

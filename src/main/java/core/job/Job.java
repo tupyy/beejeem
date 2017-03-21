@@ -4,6 +4,7 @@ import core.modules.MethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -100,4 +101,6 @@ public interface Job extends Executable {
      * @param qstatOutput
      */
     public void setQstatResult(MethodResult qstatOutput);
+
+    public void setModules(List<ModuleController> modules);
 }
