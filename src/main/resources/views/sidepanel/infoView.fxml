@@ -21,9 +21,9 @@
             <Label text="Name" />
             <Label text="ID" GridPane.rowIndex="1" />
             <Label text="Status" GridPane.rowIndex="2" />
-            <Label GridPane.columnIndex="1" />
-            <Label GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="nameLabel" GridPane.columnIndex="1" />
+            <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="statusLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <GridPane VBox.vgrow="ALWAYS">
@@ -36,7 +36,7 @@
         </rowConstraints>
          <children>
             <Label text="Log" />
-            <TextArea GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+            <TextArea fx:id="logArea" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
          </children>
       </GridPane>
    </children>
