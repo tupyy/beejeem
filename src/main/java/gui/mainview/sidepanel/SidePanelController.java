@@ -48,6 +48,7 @@ public class SidePanelController implements Initializable{
 
     private PropertyController propertyController;
     private MainController mainController;
+    private ModulesController modulesController;
 
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -65,11 +66,18 @@ public class SidePanelController implements Initializable{
         addInfoView(vboxInfoPanel);
     }
 
+    /**
+     * Perform action when a job has been selected in the hubView
+     * @param id
+     */
     public void onJobSelected(String id) {
 
         logger.info("Selected job id {}",id);
         Job j = getCoreEngine().getJob(UUID.fromString(id));
+        
         model.loadJobParameters(j.getParameters());
+        modulesController.onJobSelected(j);
+        
     }
 
     public void setMainController(MainController mainController) {
@@ -90,7 +98,7 @@ public class SidePanelController implements Initializable{
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/moduleView.fxml"));
             VBox command = (VBox) loader.load();
 
-            ModulesController controller = loader.getController();
+            modulesController = loader.getController();
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
