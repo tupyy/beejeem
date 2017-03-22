@@ -64,7 +64,7 @@ public class ModuleStarter implements Runnable{
         }
 
 //        try {
-//            logger.info("Loading configuration");
+//            logger.sidepanel("Loading configuration");
 //            MZmineCore.getConfiguration()
 //                    .loadConfiguration(MZmineConfiguration.CONFIG_FILE);
 //        } catch (Exception e) {

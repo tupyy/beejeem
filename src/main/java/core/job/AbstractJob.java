@@ -3,6 +3,7 @@ package core.job;
 import core.modules.MethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.BooleanParameter;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +44,6 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     private int status;
 
     /**
-     * True if the job is editable, false otherwise
-     */
-    private boolean editable;
-
-    /**
      *
      * @param parameterSet
      */
@@ -77,12 +73,15 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
     public AbstractJob() {
         this.status = JobState.IDLE;
-        this.editable = true;
 
         //create the temporary folder parameter
         StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
         temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(id.toString().substring(0,7)));
         this.parameterSet.addParameter(temporaryParameter);
+
+        //create the temporary folder parameter
+        BooleanParameter editableParameter = new BooleanParameter("editable","Editable job flag","internal",Boolean.TRUE);
+        this.parameterSet.addParameter(editableParameter);
     }
 
 
@@ -99,7 +98,8 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
 
     @Override
     public boolean isEditable() {
-        return editable;
+
+        return (Boolean) parameterSet.getParameter("editable").getValue();
     }
 
     @Override

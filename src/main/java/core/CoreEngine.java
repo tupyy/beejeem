@@ -92,8 +92,8 @@ public final class CoreEngine extends Observable implements Core, Observer {
         AbstractJob aj = (AbstractJob) j;
         aj.addObserver(this);
 
-        fireCoreEvent(CoreEventType.JOB_CREATED, j.getID());
-        logger.info("Job created: {}",j.getName());
+        fireCoreEvent(CoreEventType.JOB_CREATED, aj.getID());
+        logger.info("Job created: {}",aj.getName());
     }
 
     @Override
