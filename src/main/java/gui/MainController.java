@@ -1,6 +1,7 @@
 package gui;
 
 import gui.creator.CreatorController;
+import gui.mainview.hub.HubController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static core.JStesCore.getCoreEngine;
 
 
 public class MainController implements Initializable{
@@ -97,6 +100,7 @@ public class MainController implements Initializable{
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
+
             VBox hubPane = (VBox) loader.load();
             parentNode.getChildren().add(hubPane);
         }
