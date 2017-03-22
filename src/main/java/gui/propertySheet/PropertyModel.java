@@ -11,7 +11,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.controlsfx.control.PropertySheet;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,6 @@ import java.util.Optional;
 public class PropertyModel {
 
     private ParameterSet parameterSet;
-    private List<SimpleItem> simpleItems = new ArrayList<>();
     private ObservableList<PropertySheet.Item> propertySheetItems = FXCollections.observableArrayList();
 
     public PropertyModel(ParameterSet parameterSet) {
@@ -53,11 +51,21 @@ public class PropertyModel {
      */
     private void addItems(ParameterSet parameterSet) {
 
+        boolean editableItem = true;
+        try {
+            editableItem = (Boolean) parameterSet.getParameter("editable").getValue();
+        }
+        catch (IllegalArgumentException e) {
+
+        }
+
         for (Parameter p : parameterSet) {
             if (p.getSource().equals("external")) {
-                getPropertySheetItems().add(new SimpleItem(p));
+                getPropertySheetItems().add( new SimpleItem(p,editableItem));
             }
         }
+
+
     }
 
     //<editor-fold desc="SimpleItem class">
@@ -71,9 +79,11 @@ public class PropertyModel {
     public class SimpleItem implements PropertySheet.Item {
 
         Parameter parameter;
+        private boolean editable = true;
 
-        public SimpleItem(Parameter p) {
+        public SimpleItem(Parameter p,boolean editable) {
             this.parameter = p;
+            this.editable = editable;
         }
 
         @Override
@@ -128,6 +138,15 @@ public class PropertyModel {
             }
 
             return null;
+        }
+
+        @Override
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
         }
 
         @Override

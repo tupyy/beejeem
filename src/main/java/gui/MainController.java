@@ -1,5 +1,7 @@
 package gui;
 
+import gui.mainview.hub.HubController;
+import gui.mainview.sidepanel.SidePanelController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -40,10 +42,12 @@ public class MainController implements Initializable{
 
     @FXML
     private HBox statusBarPane;
+    private SidePanelController sidePanelController;
+    private HubController hubController;
 
     public void initialize(URL location, ResourceBundle resources) {
 
-        showCommandView(splitPaneVBox);
+        showSidePanelView(splitPaneVBox);
         showHubView(splitPaneHub);
         showStatusBar(statusBarPane);
         //
@@ -75,12 +79,14 @@ public class MainController implements Initializable{
      * Show sidepanel view
      * @param parentNode
      */
-    private void showCommandView(VBox parentNode) {
+    private void showSidePanelView(VBox parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidePanel.fxml"));
             VBox command = (VBox) loader.load();
 
+            sidePanelController = loader.getController();
+            sidePanelController.setMainController(this);
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
@@ -96,26 +102,12 @@ public class MainController implements Initializable{
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
-
             VBox hubPane = (VBox) loader.load();
             parentNode.getChildren().add(hubPane);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
 
-    /**
-     * Add Detail View
-     * @param parentNode
-     */
-    private void showInfoView(BorderPane parentNode) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/jobDetail.fxml"));
-            VBox infoPane = (VBox) loader.load();
+            hubController = loader.getController();
+            hubController.setMainController(this);
 
-            parentNode.setRight(infoPane);
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -137,5 +129,13 @@ public class MainController implements Initializable{
         catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public SidePanelController getSidePanelController() {
+        return sidePanelController;
+    }
+
+    public HubController getHubController() {
+        return hubController;
     }
 }

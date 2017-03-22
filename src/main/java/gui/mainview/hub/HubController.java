@@ -4,6 +4,7 @@ import core.CoreEvent;
 import core.CoreEventType;
 import core.CoreListener;
 import core.job.JobListener;
+import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,11 +28,20 @@ public class HubController implements Initializable, CoreListener {
 
     private HubTableModel tableModel = new HubTableModel();
 
+    private MainController mainController;
+
     public void initialize(URL location, ResourceBundle resources) {
         assert hubTable != null : "fx:id=\"hubTable\" was not injected: check your FXML file 'hubTable";
 
         setupTable();
         getCoreEngine().addCoreEventListener(this);
+
+        hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
+            if (newSelection != null) {
+                HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
+                mainController.getSidePanelController().onJobSelected(selectedData.getId());
+            }
+        });
     }
 
     private void setupTable() {
@@ -70,5 +80,13 @@ public class HubController implements Initializable, CoreListener {
             UUID id = e.getId();
             tableModel.addJob(getCoreEngine().getJob(id));
         }
+    }
+
+    public MainController getMainController() {
+        return mainController;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
     }
 }

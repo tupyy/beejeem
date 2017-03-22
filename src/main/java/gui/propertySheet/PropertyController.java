@@ -20,7 +20,7 @@ public class PropertyController {
         propertySheet = new PropertySheet(model.getPropertySheetItems());
         propertySheet.setMaxWidth(Control.USE_COMPUTED_SIZE);
         propertySheet.setPrefWidth(Control.USE_COMPUTED_SIZE);
-     
+
         getPropertySheet().setPropertyEditorFactory(param -> {
             PropertyModel.SimpleItem simpleItem = (PropertyModel.SimpleItem) param;
 
@@ -44,4 +44,5 @@ public class PropertyController {
     public PropertySheet getPropertySheet() {
         return propertySheet;
     }
+
 }
