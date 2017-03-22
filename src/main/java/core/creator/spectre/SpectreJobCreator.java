@@ -73,20 +73,21 @@ public class SpectreJobCreator extends AbstractCreator {
 
             for(Map.Entry fileEntry: filesMap.entrySet()) {
                try {
-                   parameterSet.getParameter("filename").setValue(fileEntry.getValue());
+                   for (HashMap<String, String> paramMap : paramValues) {
+                       if (paramMap.get("name").equals(fileEntry.getKey())) {
+                           ParameterSet newParameters = parameterSet.clone();
+                           newParameters.getParameter("filename").setValue(fileEntry.getValue());
+                           updateParameterSet(newParameters, paramMap,creatorLog);
+
+                           SimpleJob job = new SimpleJob(newParameters,createModuleParameter(moduleElements,creatorLog));
+                           jobs.add(job);
+                       }
+                   }
                }
                 catch (IllegalArgumentException e) {
                    creatorLog.fatalError("Parameter filename not found in the input parameter set. Abort");
                    throw new IllegalArgumentException(e);
                 }
-
-                for (HashMap<String, String> paramMap : paramValues) {
-                    if (paramMap.get("name").equals(fileEntry.getKey())) {
-                        updateParameterSet(parameterSet, paramMap,creatorLog);
-                    }
-                }
-                SimpleJob job = new SimpleJob(parameterSet,createModuleParameter(moduleElements,creatorLog));
-                jobs.add(job);
             }
 
         return jobs;
@@ -106,12 +107,11 @@ public class SpectreJobCreator extends AbstractCreator {
 
         String line;
         String[] spectreParameterNames = spectreParamNames.split(",");
-        HashMap<String, String> entry = new HashMap<>();
 
         BufferedReader br = new BufferedReader(new FileReader(spectrumTextFile));
         while (( line = br.readLine()) != null ) {
             if ( ! line.startsWith("Point_name")) {
-
+                HashMap<String, String> entry = new HashMap<>();
                 String[] buffer = line.split("\\s+");
 
                 try {

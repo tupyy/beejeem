@@ -77,8 +77,8 @@ public class CreatorController implements Initializable {
 
         okButton.setOnAction((event) -> {
 
-            //get the type of the job
-            try {
+             try {
+                //get the type of the job
                 Parameter type = model.getPropertyModel().getParameterSet().getParameter("type");
                 String jobType = (String) type.getValue();
                 if (type.getValue().equals("stesSpectre")) {
