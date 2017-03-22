@@ -1,4 +1,4 @@
-package main.configuration;
+package core.configuration;
 
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
@@ -105,4 +105,7 @@ public final class JStesPreferences  {
     }
 
 
+    public List<JobDefinition> getJobs() {
+        return jobs;
+    }
 }
