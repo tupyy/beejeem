@@ -24,7 +24,7 @@ public class JobInfoController implements Initializable{
 
     @FXML
     private TextArea logArea;
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
