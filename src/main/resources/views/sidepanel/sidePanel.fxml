@@ -23,13 +23,13 @@
           </TitledPane>
           <TitledPane animated="false" text="Modules">
                <content>
-                  <VBox fx:id="vboxModule" prefHeight="200.0" prefWidth="100.0" />
+                  <VBox fx:id="vboxModulePanel" prefHeight="200.0" prefWidth="100.0" />
                </content>
           </TitledPane>
             <TitledPane animated="false" text="Information">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
+               <content>
+                  <VBox fx:id="vboxInfoPanel" prefHeight="200.0" prefWidth="100.0" />
+               </content>
             </TitledPane>
         </panes>
       </Accordion>

@@ -35,7 +35,10 @@ public class SidePanelController implements Initializable{
     private AnchorPane parametersPane;
 
     @FXML
-    private VBox vboxModule;
+    private VBox vboxModulePanel;
+
+    @FXML
+    private VBox vboxInfoPanel;
 
     @FXML
     private TitledPane codePane;
@@ -55,7 +58,10 @@ public class SidePanelController implements Initializable{
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
 
         //add module view
-        addModuleView(vboxModule);
+        addModuleView(vboxModulePanel);
+
+        //add info view
+        addInfoView(vboxInfoPanel);
     }
 
     public void onJobSelected(String id) {
@@ -81,6 +87,24 @@ public class SidePanelController implements Initializable{
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/moduleView.fxml"));
+            VBox command = (VBox) loader.load();
+
+            ModulesController controller = loader.getController();
+            parentNode.getChildren().add(command);
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Show sidepanel view
+     * @param parentNode
+     */
+    private void addInfoView(VBox parentNode) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/infoView.fxml"));
             VBox command = (VBox) loader.load();
 
             ModulesController controller = loader.getController();
