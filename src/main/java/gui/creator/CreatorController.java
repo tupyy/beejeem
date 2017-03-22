@@ -108,12 +108,20 @@ public class CreatorController implements Initializable {
             if (files != null) {
                 model.addFiles(files);
                 fileList.setItems(model.getObsFileNameList());
+
+                if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
+                    okButton.setDisable(false);
+                }
             }
         });
 
         jobTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             String newJobType = (String) newValue;
             model.loadParameters(newJobType);
+
+            if (model.getFiles().size() > 0) {
+                okButton.setDisable(false);
+            }
         });
     }
 
