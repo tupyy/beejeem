@@ -11,9 +11,9 @@
    <children>
       <Accordion VBox.vgrow="ALWAYS">
         <panes>
-          <TitledPane fx:id="parametersPane" animated="false" text="Parameters">
+          <TitledPane animated="false" text="Parameters">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane fx:id="parametersPane" minHeight="0.0" minWidth="0.0" />
             </content>
           </TitledPane>
           <TitledPane fx:id="codePane" animated="false" text="Code">

@@ -1,11 +1,10 @@
 package gui.mainview.sidepanel;
 
-import javafx.beans.value.ObservableNumberValue;
+import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -20,14 +19,22 @@ public class SidePanelController implements Initializable{
     private VBox vboxContentPane;
 
     @FXML
-    private TitledPane parametersPane;
+    private AnchorPane parametersPane;
 
     @FXML
     private TitledPane codePane;
 
+    private SidePanelModel model = new SidePanelModel();
+
+    private PropertyController propertyController;
+
     public void initialize(URL location, ResourceBundle resources) {
 
-        Parent parentNode =  vboxContentPane.getParent();
-//        vboxContentPane.maxWidthProperty().bind(parentNode.widthProperty().multiply(0.3));
+        assert parametersPane != null : "fx:id=\"parametersPane\" was not injected: check your FXML file 'parametersPane";
+        assert codePane != null : "fx:id=\"codePane\" was not injected: check your FXML file 'codePane";
+
+        propertyController = new PropertyController(model.getPropertyModel());
+        parametersPane.getChildren().add(propertyController.getPropertySheet());
+        propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
     }
 }
