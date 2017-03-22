@@ -28,6 +28,8 @@ public class HubController implements Initializable, CoreListener {
     private HubTableModel tableModel = new HubTableModel();
 
     public void initialize(URL location, ResourceBundle resources) {
+        assert hubTable != null : "fx:id=\"hubTable\" was not injected: check your FXML file 'hubTable";
+
         setupTable();
         getCoreEngine().addCoreEventListener(this);
     }
@@ -41,18 +43,25 @@ public class HubController implements Initializable, CoreListener {
 
         TableColumn typeCol = new TableColumn("Type");
         typeCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("type"));
+        typeCol.setMaxWidth(400);
+        typeCol.setMinWidth(100);
 
         TableColumn aircraftCol = new TableColumn("Aircraft");
         aircraftCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("aircraft"));
+        aircraftCol.setMaxWidth(400);
+        aircraftCol.setMinWidth(100);
 
         TableColumn statusCol = new TableColumn("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("status"));
+        statusCol.setMaxWidth(400);
+        statusCol.setMinWidth(100);
 
         TableColumn idCol = new TableColumn("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
 
         hubTable.getColumns().addAll(nameCol,destinationCol,typeCol,aircraftCol,statusCol,idCol);
         hubTable.setItems(tableModel.getData());
+        hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     @Override

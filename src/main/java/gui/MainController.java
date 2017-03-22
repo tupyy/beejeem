@@ -59,7 +59,7 @@ public class MainController implements Initializable{
                 URL url = getClass().getClassLoader().getResource("views/creator.fxml");
                 Pane root  = fxmlLoader.load(url);
                 Scene scene = new Scene(root);
-                CreatorController controller = fxmlLoader.getController();
+
                 dialog.setScene(scene);
                 dialog.setTitle("Add jobs");
                 dialog.setResizable(false);

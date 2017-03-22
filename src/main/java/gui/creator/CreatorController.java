@@ -77,8 +77,8 @@ public class CreatorController implements Initializable {
 
         okButton.setOnAction((event) -> {
 
-            //get the type of the job
-            try {
+             try {
+                //get the type of the job
                 Parameter type = model.getPropertyModel().getParameterSet().getParameter("type");
                 String jobType = (String) type.getValue();
                 if (type.getValue().equals("stesSpectre")) {
@@ -108,12 +108,20 @@ public class CreatorController implements Initializable {
             if (files != null) {
                 model.addFiles(files);
                 fileList.setItems(model.getObsFileNameList());
+
+                if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
+                    okButton.setDisable(false);
+                }
             }
         });
 
         jobTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             String newJobType = (String) newValue;
             model.loadParameters(newJobType);
+
+            if (model.getFiles().size() > 0) {
+                okButton.setDisable(false);
+            }
         });
     }
 

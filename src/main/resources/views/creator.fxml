@@ -73,7 +73,7 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="50.0" prefWidth="200.0">
          <children>
-            <Button fx:id="okButton" mnemonicParsing="false" prefWidth="100.0" text="Ok" />
+            <Button fx:id="okButton" defaultButton="true" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Ok" />
             <Separator prefWidth="20.0" visible="false" />
             <Button fx:id="cancelButton" mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
             <Separator prefWidth="10.0" visible="false" />
