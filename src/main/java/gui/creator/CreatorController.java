@@ -100,6 +100,7 @@ public class CreatorController implements Initializable {
 
         selectFileButton.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File("C:\\Users\\tctupangiu\\Desktop\\Nouveau dossier\\test\\STF"));
             fileChooser.setTitle("Choose input files");
 
             Node  source = (Node)  event.getSource();

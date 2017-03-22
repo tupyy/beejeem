@@ -7,10 +7,7 @@ import core.modules.Module;
 import core.modules.ModuleStarter;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.BooleanParameter;
-import core.parameters.parametertypes.DoubleParameter;
-import core.parameters.parametertypes.IntegerParameter;
-import core.parameters.parametertypes.StringParameter;
+import core.parameters.parametertypes.*;
 import core.util.XMLWorker;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -136,6 +133,9 @@ public class AbstractCreator implements Creator {
             }
         }
         else if (p instanceof StringParameter) {
+            p.setValue(value);
+        }
+        else if (p instanceof ListParameter) {
             p.setValue(value);
         }
     }

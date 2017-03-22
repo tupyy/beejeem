@@ -13,13 +13,14 @@ import java.io.IOException;
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore {
+public class JStesCore implements CoreListener{
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public JStesCore() {
 
+        coreEngine.addCoreEventListener(this);
         //read configuration
         try {
 
@@ -42,5 +43,12 @@ public class JStesCore {
      */
     public static Core getCoreEngine() {
         return coreEngine;
+    }
+
+    @Override
+    public void coreEvent(CoreEvent e) {
+        if (e.getAction() == CoreEventType.SSH_CONNECTION_ERROR) {
+            logger.error("Ssh connection");
+        }
     }
 }

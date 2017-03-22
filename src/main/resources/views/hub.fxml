@@ -7,11 +7,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.hub.HubController">
+<VBox prefHeight="460.0" prefWidth="461.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.hub.HubController">
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="200.0">
          <children>
-            <Pane prefHeight="200.0" HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="runJobButton" mnemonicParsing="false" prefWidth="70.0" text="Run job" />
+                  <Separator prefWidth="10.0" visible="false" HBox.hgrow="NEVER" />
+                  <Button fx:id="runAllButton" mnemonicParsing="false" prefWidth="70.0" text="Run all" />
+               </children>
+            </HBox>
             <TextField promptText="Filter">
                <HBox.margin>
                   <Insets />
