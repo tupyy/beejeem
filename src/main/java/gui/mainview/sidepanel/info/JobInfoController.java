@@ -1,4 +1,4 @@
-package gui.mainview.sidepanel.modules;
+package gui.mainview.sidepanel.info;
 
 import javafx.fxml.Initializable;
 
@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 /**
  * Created by tctupangiu on 22/03/2017.
  */
-public class ModulesController implements Initializable{
+public class JobInfoController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

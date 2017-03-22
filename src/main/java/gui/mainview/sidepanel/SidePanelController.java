@@ -2,6 +2,7 @@ package gui.mainview.sidepanel;
 
 import core.job.Job;
 import gui.MainController;
+import gui.mainview.sidepanel.info.JobInfoController;
 import gui.mainview.sidepanel.modules.ModulesController;
 import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
@@ -107,7 +108,7 @@ public class SidePanelController implements Initializable{
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/infoView.fxml"));
             VBox command = (VBox) loader.load();
 
-            ModulesController controller = loader.getController();
+            JobInfoController controller = loader.getController();
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
