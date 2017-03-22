@@ -1,23 +1,14 @@
 package core.creator.spectre;
 
 import core.creator.AbstractCreator;
-import core.creator.Creator;
 import core.creator.CreatorLog;
 import core.job.Job;
-import core.job.JobState;
-import core.job.ModuleController;
 import core.job.SimpleJob;
-import core.modules.Module;
-import core.modules.ModuleStarter;
-import core.parameters.Parameter;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.*;
 import core.util.XMLWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.*;
 import java.util.*;
