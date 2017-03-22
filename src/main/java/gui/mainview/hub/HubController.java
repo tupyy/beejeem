@@ -36,9 +36,9 @@ public class HubController implements Initializable, CoreListener {
     @FXML
     private Button runAllButton;
 
-    private HubTableModel tableModel = new HubTableModel();
-
     private MainController mainController;
+
+    private HubModel model = new HubModel();
 
     public void initialize(URL location, ResourceBundle resources) {
         assert hubTable != null : "fx:id=\"hubTable\" was not injected: check your FXML file 'hubTable";
@@ -50,7 +50,7 @@ public class HubController implements Initializable, CoreListener {
         hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
             if (newSelection != null) {
                 HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
-                mainController.getSidePanelController().onJobSelected(selectedData.getId());
+                mainController.getSidePanelController().onJobSelected(selectedData.getId(),model.getJobLogger(selectedData.getId()));
             }
         });
 
@@ -59,10 +59,26 @@ public class HubController implements Initializable, CoreListener {
 
             if (selection.size() > -1) {
                 for (HubTableModel.JobData jobData: selection) {
-                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), null);
+                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(jobData.getId()));
                 }
             }
         });
+    }
+
+    @Override
+    public void coreEvent(CoreEvent e) {
+        if (e.getAction() == CoreEventType.JOB_CREATED) {
+            UUID id = e.getId();
+            model.getTableModel().addJob(getCoreEngine().getJob(id));
+        }
+    }
+
+    public MainController getMainController() {
+        return mainController;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
     }
 
     private void setupTable() {
@@ -91,23 +107,11 @@ public class HubController implements Initializable, CoreListener {
         idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
 
         hubTable.getColumns().addAll(nameCol,destinationCol,typeCol,aircraftCol,statusCol,idCol);
-        hubTable.setItems(tableModel.getData());
+        hubTable.setItems(model.getTableModel().getData());
         hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    @Override
-    public void coreEvent(CoreEvent e) {
-        if (e.getAction() == CoreEventType.JOB_CREATED) {
-            UUID id = e.getId();
-            tableModel.addJob(getCoreEngine().getJob(id));
-        }
-    }
 
-    public MainController getMainController() {
-        return mainController;
-    }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
+
 }

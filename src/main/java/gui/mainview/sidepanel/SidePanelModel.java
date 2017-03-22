@@ -1,6 +1,9 @@
 package gui.mainview.sidepanel;
 
-import core.parameters.ParameterSet;
+import core.job.Job;
+import core.job.JobExecutionProgress;
+import gui.mainview.sidepanel.info.JobInfoModel;
+import gui.mainview.sidepanel.modules.ModulesModel;
 import gui.propertySheet.PropertyModel;
 
 import java.util.UUID;
@@ -11,6 +14,9 @@ import java.util.UUID;
 public class SidePanelModel {
 
     private PropertyModel propertyModel = new PropertyModel();
+    private ModulesModel modulesModel = new ModulesModel();
+    private JobInfoModel jobInfoModel = new JobInfoModel();
+
     private UUID selectedJobID;
 
     public SidePanelModel() {
@@ -25,8 +31,22 @@ public class SidePanelModel {
         return propertyModel;
     }
 
-    public void loadJobParameters(ParameterSet parameterSet) {
+    public void onJobSelected(Job job, JobExecutionProgress jobExecutionProgress) {
+
         getPropertyModel().clear();
-        getPropertyModel().setParameterSet(parameterSet);
+        getPropertyModel().setParameterSet(job.getParameters());
+
+        modulesModel.populate(job);
+        jobInfoModel.populate(job,jobExecutionProgress);
     }
+
+
+    public ModulesModel getModulesModel() {
+        return modulesModel;
+    }
+
+    public JobInfoModel getJobInfoModel() {
+        return jobInfoModel;
+    }
+
 }

@@ -1,6 +1,7 @@
 package gui.mainview.sidepanel;
 
 import core.job.Job;
+import core.job.JobExecutionProgress;
 import gui.MainController;
 import gui.mainview.sidepanel.info.JobInfoController;
 import gui.mainview.sidepanel.modules.ModulesController;
@@ -44,40 +45,42 @@ public class SidePanelController implements Initializable{
     @FXML
     private TitledPane codePane;
 
-    private SidePanelModel model = new SidePanelModel();
+    private SidePanelModel sidePanelModel = new SidePanelModel();
 
     private PropertyController propertyController;
     private MainController mainController;
     private ModulesController modulesController;
+    private JobInfoController jobInfoController;
 
     public void initialize(URL location, ResourceBundle resources) {
 
         assert parametersPane != null : "fx:id=\"parametersPane\" was not injected: check your FXML file 'parametersPane";
         assert codePane != null : "fx:id=\"codePane\" was not injected: check your FXML file 'codePane";
 
-        propertyController = new PropertyController(model.getPropertyModel());
+        propertyController = new PropertyController(sidePanelModel.getPropertyModel());
         parametersPane.getChildren().add(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
 
         //add module view
         addModuleView(vboxModulePanel);
+        modulesController.setModel(sidePanelModel.getModulesModel());
 
         //add info view
         addInfoView(vboxInfoPanel);
+        jobInfoController.setJobInfoModel(sidePanelModel.getJobInfoModel());
+
     }
 
     /**
      * Perform action when a job has been selected in the hubView
      * @param id
      */
-    public void onJobSelected(String id) {
+    public void onJobSelected(String id, JobExecutionProgress jobExecutionProgress) {
 
         logger.info("Selected job id {}",id);
         Job j = getCoreEngine().getJob(UUID.fromString(id));
         
-        model.loadJobParameters(j.getParameters());
-        modulesController.onJobSelected(j);
-        
+        sidePanelModel.onJobSelected(j,jobExecutionProgress);
     }
 
     public void setMainController(MainController mainController) {
@@ -116,7 +119,7 @@ public class SidePanelController implements Initializable{
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/infoView.fxml"));
             VBox command = (VBox) loader.load();
 
-            JobInfoController controller = loader.getController();
+            jobInfoController = loader.getController();
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {

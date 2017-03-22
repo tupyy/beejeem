@@ -3,7 +3,6 @@ package gui.mainview.sidepanel.modules;
 import core.job.Job;
 import core.job.JobState;
 import core.job.ModuleController;
-import core.parameters.ParameterSet;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +21,9 @@ public class ModulesModel {
     }
 
     public void populate(Job j) {
+
+        getData().clear();
+
         List<ModuleController> moduleList = j.getModules();
         for(ModuleController moduleController: moduleList) {
 

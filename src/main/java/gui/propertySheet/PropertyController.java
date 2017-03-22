@@ -1,5 +1,6 @@
 package gui.propertySheet;
 
+import core.parameters.ParameterSet;
 import javafx.scene.control.Control;
 import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
@@ -44,5 +45,6 @@ public class PropertyController {
     public PropertySheet getPropertySheet() {
         return propertySheet;
     }
+
 
 }
