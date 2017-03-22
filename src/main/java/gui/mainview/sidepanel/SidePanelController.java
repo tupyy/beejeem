@@ -2,8 +2,10 @@ package gui.mainview.sidepanel;
 
 import core.job.Job;
 import gui.MainController;
+import gui.mainview.sidepanel.modules.ModulesController;
 import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
@@ -12,6 +14,7 @@ import main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -32,6 +35,9 @@ public class SidePanelController implements Initializable{
     private AnchorPane parametersPane;
 
     @FXML
+    private VBox vboxModule;
+
+    @FXML
     private TitledPane codePane;
 
     private SidePanelModel model = new SidePanelModel();
@@ -47,6 +53,9 @@ public class SidePanelController implements Initializable{
         propertyController = new PropertyController(model.getPropertyModel());
         parametersPane.getChildren().add(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
+
+        //add module view
+        addModuleView(vboxModule);
     }
 
     public void onJobSelected(String id) {
@@ -62,5 +71,23 @@ public class SidePanelController implements Initializable{
 
     public MainController getMainController() {
         return mainController;
+    }
+
+    /**
+     * Show sidepanel view
+     * @param parentNode
+     */
+    private void addModuleView(VBox parentNode) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/moduleView.fxml"));
+            VBox command = (VBox) loader.load();
+
+            ModulesController controller = loader.getController();
+            parentNode.getChildren().add(command);
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

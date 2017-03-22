@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -82,7 +81,7 @@ public class MainController implements Initializable{
     private void showSidePanelView(VBox parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidePanel.fxml"));
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/sidePanel.fxml"));
             VBox command = (VBox) loader.load();
 
             sidePanelController = loader.getController();
