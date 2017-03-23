@@ -28,27 +28,23 @@ public class JobInfoModel {
     private SimpleStringProperty jobStatus= new SimpleStringProperty();
     private WebEngine webEngine;
 
+    private SimpleLogger simpleLogger;
+    private ListListener myListener = new ListListener();
+
     public JobInfoModel(JobInfoController jobInfoController) {
         this.controller = jobInfoController;
     }
 
     public void setJobLogger(JobExecutionProgress jobExecutionProgress) {
 
-        SimpleLogger logger = (SimpleLogger) jobExecutionProgress;
+        if (simpleLogger != null) {
+            simpleLogger.getInfoList().removeListener(myListener);
+        }
 
-                logger.getInfoList().addListener((ListChangeListener.Change<? extends String> c) -> {
-                            while (c.next()) {
-                                if (c.wasAdded()) {
-                                    for (int i = c.getFrom(); i < c.getTo(); ++i) {
-                                       String text = controller.getLogArea().getText();
-                                        text += logger.getInfoList().get(i) + "\n";
-                                        controller.getLogArea().setText(text);
-                                    }
+        simpleLogger = (SimpleLogger) jobExecutionProgress;
+        loadProgressData(simpleLogger);
 
-                                }
-                            }
-                        }
-                );
+        simpleLogger.getInfoList().addListener(myListener);
     }
 
     public void populate(Job job) {
@@ -74,33 +70,34 @@ public class JobInfoModel {
     }
 
 
+    private void loadProgressData(SimpleLogger simpleLogger) {
+        controller.getLogArea().setText("");
+        StringBuilder stringBuilder = new StringBuilder();
 
-    private void addInfoMessage(String message) {
+        for (String s: simpleLogger.getInfoList()) {
+            stringBuilder.append(s + "\n");
+        }
 
-        Platform.runLater(() -> {
-
-        });
-
-
+        controller.getLogArea().setText(stringBuilder.toString());
     }
 
-    private void clearDocument() {
-        Document document = webEngine.getDocument();
+    private class  ListListener implements ListChangeListener<String> {
+        @Override
+        public void onChanged(Change<? extends String> c) {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (int i = c.getFrom(); i < c.getTo(); ++i) {
+                        String text = controller.getLogArea().getText();
+                        text += simpleLogger.getInfoList().get(i) + "\n";
+                        controller.getLogArea().setText(text);
+                    }
 
-        if (document != null) {
-            Element el = document.getElementById("content");
-            el.setTextContent("");
+                }
+            }
         }
     }
 
-    public void startEngine(WebEngine webEngine) {
-        this.webEngine = webEngine;
-        webEngine.loadContent("<!DOCTYPE html><html><body><div id='content'></div></body></html>");
-        webEngine.getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
-            if (newState == Worker.State.SUCCEEDED) {
-                Document doc = webEngine.getDocument();
-            }
-        });
-    }
+
+
 
 }

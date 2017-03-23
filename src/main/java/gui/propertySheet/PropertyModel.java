@@ -41,6 +41,7 @@ public class PropertyModel {
         this.parameterSet = parameterSet;
 
         Platform.runLater(() -> {
+            clear();
             addItems(parameterSet);
         });
 
