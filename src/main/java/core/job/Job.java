@@ -102,5 +102,15 @@ public interface Job extends Executable {
      */
     public void setQstatResult(MethodResult qstatOutput);
 
+    /**
+     * Set modules
+     * @param modules
+     */
     public void setModules(List<ModuleController> modules);
+
+    /**
+     * Return a copy of the modules list
+     * @return clone of module list
+     */
+    public List<ModuleController> getModules();
 }

@@ -24,29 +24,34 @@ public class ModuleController extends Observable implements Executable {
     /*
     * Not started state
      */
-    public static final int STATE_IDLE = 0;
+    public static final int READY = 0;
 
     /**
      * The model can be executed
      */
-    public static final int STATE_STARTABLE = 1;
+    public static final int SCHEDULED = 1;
 
     /**
      * Module is running
      */
-    public  static final int STATE_INPROGRESS = 2;
+    public  static final int RUNNING = 2;
 
     /**
      * Module finished
      */
-    public static final int STATE_DONE = 3;
+    public static final int FINISHED = 3;
+
+    /**
+     * Module failed
+     */
+    public static final int FAILED = 4;
 
 
     //True if the module already run
     private int state;
 
     //the state of the job which will trigger the execution of the model
-    private int triggerJobState;
+    private int triggerJobState = 0;
 
     //holds the result state of the module
     private Boolean successful;
@@ -69,11 +74,11 @@ public class ModuleController extends Observable implements Executable {
         this.parent = parent;
 
         if (triggerJobState == JobState.NONE) {
-            changeState(ModuleController.STATE_STARTABLE);
+            changeState(ModuleController.SCHEDULED);
         }
         else {
             this.triggerJobState = triggerJobState;
-            changeState(ModuleController.STATE_IDLE);
+            changeState(ModuleController.READY);
         }
     }
 
@@ -85,11 +90,11 @@ public class ModuleController extends Observable implements Executable {
         this.name = name;
 
         if (triggerJobState == JobState.NONE) {
-            changeState(ModuleController.STATE_STARTABLE);
+            changeState(ModuleController.SCHEDULED);
         }
         else {
             this.triggerJobState = triggerJobState;
-            changeState(ModuleController.STATE_IDLE);
+            changeState(ModuleController.READY);
         }
     }
 
@@ -184,7 +189,7 @@ public class ModuleController extends Observable implements Executable {
         successful = checkResults();
 
         if (isFinished()) {
-            changeState(ModuleController.STATE_DONE);
+            changeState(ModuleController.FINISHED);
         }
 
     }
@@ -193,7 +198,7 @@ public class ModuleController extends Observable implements Executable {
      * Start the module
      */
     public void start() {
-        changeState(ModuleController.STATE_INPROGRESS);
+        changeState(ModuleController.RUNNING);
     }
 
     /**
@@ -219,12 +224,15 @@ public class ModuleController extends Observable implements Executable {
      * @param newJobStatus
      */
     public void onJobStatusChange(int newJobStatus) {
-        if (newJobStatus == triggerJobState && this.getState() == STATE_IDLE) {
-            changeState(ModuleController.STATE_STARTABLE);
+        if (newJobStatus == getTrigger() && this.getState() == READY) {
+            changeState(ModuleController.SCHEDULED);
             logger.debug("Module {} has become startable",this.getName());
         }
     }
 
+    public int getTrigger() {
+        return triggerJobState;
+    }
     /**
      * Get the state
      * @return
