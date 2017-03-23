@@ -79,9 +79,6 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(id.toString().substring(0,7)));
         this.parameterSet.addParameter(temporaryParameter);
 
-        //create the temporary folder parameter
-        BooleanParameter editableParameter = new BooleanParameter("editable","Editable job flag","internal",Boolean.TRUE);
-        this.parameterSet.addParameter(editableParameter);
     }
 
 
@@ -99,7 +96,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     @Override
     public boolean isEditable() {
 
-        return (Boolean) parameterSet.getParameter("editable").getValue();
+        return parameterSet.isEditable();
     }
 
     @Override
@@ -155,6 +152,14 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     //</editor-fold>
 
     /**
+     * Set editable
+     * @param editable
+     */
+    public void setEditable(boolean editable) {
+        parameterSet.setEditable(editable);
+    }
+
+    /**
      * Get the parameter set
      * @return the parameter set
      */
@@ -175,7 +180,12 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * @return list of module
      */
     public List<ModuleController> getModules() {
-        return modules;
+        List<ModuleController> clone = new ArrayList<>();
+
+        for (ModuleController moduleController: modules) {
+            clone.add(moduleController);
+        }
+        return clone;
     }
 
 
