@@ -81,6 +81,7 @@ public class SidePanelController implements Initializable{
         Job j = getCoreEngine().getJob(UUID.fromString(id));
         
         sidePanelModel.onJobSelected(j,jobExecutionProgress);
+        modulesController.setEditable(j.isEditable());
     }
 
     public void setMainController(MainController mainController) {

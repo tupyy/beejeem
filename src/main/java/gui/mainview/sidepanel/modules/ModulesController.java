@@ -58,6 +58,13 @@ public class ModulesController implements Initializable{
         setupTable();
     }
 
+    public void setEditable(boolean editable) {
+        modulesTable.setEditable(editable);
+        addModuleButton.setDisable((editable == true) ? false : true);
+        removeButtonModule.setDisable((editable == true) ? false : true);
+        moveupButton.setDisable((editable == true) ? false : true);
+        movedownButton.setDisable((editable == true) ? false : true);
+    }
     private void setupTable() {
 
         if (model != null) {
@@ -66,4 +73,6 @@ public class ModulesController implements Initializable{
             modulesTable.setItems(getModel().getData());
         }
     }
+
+
 }
