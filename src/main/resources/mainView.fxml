@@ -56,7 +56,7 @@
           </ToolBar>
       <SplitPane fx:id="splitPane" dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
          <items>
-            <VBox fx:id="splitPaneVBox" maxWidth="400.0" />
+            <VBox fx:id="splitPaneVBox" maxWidth="400.0" prefWidth="400.0" />
             <VBox fx:id="splitPaneHub" />
          </items>
       </SplitPane>

@@ -7,7 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableStringValue;
 
 /**
- * Created by tctupangiu on 22/03/2017.
+ * Model class for the Information Pane of the SidePanelView
  */
 public class JobInfoModel {
 
