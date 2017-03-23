@@ -81,6 +81,7 @@ public class SpectreJobCreator extends AbstractCreator {
 
                            SimpleJob job = new SimpleJob(newParameters,createModuleParameter(moduleElements,creatorLog));
                            jobs.add(job);
+                           break;
                        }
                    }
                }
