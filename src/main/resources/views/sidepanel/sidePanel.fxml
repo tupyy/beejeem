@@ -7,13 +7,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="vboxContentPane" maxWidth="400.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.sidepanel.SidePanelController">
+<VBox fx:id="vboxContentPane" maxWidth="533.0" prefHeight="550.0" prefWidth="533.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.sidepanel.SidePanelController">
    <children>
       <Accordion VBox.vgrow="ALWAYS">
         <panes>
-          <TitledPane fx:id="parametersPane" animated="false" text="Parameters">
+          <TitledPane animated="false" text="Parameters">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane fx:id="parametersPane" minHeight="0.0" minWidth="0.0" />
             </content>
           </TitledPane>
           <TitledPane fx:id="codePane" animated="false" text="Code">
@@ -22,14 +22,14 @@
             </content>
           </TitledPane>
           <TitledPane animated="false" text="Modules">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
+               <content>
+                  <VBox fx:id="vboxModulePanel" prefHeight="200.0" prefWidth="100.0" />
+               </content>
           </TitledPane>
             <TitledPane animated="false" text="Information">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
+               <content>
+                  <VBox fx:id="vboxInfoPanel" prefHeight="200.0" prefWidth="100.0" />
+               </content>
             </TitledPane>
         </panes>
       </Accordion>

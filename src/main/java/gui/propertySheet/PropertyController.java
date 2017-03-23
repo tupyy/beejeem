@@ -1,5 +1,7 @@
 package gui.propertySheet;
 
+import core.parameters.ParameterSet;
+import javafx.scene.control.Control;
 import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.editor.Editors;
@@ -15,7 +17,10 @@ public class PropertyController {
 
     public PropertyController(PropertyModel model) {
         this.model = model;
+
         propertySheet = new PropertySheet(model.getPropertySheetItems());
+        propertySheet.setMaxWidth(Control.USE_COMPUTED_SIZE);
+        propertySheet.setPrefWidth(Control.USE_COMPUTED_SIZE);
 
         getPropertySheet().setPropertyEditorFactory(param -> {
             PropertyModel.SimpleItem simpleItem = (PropertyModel.SimpleItem) param;
@@ -40,4 +45,6 @@ public class PropertyController {
     public PropertySheet getPropertySheet() {
         return propertySheet;
     }
+
+
 }

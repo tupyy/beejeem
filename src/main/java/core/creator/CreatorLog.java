@@ -30,7 +30,7 @@ public interface CreatorLog {
     public void debug(String message);
 
     /**
-     * Add info message
+     * Add sidepanel message
      * @param message
      */
     public void info(String message);
