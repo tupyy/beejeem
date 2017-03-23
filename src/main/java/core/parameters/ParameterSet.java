@@ -37,6 +37,8 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
 
     private UUID ID = java.util.UUID.randomUUID();
 
+    private boolean editable = true;
+
     private final List<Parameter<?>> parameters = new ArrayList<>();
 
     public ParameterSet(Parameter<?>... items) {
@@ -263,4 +265,11 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
     }
 
 
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
 }
