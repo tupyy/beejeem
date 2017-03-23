@@ -114,19 +114,19 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public void executeJob(UUID id,JobExecutionProgress progress) {
 
-        //check if the ssh client is connected before executing jobs
-        if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
-            qstatManager.start();
+//        //check if the ssh client is connected before executing jobs
+//        if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
+//            qstatManager.start();
             Job job = getJob(id);
             try {
                 job.execute(progress);
             } catch (JobException e) {
                 e.printStackTrace();
             }
-        }
-        else {
-            fireCoreEvent(CoreEventType.SSH_CONNECTION_ERROR,UUID.randomUUID());
-        }
+//        }
+//        else {
+//            fireCoreEvent(CoreEventType.SSH_CONNECTION_ERROR,UUID.randomUUID());
+//        }
     }
 
     @Override
@@ -149,7 +149,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public void update(Observable o, Object arg) {
         SimpleJob j = (SimpleJob) o;
-        fireCoreEvent(CoreEventType.JOB_STATUS_CHANGED, j.getID());
+        fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
 
         if (j.getStatus() == JobState.FINISHED) {
             finishedJobs++;
