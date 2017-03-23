@@ -14,13 +14,15 @@ import java.util.UUID;
 public class SidePanelModel {
 
     private PropertyModel propertyModel = new PropertyModel();
-    private ModulesModel modulesModel = new ModulesModel();
-    private JobInfoModel jobInfoModel = new JobInfoModel();
+    private ModulesModel modulesModel;
+    private JobInfoModel jobInfoModel;
+
+    private SidePanelController sidePanelController;
 
     private UUID selectedJobID;
 
-    public SidePanelModel() {
-
+    public SidePanelModel(SidePanelController sidePanelController) {
+        this.sidePanelController = sidePanelController;
     }
 
     /**
@@ -36,8 +38,8 @@ public class SidePanelModel {
         getPropertyModel().clear();
         getPropertyModel().setParameterSet(job.getParameters());
 
-        modulesModel.populate(job);
-        jobInfoModel.populate(job,jobExecutionProgress);
+        getModulesModel().populate(job);
+        getJobInfoModel().populate(job,jobExecutionProgress);
     }
 
 
@@ -49,4 +51,23 @@ public class SidePanelModel {
         return jobInfoModel;
     }
 
+    public void setSidePanelController(SidePanelController sidePanelController) {
+        this.sidePanelController = sidePanelController;
+    }
+
+    public SidePanelController getSidePanelController() {
+        return sidePanelController;
+    }
+
+    public void setPropertyModel(PropertyModel propertyModel) {
+        this.propertyModel = propertyModel;
+    }
+
+    public void setModulesModel(ModulesModel modulesModel) {
+        this.modulesModel = modulesModel;
+    }
+
+    public void setJobInfoModel(JobInfoModel jobInfoModel) {
+        this.jobInfoModel = jobInfoModel;
+    }
 }

@@ -14,10 +14,11 @@ import java.util.List;
  */
 public class ModulesModel {
 
+    private final ModulesController controller;
     private ObservableList<SimpleEntry> data = FXCollections.observableArrayList();
 
-    public ModulesModel() {
-
+    public ModulesModel(ModulesController controller) {
+        this.controller = controller;
     }
 
     public void populate(Job j) {

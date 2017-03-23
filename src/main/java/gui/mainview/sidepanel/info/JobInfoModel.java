@@ -11,12 +11,13 @@ import javafx.beans.value.ObservableStringValue;
  */
 public class JobInfoModel {
 
+    private final JobInfoController controller;
     private SimpleStringProperty jobName = new SimpleStringProperty();
     private SimpleStringProperty jobID= new SimpleStringProperty();
     private SimpleStringProperty jobStatus= new SimpleStringProperty();
 
-    public JobInfoModel() {
-
+    public JobInfoModel(JobInfoController jobInfoController) {
+        this.controller = jobInfoController;
     }
 
     public void populate(Job job, JobExecutionProgress jobExecutionProgress) {
@@ -35,5 +36,9 @@ public class JobInfoModel {
 
     public ObservableStringValue getJobStatus() {
         return jobStatus;
+    }
+
+    public JobInfoController getController() {
+        return controller;
     }
 }

@@ -42,11 +42,12 @@ public class ModulesController implements Initializable{
     private ModulesModel model;
 
     public ModulesController() {
+        this.model = new ModulesModel(this);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        setupTable();
     }
 
     public ModulesModel getModel() {

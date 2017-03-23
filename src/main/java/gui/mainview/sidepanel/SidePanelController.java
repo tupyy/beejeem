@@ -45,12 +45,16 @@ public class SidePanelController implements Initializable{
     @FXML
     private TitledPane codePane;
 
-    private SidePanelModel sidePanelModel = new SidePanelModel();
+    private SidePanelModel sidePanelModel;
 
     private PropertyController propertyController;
     private MainController mainController;
     private ModulesController modulesController;
     private JobInfoController jobInfoController;
+
+    public SidePanelController() {
+        sidePanelModel = new SidePanelModel(this);
+    }
 
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -63,11 +67,11 @@ public class SidePanelController implements Initializable{
 
         //add module view
         addModuleView(vboxModulePanel);
-        modulesController.setModel(sidePanelModel.getModulesModel());
+        sidePanelModel.setModulesModel(modulesController.getModel());
 
         //add info view
         addInfoView(vboxInfoPanel);
-        jobInfoController.setJobInfoModel(sidePanelModel.getJobInfoModel());
+        sidePanelModel.setJobInfoModel(jobInfoController.getModel());
 
     }
 
@@ -81,16 +85,35 @@ public class SidePanelController implements Initializable{
         Job j = getCoreEngine().getJob(UUID.fromString(id));
         
         sidePanelModel.onJobSelected(j,jobExecutionProgress);
-        modulesController.setEditable(j.isEditable());
+        setEditable(j.isEditable());
     }
 
+    /**
+     * Set the main controller
+     * @param mainController
+     */
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
 
+    /**
+     * Get the main controller
+     * @return
+     */
     public MainController getMainController() {
         return mainController;
     }
+
+
+    /**
+     * Disable the editing if the job has become not editable
+     * @param editable
+     */
+    public void setEditable(boolean editable) {
+        modulesController.setEditable(editable);
+        propertyController.setEditable(editable);
+    }
+
 
     /**
      * Show sidepanel view

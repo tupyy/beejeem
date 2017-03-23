@@ -29,23 +29,30 @@ public class JobInfoController implements Initializable{
     private JobInfoModel jobInfoModel;
 
     public JobInfoController() {
-
+        this.jobInfoModel = new JobInfoModel(this);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        bindLabels(jobInfoModel);
     }
 
-    public JobInfoModel getJobInfoModel() {
+    public void setModel(JobInfoModel jobInfoModel) {
+        this.jobInfoModel = jobInfoModel;
+        bindLabels(jobInfoModel);
+    }
+
+    public JobInfoModel getModel() {
         return jobInfoModel;
     }
 
-    public void setJobInfoModel(JobInfoModel jobInfoModel) {
-        this.jobInfoModel = jobInfoModel;
-
-        nameLabel.textProperty().bind(jobInfoModel.getJobName());
-        idLabel.textProperty().bind(jobInfoModel.getJobID());
-        statusLabel.textProperty().bind(jobInfoModel.getJobStatus());
+    /**
+     * Bind text property for the label to the model
+     * @param model
+     */
+    private void bindLabels(JobInfoModel model) {
+        nameLabel.textProperty().bind(model.getJobName());
+        idLabel.textProperty().bind(model.getJobID());
+        statusLabel.textProperty().bind(model.getJobStatus());
     }
 }

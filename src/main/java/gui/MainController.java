@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class MainController implements Initializable{
+public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory
             .getLogger(Main.class);
 

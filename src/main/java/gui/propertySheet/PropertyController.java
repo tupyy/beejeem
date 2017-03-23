@@ -47,4 +47,7 @@ public class PropertyController {
     }
 
 
+    public void setEditable(boolean editable) {
+        this.propertySheet.setDisable((editable==true) ? false: true);
+    }
 }
