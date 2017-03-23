@@ -3,6 +3,7 @@ package gui.mainview.sidepanel.info;
 import core.job.Job;
 import core.job.JobExecutionProgress;
 import core.job.JobState;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableStringValue;
 
@@ -25,9 +26,13 @@ public class JobInfoModel {
     }
 
     public void populate(Job job) {
-        jobName.set(job.getName());
-        jobID.set(job.getID().toString());
-        jobStatus.set(JobState.toString(job.getStatus()));
+
+        Platform.runLater(() -> {
+            jobName.set(job.getName());
+            jobID.set(job.getID().toString());
+            jobStatus.set(JobState.toString(job.getStatus()));
+        });
+
     }
 
     public ObservableStringValue getJobName() {

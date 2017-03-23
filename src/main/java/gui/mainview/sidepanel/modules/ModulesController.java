@@ -67,6 +67,11 @@ public class ModulesController implements Initializable,ComponentController{
         setEditable(job.isEditable());
     }
 
+    @Override
+    public void updateJob(Job job) {
+        loadJob(job);
+    }
+
     /********************************************************************
      *
      *                          P R I V A T E

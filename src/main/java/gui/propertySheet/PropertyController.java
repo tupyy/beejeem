@@ -45,6 +45,12 @@ public class PropertyController implements ComponentController{
         model.setParameterSet(j.getParameters());
     }
 
+    @Override
+    public void updateJob(Job job) {
+        model.updateParameterSet(job.getParameters());
+    }
+
+
     private void initializeController(PropertyModel model) {
         propertySheet = new PropertySheet(model.getPropertySheetItems());
         propertySheet.setMaxWidth(Control.USE_COMPUTED_SIZE);

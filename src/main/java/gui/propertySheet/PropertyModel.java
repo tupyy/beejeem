@@ -6,6 +6,7 @@ import core.parameters.parametertypes.AircraftParameter;
 import core.parameters.parametertypes.BooleanParameter;
 import core.parameters.parametertypes.IntegerParameter;
 import core.parameters.parametertypes.ListParameter;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,7 @@ import org.controlsfx.control.PropertySheet;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Created by tctupangiu on 17/03/2017.
@@ -37,7 +39,30 @@ public class PropertyModel {
 
     public void setParameterSet(ParameterSet parameterSet) {
         this.parameterSet = parameterSet;
-        addItems(parameterSet);
+
+        Platform.runLater(() -> {
+            addItems(parameterSet);
+        });
+
+    }
+
+    public void updateParameterSet(ParameterSet newParameterSet) {
+        Platform.runLater(() -> {
+            for (Parameter p : newParameterSet) {
+                if (p.getSource().equals("external")) {
+                    SimpleItem simpleItem = getItem(p.getID());
+                    if (simpleItem != null) {
+                        if ( !simpleItem.getValue().equals(p.getValue()) ) {
+                            simpleItem.setValue(p.getValue());
+                        }
+                    } else {
+                        addItem(p, parameterSet.isEditable());
+                    }
+                }
+            }
+        });
+
+
     }
 
     public void clear() {
@@ -51,21 +76,32 @@ public class PropertyModel {
      */
     private void addItems(ParameterSet parameterSet) {
 
-        boolean editableItem = true;
-        try {
-            editableItem = (Boolean) parameterSet.getParameter("editable").getValue();
-        }
-        catch (IllegalArgumentException e) {
-
-        }
-
         for (Parameter p : parameterSet) {
             if (p.getSource().equals("external")) {
-                getPropertySheetItems().add( new SimpleItem(p,editableItem));
+                getPropertySheetItems().add( new SimpleItem(p,parameterSet.isEditable()));
             }
         }
 
 
+    }
+
+    private void addItem(Parameter p,boolean editable) {
+        getPropertySheetItems().add( new SimpleItem(p,editable));
+    }
+    /**
+     * Get the item based on the id
+     * @param id
+     * @return
+     */
+    private SimpleItem getItem(UUID id) {
+        for(PropertySheet.Item item: getPropertySheetItems()) {
+            SimpleItem simpleItem = (SimpleItem) item;
+            if (simpleItem.getID().equals(id)) {
+                return simpleItem;
+            }
+        }
+
+        return null;
     }
 
     //<editor-fold desc="SimpleItem class">
@@ -147,6 +183,10 @@ public class PropertyModel {
 
         public void setEditable(boolean editable) {
             this.editable = editable;
+        }
+
+        public UUID getID() {
+            return parameter.getID();
         }
 
         @Override

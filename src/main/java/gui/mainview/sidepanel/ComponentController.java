@@ -7,7 +7,8 @@ import core.job.Job;
  */
 public interface ComponentController {
 
-    public void loadJob(Job j);
+    public void loadJob(Job job);
 
+    public void updateJob(Job job);
 
 }

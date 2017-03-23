@@ -40,8 +40,13 @@ public class JobInfoController implements Initializable,ComponentController{
     }
 
     @Override
-    public void loadJob(Job j) {
-        getModel().populate(j);
+    public void loadJob(Job job) {
+        getModel().populate(job);
+    }
+
+    @Override
+    public void updateJob(Job job) {
+        getModel().populate(job);
     }
 
 

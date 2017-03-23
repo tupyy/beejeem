@@ -118,7 +118,10 @@ public class SidePanelController implements Initializable, CoreListener{
     public void coreEvent(CoreEvent e) {
         if (e.getId().equals(currentJobID)) {
             if (e.getAction() == CoreEventType.JOB_UPDATED) {
-                updateJob(getCoreEngine().getJob(e.getId()));
+
+                for (ComponentController componentController: componentControllerList) {
+                    componentController.updateJob(getCoreEngine().getJob(e.getId()));
+                }
             }
         }
     }
