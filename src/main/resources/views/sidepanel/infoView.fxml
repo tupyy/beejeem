@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -36,7 +37,7 @@
         </rowConstraints>
          <children>
             <Label text="Log" />
-            <TextArea fx:id="logArea" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+            <TextArea fx:id="logArea" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

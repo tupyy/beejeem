@@ -1,11 +1,19 @@
 package gui.mainview.sidepanel.info;
 
 import core.job.Job;
+import core.job.JobExecutionProgress;
 import gui.mainview.sidepanel.ComponentController;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import main.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,8 +22,9 @@ import java.util.ResourceBundle;
  * Created by tctupangiu on 22/03/2017.
  */
 
-public class JobInfoController implements Initializable,ComponentController{
-
+public class JobInfoController implements Initializable,ComponentController {
+    private static final Logger logger = LoggerFactory
+            .getLogger(Main.class);
     @FXML
     private Label nameLabel;
 
@@ -36,7 +45,9 @@ public class JobInfoController implements Initializable,ComponentController{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         bindLabels(jobInfoModel);
+
     }
 
     @Override
@@ -49,6 +60,11 @@ public class JobInfoController implements Initializable,ComponentController{
         getModel().populate(job);
     }
 
+    @Override
+    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
+        getModel().setJobLogger(jobProgressLogger);
+    }
+
 
     public JobInfoModel getModel() {
         return jobInfoModel;
@@ -56,6 +72,7 @@ public class JobInfoController implements Initializable,ComponentController{
 
     /**
      * Bind text property for the label to the model
+     *
      * @param model
      */
     private void bindLabels(JobInfoModel model) {
@@ -65,4 +82,7 @@ public class JobInfoController implements Initializable,ComponentController{
     }
 
 
+    public TextArea getLogArea() {
+        return logArea;
+    }
 }

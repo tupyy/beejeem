@@ -16,7 +16,7 @@ public class HubModel {
     //table model
     private HubTableModel tableModel = new HubTableModel();
 
-    Map<String, SimpleLogger> loggerMap = new HashMap<>();
+    Map<UUID, SimpleLogger> loggerMap = new HashMap<>();
 
     public HubModel() {
 
@@ -32,12 +32,12 @@ public class HubModel {
      * @param uuid
      * @return
      */
-    public JobExecutionProgress getJobLogger(String uuid) {
+    public JobExecutionProgress getJobLogger(UUID uuid) {
         if (loggerMap.containsKey(uuid)) {
             return loggerMap.get(uuid);
         }
 
-        SimpleLogger logger = new SimpleLogger();
+        SimpleLogger logger = new SimpleLogger(uuid);
         loggerMap.put(uuid,logger);
         return logger;
     }

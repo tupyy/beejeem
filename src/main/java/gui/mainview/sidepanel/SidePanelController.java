@@ -94,6 +94,7 @@ public class SidePanelController implements Initializable, CoreListener{
 
         for (ComponentController componentController: componentControllerList) {
             componentController.loadJob(j);
+            componentController.setJobProgressLogger(jobExecutionProgress);
         }
      }
 
@@ -118,7 +119,6 @@ public class SidePanelController implements Initializable, CoreListener{
     public void coreEvent(CoreEvent e) {
         if (e.getId().equals(currentJobID)) {
             if (e.getAction() == CoreEventType.JOB_UPDATED) {
-
                 for (ComponentController componentController: componentControllerList) {
                     componentController.updateJob(getCoreEngine().getJob(e.getId()));
                 }

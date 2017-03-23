@@ -48,6 +48,8 @@ public class PropertyModel {
 
     public void updateParameterSet(ParameterSet newParameterSet) {
         Platform.runLater(() -> {
+
+            //check for new values
             for (Parameter p : newParameterSet) {
                 if (p.getSource().equals("external")) {
                     SimpleItem simpleItem = getItem(p.getID());
@@ -59,6 +61,11 @@ public class PropertyModel {
                         addItem(p, parameterSet.isEditable());
                     }
                 }
+            }
+
+            //update the editable
+            if (parameterSet.isEditable() != newParameterSet.isEditable()) {
+                setEditable(newParameterSet.isEditable());
             }
         });
 
@@ -104,6 +111,18 @@ public class PropertyModel {
         return null;
     }
 
+    /**
+     * Set editable
+     * @param editable
+     */
+    private void setEditable(boolean editable) {
+        parameterSet.setEditable(editable);
+
+        for(PropertySheet.Item item: getPropertySheetItems()) {
+            SimpleItem simpleItem = (SimpleItem) item;
+            simpleItem.setEditable(editable);
+        }
+    }
     //<editor-fold desc="SimpleItem class">
     public ObservableList<PropertySheet.Item> getPropertySheetItems() {
         return propertySheetItems;

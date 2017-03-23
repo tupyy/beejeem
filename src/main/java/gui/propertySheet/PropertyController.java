@@ -1,6 +1,7 @@
 package gui.propertySheet;
 
 import core.job.Job;
+import core.job.JobExecutionProgress;
 import core.parameters.ParameterSet;
 import gui.mainview.sidepanel.ComponentController;
 import javafx.scene.control.Control;
@@ -48,6 +49,11 @@ public class PropertyController implements ComponentController{
     @Override
     public void updateJob(Job job) {
         model.updateParameterSet(job.getParameters());
+    }
+
+    @Override
+    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
+
     }
 
 

@@ -50,7 +50,7 @@ public class HubController implements Initializable, CoreListener {
         hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
             if (newSelection != null) {
                 HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
-                mainController.getSidePanelController().onJobSelected(selectedData.getId(),model.getJobLogger(selectedData.getId()));
+                mainController.getSidePanelController().onJobSelected(selectedData.getId(),model.getJobLogger(UUID.fromString(selectedData.getId())));
             }
         });
 
@@ -59,7 +59,7 @@ public class HubController implements Initializable, CoreListener {
 
             if (selection.size() > -1) {
                 for (HubTableModel.JobData jobData: selection) {
-                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(jobData.getId()));
+                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
                 }
             }
         });

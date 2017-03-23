@@ -1,6 +1,7 @@
 package gui.mainview.sidepanel.modules;
 
 import core.job.Job;
+import core.job.JobExecutionProgress;
 import gui.mainview.sidepanel.ComponentController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -70,6 +71,11 @@ public class ModulesController implements Initializable,ComponentController{
     @Override
     public void updateJob(Job job) {
         loadJob(job);
+    }
+
+    @Override
+    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
+
     }
 
     /********************************************************************
