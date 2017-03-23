@@ -3,6 +3,7 @@ package gui.mainview.hub;
 import core.CoreEvent;
 import core.CoreEventType;
 import core.CoreListener;
+import core.job.Job;
 import core.job.JobListener;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
@@ -70,6 +71,10 @@ public class HubController implements Initializable, CoreListener {
         if (e.getAction() == CoreEventType.JOB_CREATED) {
             UUID id = e.getId();
             model.getTableModel().addJob(getCoreEngine().getJob(id));
+        }
+        else if (e.getAction() == CoreEventType.JOB_UPDATED) {
+            Job j = getCoreEngine().getJob(e.getId());
+            model.getTableModel().updateJob(j);
         }
     }
 

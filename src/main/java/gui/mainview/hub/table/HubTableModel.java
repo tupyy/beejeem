@@ -23,6 +23,15 @@ public class HubTableModel {
         getData().add(new JobData(j));
     }
 
+    public void updateJob(Job j) {
+
+        for(JobData jobData: getData()) {
+            if (jobData.getId().equals(j.getID().toString())) {
+                jobData.updateJob(j);
+            }
+        }
+    }
+
     public ObservableList<JobData> getData() {
         return data;
     }
@@ -59,6 +68,11 @@ public class HubTableModel {
             }
         }
 
+        public void updateJob(Job j) {
+            this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
+            this.status.set(JobState.toString(j.getStatus()));
+        }
+
 
         public String getName() {
             return name.get();
@@ -83,6 +97,20 @@ public class HubTableModel {
         public String getId() {
             return id.get();
         }
+
+        public SimpleStringProperty statusProperty() {
+            return status;
+        }
+
+        public SimpleStringProperty nameProperty() {
+            return name;
+        }
+
+        public SimpleStringProperty destinationFolderProperty() {
+            return destinationFolder;
+        }
+
+
     }
     //</editor-fold>
 
