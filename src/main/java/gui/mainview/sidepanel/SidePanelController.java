@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -48,17 +50,15 @@ public class SidePanelController implements Initializable, CoreListener{
     @FXML
     private TitledPane codePane;
 
-    private SidePanelModel sidePanelModel;
 
     private PropertyController propertyController;
     private MainController mainController;
-    private ModulesController modulesController;
-    private JobInfoController jobInfoController;
+
+    private List<ComponentController> componentControllerList = new ArrayList<>();
     private UUID currentJobID;
 
     public SidePanelController() {
 
-        sidePanelModel = new SidePanelModel(this);
         getCoreEngine().addCoreEventListener(this);
 
     }
@@ -68,17 +68,17 @@ public class SidePanelController implements Initializable, CoreListener{
         assert parametersPane != null : "fx:id=\"parametersPane\" was not injected: check your FXML file 'parametersPane";
         assert codePane != null : "fx:id=\"codePane\" was not injected: check your FXML file 'codePane";
 
-        propertyController = new PropertyController(sidePanelModel.getPropertyModel());
+        propertyController = new PropertyController();
         parametersPane.getChildren().add(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
+        componentControllerList.add(propertyController);
 
         //add module view
         addModuleView(vboxModulePanel);
-        sidePanelModel.setModulesModel(modulesController.getModel());
 
         //add info view
         addInfoView(vboxInfoPanel);
-        sidePanelModel.setJobInfoModel(jobInfoController.getModel());
+
 
     }
 
@@ -90,10 +90,12 @@ public class SidePanelController implements Initializable, CoreListener{
 
         logger.info("Selected job id {}",id);
         Job j = getCoreEngine().getJob(UUID.fromString(id));
-        
-        sidePanelModel.onJobSelected(j,jobExecutionProgress);
-        setEditable(j.isEditable());
-    }
+        currentJobID = j.getID();
+
+        for (ComponentController componentController: componentControllerList) {
+            componentController.loadJob(j);
+        }
+     }
 
     /**
      * Set the main controller
@@ -112,19 +114,6 @@ public class SidePanelController implements Initializable, CoreListener{
     }
 
 
-    /**
-     * Disable the editing if the job has become not editable
-     * @param editable
-     */
-    public void setEditable(boolean editable) {
-        modulesController.setEditable(editable);
-        propertyController.setEditable(editable);
-    }
-
-    public UUID getCurrentJobID() {
-        return currentJobID;
-    }
-
     @Override
     public void coreEvent(CoreEvent e) {
         if (e.getId().equals(currentJobID)) {
@@ -141,10 +130,8 @@ public class SidePanelController implements Initializable, CoreListener{
      ********************************************************************/
 
     private void updateJob(Job job) {
-        setEditable(job.isEditable());
 
-        //just update the model without the JobExecutionProgress
-        sidePanelModel.onJobSelected(job,null);
+
     }
 
     /**
@@ -157,7 +144,8 @@ public class SidePanelController implements Initializable, CoreListener{
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/moduleView.fxml"));
             VBox command = (VBox) loader.load();
 
-            modulesController = loader.getController();
+            ModulesController modulesController = loader.getController();
+            componentControllerList.add(modulesController);
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
@@ -175,7 +163,8 @@ public class SidePanelController implements Initializable, CoreListener{
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/infoView.fxml"));
             VBox command = (VBox) loader.load();
 
-            jobInfoController = loader.getController();
+            JobInfoController jobInfoController = loader.getController();
+            componentControllerList.add(jobInfoController);
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {

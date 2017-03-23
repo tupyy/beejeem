@@ -246,12 +246,12 @@ if save_trace == True:
         <module>
             <name>core.modules.preprocessing.PreprocessingModule</name>
         </module>
-        <module>
-            <name>core.modules.processing.ProcessingModule</name>
-        </module>
-        <module>
-            <name>core.modules.postprocessing.PostprocessingModule</name>
-            <trigger type="status">Processing</trigger>
-        </module>
+        <!--<module>-->
+            <!--<name>core.modules.processing.ProcessingModule</name>-->
+        <!--</module>-->
+        <!--<module>-->
+            <!--<name>core.modules.postprocessing.PostprocessingModule</name>-->
+            <!--<trigger type="status">Processing</trigger>-->
+        <!--</module>-->
     </modules>
 </job>

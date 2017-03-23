@@ -1,5 +1,7 @@
 package gui.mainview.sidepanel.info;
 
+import core.job.Job;
+import gui.mainview.sidepanel.ComponentController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -12,7 +14,7 @@ import java.util.ResourceBundle;
  * Created by tctupangiu on 22/03/2017.
  */
 
-public class JobInfoController implements Initializable{
+public class JobInfoController implements Initializable,ComponentController{
 
     @FXML
     private Label nameLabel;
@@ -37,10 +39,11 @@ public class JobInfoController implements Initializable{
         bindLabels(jobInfoModel);
     }
 
-    public void setModel(JobInfoModel jobInfoModel) {
-        this.jobInfoModel = jobInfoModel;
-        bindLabels(jobInfoModel);
+    @Override
+    public void loadJob(Job j) {
+        getModel().populate(j);
     }
+
 
     public JobInfoModel getModel() {
         return jobInfoModel;
@@ -55,4 +58,6 @@ public class JobInfoController implements Initializable{
         idLabel.textProperty().bind(model.getJobID());
         statusLabel.textProperty().bind(model.getJobStatus());
     }
+
+
 }

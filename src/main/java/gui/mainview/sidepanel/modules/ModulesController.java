@@ -1,6 +1,7 @@
 package gui.mainview.sidepanel.modules;
 
 import core.job.Job;
+import gui.mainview.sidepanel.ComponentController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,7 +16,7 @@ import java.util.UUID;
 /**
  * Created by tctupangiu on 22/03/2017.
  */
-public class ModulesController implements Initializable{
+public class ModulesController implements Initializable,ComponentController{
 
     @FXML
     private Button addModuleButton;
@@ -59,7 +60,20 @@ public class ModulesController implements Initializable{
         setupTable();
     }
 
-    public void setEditable(boolean editable) {
+    @Override
+    public void loadJob(Job job) {
+
+        model.populate(job);
+        setEditable(job.isEditable());
+    }
+
+    /********************************************************************
+     *
+     *                          P R I V A T E
+     *
+     ********************************************************************/
+
+    private void setEditable(boolean editable) {
         modulesTable.setEditable(editable);
         addModuleButton.setDisable((editable == true) ? false : true);
         removeButtonModule.setDisable((editable == true) ? false : true);

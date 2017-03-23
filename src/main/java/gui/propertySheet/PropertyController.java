@@ -1,6 +1,8 @@
 package gui.propertySheet;
 
+import core.job.Job;
 import core.parameters.ParameterSet;
+import gui.mainview.sidepanel.ComponentController;
 import javafx.scene.control.Control;
 import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
@@ -10,14 +12,40 @@ import org.controlsfx.property.editor.PropertyEditor;
 /**
  * Created by tctupangiu on 17/03/2017.
  */
-public class PropertyController {
+public class PropertyController implements ComponentController{
 
     private PropertySheet propertySheet;
     private PropertyModel model;
 
     public PropertyController(PropertyModel model) {
         this.model = model;
+        initializeController(model);
+    }
 
+    public PropertyController() {
+        this.model = new PropertyModel();
+        initializeController(model);
+    }
+
+    public void clearPropertySheet() {
+        model.getPropertySheetItems().clear();
+    }
+
+    public PropertySheet getPropertySheet() {
+        return propertySheet;
+    }
+
+
+    public void setEditable(boolean editable) {
+        this.propertySheet.setDisable((editable==true) ? false: true);
+    }
+
+    @Override
+    public void loadJob(Job j) {
+        model.setParameterSet(j.getParameters());
+    }
+
+    private void initializeController(PropertyModel model) {
         propertySheet = new PropertySheet(model.getPropertySheetItems());
         propertySheet.setMaxWidth(Control.USE_COMPUTED_SIZE);
         propertySheet.setPrefWidth(Control.USE_COMPUTED_SIZE);
@@ -35,19 +63,5 @@ public class PropertyController {
                 return Editors.createTextEditor(simpleItem);
             }
         });
-
-    }
-
-    public void clearPropertySheet() {
-        model.getPropertySheetItems().clear();
-    }
-
-    public PropertySheet getPropertySheet() {
-        return propertySheet;
-    }
-
-
-    public void setEditable(boolean editable) {
-        this.propertySheet.setDisable((editable==true) ? false: true);
     }
 }
