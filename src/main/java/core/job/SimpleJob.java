@@ -48,7 +48,7 @@ public class SimpleJob extends AbstractJob {
     public synchronized void update(Observable o, Object arg) {
         ModuleController moduleController = (ModuleController) o;
 
-        if ((int) arg == ModuleController.STATE_DONE) {
+        if ((int) arg == ModuleController.FINISHED) {
             if (moduleController.isSuccessful()) {
                 logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
 
@@ -60,14 +60,16 @@ public class SimpleJob extends AbstractJob {
             }
             else {
                 updateStatus(JobState.ERROR);
+                setEditable(true);
             }
         }
-        else if ( (int) arg == ModuleController.STATE_STARTABLE && canExecute()) {
+        else if ( (int) arg == ModuleController.SCHEDULED && canExecute()) {
             moduleController.execute(this.jobProgress);
         }
 
         if(isJobFinished()) {
             updateStatus(JobState.DONE);
+            setEditable(true);
         }
 
     }
@@ -88,6 +90,7 @@ public class SimpleJob extends AbstractJob {
         String nextModule = getNextModuleName();
         if ( !nextModule.isEmpty() ) {
             updateStatus(JobState.SUBMITTING);
+            setEditable(false);
             getModuleManager(nextModule).execute(this.jobProgress);
         }
         else {
@@ -204,7 +207,7 @@ public class SimpleJob extends AbstractJob {
         }
 
         for(ModuleController mm: getModules()) {
-            if (mm.getState() != ModuleController.STATE_DONE) {
+            if (mm.getState() != ModuleController.FINISHED) {
                 return false;
             }
         }
@@ -337,7 +340,7 @@ public class SimpleJob extends AbstractJob {
 //        }
 
         for(ModuleController mm: getModules()) {
-            if (mm.getState() == ModuleController.STATE_STARTABLE) {
+            if (mm.getState() == ModuleController.SCHEDULED) {
                 mm.start();
                 return mm.getName();
             }
