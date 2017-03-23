@@ -21,6 +21,10 @@ public class JobInfoModel {
     }
 
     public void populate(Job job, JobExecutionProgress jobExecutionProgress) {
+        populate(job);
+    }
+
+    public void populate(Job job) {
         jobName.set(job.getName());
         jobID.set(job.getID().toString());
         jobStatus.set(JobState.toString(job.getStatus()));

@@ -1,5 +1,8 @@
 package gui.mainview.sidepanel;
 
+import core.CoreEvent;
+import core.CoreEventType;
+import core.CoreListener;
 import core.job.Job;
 import core.job.JobExecutionProgress;
 import gui.MainController;
@@ -26,7 +29,7 @@ import static core.JStesCore.getCoreEngine;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController implements Initializable{
+public class SidePanelController implements Initializable, CoreListener{
     private static final Logger logger = LoggerFactory
             .getLogger(Main.class);
 
@@ -51,9 +54,13 @@ public class SidePanelController implements Initializable{
     private MainController mainController;
     private ModulesController modulesController;
     private JobInfoController jobInfoController;
+    private UUID currentJobID;
 
     public SidePanelController() {
+
         sidePanelModel = new SidePanelModel(this);
+        getCoreEngine().addCoreEventListener(this);
+
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -114,6 +121,31 @@ public class SidePanelController implements Initializable{
         propertyController.setEditable(editable);
     }
 
+    public UUID getCurrentJobID() {
+        return currentJobID;
+    }
+
+    @Override
+    public void coreEvent(CoreEvent e) {
+        if (e.getId().equals(currentJobID)) {
+            if (e.getAction() == CoreEventType.JOB_UPDATED) {
+                updateJob(getCoreEngine().getJob(e.getId()));
+            }
+        }
+    }
+
+    /********************************************************************
+     *
+     *                          P R I V A T E
+     *
+     ********************************************************************/
+
+    private void updateJob(Job job) {
+        setEditable(job.isEditable());
+
+        //just update the model without the JobExecutionProgress
+        sidePanelModel.onJobSelected(job,null);
+    }
 
     /**
      * Show sidepanel view
@@ -150,4 +182,7 @@ public class SidePanelController implements Initializable{
             ex.printStackTrace();
         }
     }
+
+
+
 }

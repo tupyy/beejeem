@@ -39,9 +39,14 @@ public class SidePanelModel {
         getPropertyModel().setParameterSet(job.getParameters());
 
         getModulesModel().populate(job);
-        getJobInfoModel().populate(job,jobExecutionProgress);
-    }
 
+        if (jobExecutionProgress != null) {
+            getJobInfoModel().populate(job, jobExecutionProgress);
+        }
+        else {
+            getJobInfoModel().populate(job);
+        }
+    }
 
     public ModulesModel getModulesModel() {
         return modulesModel;
@@ -55,10 +60,18 @@ public class SidePanelModel {
         this.sidePanelController = sidePanelController;
     }
 
+    /**
+     * Getter for sidePanelController
+     * @return
+     */
     public SidePanelController getSidePanelController() {
         return sidePanelController;
     }
 
+    /**
+     * Setter for propertyModel
+     * @param propertyModel
+     */
     public void setPropertyModel(PropertyModel propertyModel) {
         this.propertyModel = propertyModel;
     }

@@ -73,13 +73,15 @@ public class HubController implements Initializable, CoreListener {
         }
     }
 
-    public MainController getMainController() {
-        return mainController;
-    }
-
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
+
+    /********************************************************************
+     *
+     *                          P R I V A T E
+     *
+     ********************************************************************/
 
     private void setupTable() {
         TableColumn nameCol = new TableColumn("Name");

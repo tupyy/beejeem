@@ -1,5 +1,9 @@
 package gui;
 
+import core.CoreEvent;
+import core.CoreEventType;
+import core.CoreListener;
+import core.job.Job;
 import gui.mainview.hub.HubController;
 import gui.mainview.sidepanel.SidePanelController;
 import javafx.fxml.FXML;
@@ -22,8 +26,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static core.JStesCore.getCoreEngine;
 
-public class MainController implements Initializable {
+
+public class MainController implements Initializable, CoreListener {
     private static final Logger logger = LoggerFactory
             .getLogger(Main.class);
 
@@ -73,6 +79,25 @@ public class MainController implements Initializable {
 
         });
     }
+
+    public SidePanelController getSidePanelController() {
+        return sidePanelController;
+    }
+
+    public HubController getHubController() {
+        return hubController;
+    }
+
+    @Override
+    public void coreEvent(CoreEvent e) {
+
+    }
+
+    /********************************************************************
+     *
+     *                          P R I V A T E
+     *
+     ********************************************************************/
 
     /**
      * Show sidepanel view
@@ -130,11 +155,5 @@ public class MainController implements Initializable {
         }
     }
 
-    public SidePanelController getSidePanelController() {
-        return sidePanelController;
-    }
 
-    public HubController getHubController() {
-        return hubController;
-    }
 }
