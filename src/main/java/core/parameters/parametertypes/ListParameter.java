@@ -37,6 +37,7 @@ public class ListParameter<ValueType> extends AbstractParameter<ValueType> {
     public Parameter<ValueType> clone() {
         ListParameter<ValueType> copy = new ListParameter<ValueType>(getName(),getDescription(),getCategory(),getLabel(),
                 getSource(),options,getValue());
+        copy.setId(this.getID());
         return copy;
     }
 
