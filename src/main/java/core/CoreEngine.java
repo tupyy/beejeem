@@ -141,7 +141,9 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public void runAll() {
         for (Job job : jobList) {
-            executeJob(job.getID(),null);
+            if (job.getStatus() == JobState.IDLE) {
+                executeJob(job.getID(), null);
+            }
         }
     }
 
