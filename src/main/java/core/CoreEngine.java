@@ -6,6 +6,7 @@ import core.parameters.ParameterSet;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
+import core.util.TmpFileCleanup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,14 @@ public final class CoreEngine extends Observable implements Core, Observer {
         moduleStarter = new ModuleStarter();
         Thread readModuleThread = new Thread(moduleStarter);
         readModuleThread.start();
+
+        /**
+         * Delete the temporary folders
+         */
+        TmpFileCleanup cleanup = new TmpFileCleanup();
+        Thread tmpCleanupThread = new Thread(cleanup);
+        tmpCleanupThread.setPriority(Thread.MIN_PRIORITY);
+        tmpCleanupThread.start();
     }
 
     /**
@@ -193,6 +202,11 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public ModuleStarter getModuleStarter() {
         return moduleStarter;
+    }
+
+    @Override
+    public void shutdown() {
+        executor.shutDownExecutor();
     }
 
 
