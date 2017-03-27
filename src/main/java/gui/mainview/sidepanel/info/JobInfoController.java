@@ -3,17 +3,12 @@ package gui.mainview.sidepanel.info;
 import core.job.Job;
 import core.job.JobExecutionProgress;
 import gui.mainview.sidepanel.ComponentController;
-import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,7 +19,7 @@ import java.util.ResourceBundle;
 
 public class JobInfoController implements Initializable,ComponentController {
     private static final Logger logger = LoggerFactory
-            .getLogger(Main.class);
+            .getLogger(JobInfoController.class);
     @FXML
     private Label nameLabel;
 

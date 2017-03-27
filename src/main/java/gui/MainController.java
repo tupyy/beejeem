@@ -1,23 +1,23 @@
 package gui;
 
 import core.CoreEvent;
-import core.CoreEventType;
 import core.CoreListener;
-import core.job.Job;
 import gui.mainview.hub.HubController;
 import gui.mainview.sidepanel.SidePanelController;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main.Main;
 import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +26,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static core.JStesCore.getCoreEngine;
-
 
 public class MainController implements Initializable, CoreListener {
     private static final Logger logger = LoggerFactory
-            .getLogger(Main.class);
+            .getLogger(MainController.class);
 
     @FXML
     private Button addJobButton;
@@ -47,37 +45,27 @@ public class MainController implements Initializable, CoreListener {
 
     @FXML
     private HBox statusBarPane;
+
+    @FXML
+    private MenuItem quitMenuItem;
+
+    @FXML
+    private MenuItem newJobMenuItem;
+
     private SidePanelController sidePanelController;
     private HubController hubController;
+    private EventHandler<ActionEvent> newJobEventHandler;
 
     public void initialize(URL location, ResourceBundle resources) {
 
         showSidePanelView(splitPaneVBox);
         showHubView(splitPaneHub);
         showStatusBar(statusBarPane);
-        //
-        addJobButton.setOnAction(event -> {
-            Stage dialog = new Stage();
 
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader();
-                URL url = getClass().getClassLoader().getResource("views/creator.fxml");
-                Pane root  = fxmlLoader.load(url);
-                Scene scene = new Scene(root);
+        createActions();
+        setupMenuAction();
+        addJobButton.setOnAction(newJobEventHandler);
 
-                dialog.setScene(scene);
-                dialog.setTitle("Add jobs");
-                dialog.setResizable(false);
-
-                dialog.initOwner((Stage) addJobButton.getScene().getWindow());
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.showAndWait();
-            }
-            catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-
-        });
     }
 
     public SidePanelController getSidePanelController() {
@@ -153,6 +141,46 @@ public class MainController implements Initializable, CoreListener {
         catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void setupMenuAction() {
+        quitMenuItem.setOnAction((event) -> {
+            Stage stage = (Stage) addJobButton.getScene().getWindow();
+            stage.close();
+
+        });
+
+        newJobMenuItem.setOnAction(newJobEventHandler);
+    }
+
+    /**
+     * Create actions
+     */
+    private void createActions() {
+        newJobEventHandler = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Stage dialog = new Stage();
+
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    URL url = getClass().getClassLoader().getResource("views/creator.fxml");
+                    Pane root  = fxmlLoader.load(url);
+                    Scene scene = new Scene(root);
+
+                    dialog.setScene(scene);
+                    dialog.setTitle("New jobs");
+                    dialog.setResizable(false);
+
+                    dialog.initOwner((Stage) addJobButton.getScene().getWindow());
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.showAndWait();
+                }
+                catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        };
     }
 
 

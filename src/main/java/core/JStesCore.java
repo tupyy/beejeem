@@ -1,9 +1,11 @@
 package core;
 
-import core.Core;
-import core.CoreEngine;
+import com.sshtools.ssh.SshException;
 import core.configuration.JStesConfiguration;
-import main.Main;
+import core.configuration.JStesPreferences;
+import core.parameters.Parameter;
+import core.ssh.SshListener;
+import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +15,7 @@ import java.io.IOException;
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore implements CoreListener{
+public class JStesCore implements CoreListener,SshListener{
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -24,9 +26,11 @@ public class JStesCore implements CoreListener{
         //read configuration
         try {
 
-            File confFile = new File(Main.class.getClassLoader().getResource("configuration/configuration.xml").getFile());
+            File confFile = new File(MainApp.class.getClassLoader().getResource("configuration/configuration.xml").getFile());
             JStesConfiguration jStesConfiguration = new JStesConfiguration();
             jStesConfiguration.loadConfiguration(confFile);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -34,6 +38,31 @@ public class JStesCore implements CoreListener{
         catch (NullPointerException e) {
             logger.error("Cannot find configuration file");
         }
+
+        getCoreEngine().getSshFactory().addSshEventListener(this);
+        JStesPreferences preferences = JStesConfiguration.getPreferences();
+
+
+        try {
+            String username = (String) preferences.getUserConfiguration().getParameter("username").getValue();
+            String host = (String) preferences.getUserConfiguration().getParameter("host").getValue();
+            String password = (String) preferences.getUserConfiguration().getParameter("password").getValue();
+
+            if (username.isEmpty() || host.isEmpty() || password.isEmpty()) {
+                logger.error("Cannot connect to remote host. Username or host or password is missing");
+            }
+            else {
+                getCoreEngine().getSshFactory().connect(host, username, password);
+            }
+
+
+        }
+        catch (IllegalArgumentException ex) {
+            logger.error("Cannot connect to remote host: {}",ex.getMessage());
+        }   catch (SshException e) {
+            logger.error("Cannot connect to remote host: {}",e.getMessage());
+        }
+
 
     }
 
@@ -45,10 +74,35 @@ public class JStesCore implements CoreListener{
         return coreEngine;
     }
 
+    public void shutdown() {
+        getCoreEngine().shutdown();
+        getCoreEngine().getSshFactory().disconnect();
+    }
+
     @Override
     public void coreEvent(CoreEvent e) {
         if (e.getAction() == CoreEventType.SSH_CONNECTION_ERROR) {
             logger.error("Ssh connection");
         }
+    }
+
+    @Override
+    public void channelClosed() {
+
+    }
+
+    @Override
+    public void channelClosing() {
+
+    }
+
+    @Override
+    public void connected() {
+        logger.info("SSH client connected");
+    }
+
+    @Override
+    public void authenticated() {
+        logger.info("SSH client authenticated");
     }
 }

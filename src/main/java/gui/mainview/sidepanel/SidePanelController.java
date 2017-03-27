@@ -6,18 +6,13 @@ import core.CoreListener;
 import core.job.Job;
 import core.job.JobExecutionProgress;
 import gui.MainController;
-import gui.mainview.sidepanel.info.JobInfoController;
 import gui.mainview.sidepanel.modules.ModulesController;
 import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +30,7 @@ import static core.JStesCore.getCoreEngine;
  */
 public class SidePanelController implements Initializable, CoreListener{
     private static final Logger logger = LoggerFactory
-            .getLogger(Main.class);
+            .getLogger(SidePanelController.class);
 
     @FXML
     private VBox vboxContentPane;
@@ -144,6 +139,6 @@ public class SidePanelController implements Initializable, CoreListener{
             ex.printStackTrace();
         }
     }
-    
+
 
 }
