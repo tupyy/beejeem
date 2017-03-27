@@ -49,22 +49,21 @@ public class SimpleJob extends AbstractJob {
         ModuleController moduleController = (ModuleController) o;
 
         if ((int) arg == ModuleController.FINISHED) {
-            if (moduleController.isSuccessful()) {
-                logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
+            logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
 
-                //run next module
-                String nextModule = getNextModuleName();
-                if ( !nextModule.isEmpty() && canExecute() ) {
-                    getModuleManager(nextModule).execute(this.jobProgress);
-                }
+            //run next module
+            String nextModule = getNextModuleName();
+            if ( !nextModule.isEmpty() && canExecute() ) {
+                getModuleManager(nextModule).execute(this.jobProgress);
             }
-            else {
-                setEditable(true);
-                updateStatus(JobState.ERROR);
-            }
+
         }
         else if ( (int) arg == ModuleController.SCHEDULED && canExecute()) {
             moduleController.execute(this.jobProgress);
+        }
+        else if ((int) arg == ModuleController.FAILED) {
+            setEditable(true);
+            updateStatus(JobState.ERROR);
         }
 
         if(isJobFinished()) {

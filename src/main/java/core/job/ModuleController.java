@@ -53,9 +53,6 @@ public class ModuleController extends Observable implements Executable {
     //the state of the job which will trigger the execution of the model
     private int triggerJobState = 0;
 
-    //holds the result state of the module
-    private Boolean successful;
-
     private String name;
 
     private AbstractJob parent;
@@ -192,8 +189,7 @@ public class ModuleController extends Observable implements Executable {
             }
         }
 
-        successful = checkResults();
-        if (successful) {
+       if ( isSuccessful()) {
             progress.info(String.format("Module %s, Method %s successful",this.getName(),result.getMethodName()));
         }
         else {
@@ -201,7 +197,13 @@ public class ModuleController extends Observable implements Executable {
         }
 
         if (isFinished()) {
-            changeState(ModuleController.FINISHED);
+            if (isSuccessful()) {
+                changeState(ModuleController.FINISHED);
+            }
+            else {
+                changeState(ModuleController.FAILED);
+            }
+
             progress.info(String.format("Module %s finished",this.getName(),result.getMethodName()));
         }
 
@@ -226,7 +228,16 @@ public class ModuleController extends Observable implements Executable {
      * @return
      */
     public Boolean isSuccessful() {
-        return successful;
+        for(Map.Entry entry: methods.entrySet()) {
+            if (entry.getValue() != null) {
+                MethodResult methodResult = (MethodResult) entry.getValue();
+                if (methodResult.getExitCode() != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -263,25 +274,6 @@ public class ModuleController extends Observable implements Executable {
         state = newState;
         setChanged();
         notifyObservers(getState());
-    }
-
-    /**
-     * Return true if all the methods run at this point are
-     * successful
-     * @return
-     */
-    private boolean checkResults() {
-
-        for(Map.Entry entry: methods.entrySet()) {
-            if (entry.getValue() != null) {
-                MethodResult methodResult = (MethodResult) entry.getValue();
-                if (methodResult.getExitCode() != 0) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
