@@ -88,11 +88,11 @@ public class ModulesController implements Initializable,ComponentController{
      ********************************************************************/
 
     private void setEditable(boolean editable) {
-        modulesTable.setEditable(editable);
-        addModuleButton.setDisable((editable == true) ? false : true);
-        removeButtonModule.setDisable((editable == true) ? false : true);
-        moveupButton.setDisable((editable == true) ? false : true);
-        movedownButton.setDisable((editable == true) ? false : true);
+//        modulesTable.setEditable(editable);
+//        addModuleButton.setDisable((editable == true) ? false : true);
+//        removeButtonModule.setDisable((editable == true) ? false : true);
+//        moveupButton.setDisable((editable == true) ? false : true);
+//        movedownButton.setDisable((editable == true) ? false : true);
     }
     private void setupTable() {
 

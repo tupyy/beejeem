@@ -12,6 +12,8 @@ import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -39,7 +41,7 @@ public class SidePanelController implements Initializable, CoreListener{
     private VBox vboxContentPane;
 
     @FXML
-    private AnchorPane parametersPane;
+    private ScrollPane parametersPane;
 
     @FXML
     private VBox vboxModulePanel;
@@ -69,7 +71,7 @@ public class SidePanelController implements Initializable, CoreListener{
         assert codePane != null : "fx:id=\"codePane\" was not injected: check your FXML file 'codePane";
 
         propertyController = new PropertyController();
-        parametersPane.getChildren().add(propertyController.getPropertySheet());
+        parametersPane.setContent(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
         componentControllerList.add(propertyController);
 
