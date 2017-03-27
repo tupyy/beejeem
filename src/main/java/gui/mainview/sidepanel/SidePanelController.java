@@ -75,11 +75,6 @@ public class SidePanelController implements Initializable, CoreListener{
 
         //add module view
         addModuleView(vboxModulePanel);
-
-        //add info view
-        addInfoView(vboxInfoPanel);
-
-
     }
 
     /**

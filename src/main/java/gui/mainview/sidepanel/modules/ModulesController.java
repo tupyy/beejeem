@@ -37,6 +37,9 @@ public class ModulesController implements Initializable,ComponentController{
     private TableColumn moduleNameColumn;
 
     @FXML
+    private TableColumn statusColumn;
+
+    @FXML
     private TableColumn triggerColumn;
 
     private UUID selectedJobId;
@@ -96,6 +99,7 @@ public class ModulesController implements Initializable,ComponentController{
         if (model != null) {
             moduleNameColumn.setCellValueFactory(new PropertyValueFactory<ModulesModel.SimpleEntry, String>("name"));
             triggerColumn.setCellValueFactory(new PropertyValueFactory<ModulesModel.SimpleEntry, String>("trigger"));
+            statusColumn.setCellValueFactory(new PropertyValueFactory<ModulesModel.SimpleEntry, String>("status"));
             modulesTable.setItems(getModel().getData());
         }
     }

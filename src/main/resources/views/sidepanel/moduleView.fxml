@@ -12,7 +12,8 @@
          </columnResizePolicy>
          <columns>
             <TableColumn id="moduleNameColumn" fx:id="moduleNameColumn" maxWidth="400.0" minWidth="-1.0" prefWidth="-1.0" sortable="false" text="Name" />
-            <TableColumn id="triggerColumn" fx:id="triggerColumn" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" sortable="false" text="Trigger" />
+            <TableColumn id="triggerColumn" fx:id="triggerColumn" maxWidth="80.0" minWidth="80.0" resizable="false" sortable="false" text="Trigger" />
+            <TableColumn fx:id="statusColumn" editable="false" maxWidth="80.0" minWidth="80.0" resizable="false" sortable="false" text="State" />
          </columns>
       </TableView>
       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
