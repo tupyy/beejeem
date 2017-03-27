@@ -46,8 +46,13 @@ public class ModuleExecutor {
      * Shut down executors
      */
     public void shutDownExecutor() {
-        sshPool.shutdown();
+
+        logger.info("Shutdown the executors..");
+        logger.info("Remaining tasks in local executor: {}",pool.getQueue().size());
         pool.shutdown();
+        logger.info("Remaining tasks in ssh executor: {}",sshPool.getQueue().size());
+        sshPool.shutdown();
+
     }
 
 }
