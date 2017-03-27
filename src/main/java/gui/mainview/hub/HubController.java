@@ -130,6 +130,10 @@ public class HubController implements Initializable, CoreListener {
                 }
             }
         });
+
+        runAllButton.setOnAction((event) -> {
+           getCoreEngine().runAll();
+        });
     }
 
     /**
