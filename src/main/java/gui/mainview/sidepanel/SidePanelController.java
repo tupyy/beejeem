@@ -46,13 +46,6 @@ public class SidePanelController implements Initializable, CoreListener{
     @FXML
     private VBox vboxModulePanel;
 
-    @FXML
-    private VBox vboxInfoPanel;
-
-    @FXML
-    private TitledPane codePane;
-
-
     private PropertyController propertyController;
     private MainController mainController;
 
@@ -68,7 +61,6 @@ public class SidePanelController implements Initializable, CoreListener{
     public void initialize(URL location, ResourceBundle resources) {
 
         assert parametersPane != null : "fx:id=\"parametersPane\" was not injected: check your FXML file 'parametersPane";
-        assert codePane != null : "fx:id=\"codePane\" was not injected: check your FXML file 'codePane";
 
         propertyController = new PropertyController();
         parametersPane.setContent(propertyController.getPropertySheet());
@@ -152,26 +144,6 @@ public class SidePanelController implements Initializable, CoreListener{
             ex.printStackTrace();
         }
     }
-
-    /**
-     * Show sidepanel view
-     * @param parentNode
-     */
-    private void addInfoView(VBox parentNode) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/infoView.fxml"));
-            VBox command = (VBox) loader.load();
-
-            JobInfoController jobInfoController = loader.getController();
-            componentControllerList.add(jobInfoController);
-            parentNode.getChildren().add(command);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-
+    
 
 }
