@@ -59,8 +59,8 @@ public class SimpleJob extends AbstractJob {
                 }
             }
             else {
-                updateStatus(JobState.ERROR);
                 setEditable(true);
+                updateStatus(JobState.ERROR);
             }
         }
         else if ( (int) arg == ModuleController.SCHEDULED && canExecute()) {
@@ -68,8 +68,8 @@ public class SimpleJob extends AbstractJob {
         }
 
         if(isJobFinished()) {
-            updateStatus(JobState.DONE);
             setEditable(true);
+            updateStatus(JobState.DONE);
         }
 
     }
@@ -89,8 +89,9 @@ public class SimpleJob extends AbstractJob {
 
         String nextModule = getNextModuleName();
         if ( !nextModule.isEmpty() ) {
-            updateStatus(JobState.SUBMITTING);
             setEditable(false);
+            updateStatus(JobState.SUBMITTING);
+            progress.info("Executing job");
             getModuleManager(nextModule).execute(this.jobProgress);
         }
         else {

@@ -75,6 +75,7 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
             Parameter<?> newParam  = param.clone();
             newSet.addParameter(newParam);
         }
+        newSet.setEditable(editable);
         return newSet;
     }
 

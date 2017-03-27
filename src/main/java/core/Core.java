@@ -97,4 +97,9 @@ public interface Core {
      */
     public ModuleStarter getModuleStarter();
 
+    /**
+     * Close the executors
+     */
+    public void shutdown();
+
 }

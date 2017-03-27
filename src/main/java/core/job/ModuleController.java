@@ -116,17 +116,20 @@ public class ModuleController extends Observable implements Executable {
              Class<? extends Module> classModule = (Class<? extends Module>)Class.forName(name);
              ModuleTask moduleTask = null;
              Module module = getModule(classModule);
-            ThreadPoolExecutor executor = null;
+             progress.info("Module loaded: ".concat(classModule.getName()));
+             ThreadPoolExecutor executor = null;
 
              if (module instanceof LocalModule) {
                  LocalModule localModule = (LocalModule) module;
                  moduleTask = localModule.runModule(parent.getID(),parent.getParameterSet());
+                 progress.info("Executing job in local executor");
                  executor = ModuleExecutor.getLocalPoolExecutor();
 
              }
              else if (module instanceof SshModule) {
                  SshModule sshModule = (SshModule) module;
                  moduleTask = sshModule.runModule(parent.getID(), SshRemoteFactory.getSshClient(),parent.getParameterSet());
+                 progress.info("Executing job in ssh executor");
                  executor = ModuleExecutor.getSshPoolExecutor();
              }
 
@@ -134,17 +137,20 @@ public class ModuleController extends Observable implements Executable {
                                                                 .thenApply(methodResult -> {
 
                                                                     parent.updateParametersFromResult(methodResult);
-                                                                    setMethodResult(methodResult);
+                                                                    setMethodResult(methodResult,progress);
 
                                                                     return null;
                                                                 });
 
         } catch (ClassNotFoundException e) {
             errorMessage = "Class not found";
+            progress.error(String.format("Module %s : Class not found",this.getName()));
         } catch (ModuleException e) {
             errorMessage = "Module exception: ".concat(e.toString());
+            progress.error(String.format("Module %s : %s",this.getName(),errorMessage));
         } catch (SshException e) {
             errorMessage = "Ssh client exception: ".concat(e.toString());
+            progress.error(String.format("Module %s : %s",this.getName(),errorMessage));
         }
         finally {
             if (! errorMessage.isEmpty() ) {
@@ -152,7 +158,7 @@ public class ModuleController extends Observable implements Executable {
                 //TODO change it. it is horrible!!
                 logger.error(errorMessage);
                 StandardMethodResult methodResult = new StandardMethodResult(getName(),"unknown",parent.getID(),StandardMethodResult.ERROR,errorMessage);
-                setMethodResult(methodResult);
+                setMethodResult(methodResult,progress);
             }
         }
     }
@@ -169,7 +175,7 @@ public class ModuleController extends Observable implements Executable {
      * Associate a result to a methods
      * @param result
      */
-    public void setMethodResult(MethodResult result) {
+    public void setMethodResult(MethodResult result,JobExecutionProgress progress) {
 
         if (! result.getMethodName().equals("unknown")) {
             for (Map.Entry entry : methods.entrySet()) {
@@ -187,9 +193,16 @@ public class ModuleController extends Observable implements Executable {
         }
 
         successful = checkResults();
+        if (successful) {
+            progress.info(String.format("Module %s, Method %s successful",this.getName(),result.getMethodName()));
+        }
+        else {
+            progress.info(String.format("Module %s, Method %s failed",this.getName(),result.getMethodName()));
+        }
 
         if (isFinished()) {
             changeState(ModuleController.FINISHED);
+            progress.info(String.format("Module %s finished",this.getName(),result.getMethodName()));
         }
 
     }
