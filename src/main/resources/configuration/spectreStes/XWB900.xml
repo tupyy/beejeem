@@ -105,6 +105,12 @@
             <category>Job</category>
             <description>Remote folder</description>
         </parameter>
+        <parameter name="localFolder" type="string" source="external">
+            <label>Local folder</label>
+            <value>C:\Users\tctupangiu\Documents\100_H\Projects</value>
+            <category>Job</category>
+            <description>Local folder where all the result files are uploaded</description>
+        </parameter>
         <parameter name="ksnul" type="list" valuetype="string" source="external">
             <label>Ksnull</label>
             <value>1</value>
@@ -203,7 +209,7 @@ MS.CreateObject('Fatigue_Law_Parameters','AirbusEO_DFatigueLawGeoIndependent',[
 MS.CreateObject('Analysis_Parameters1','AirbusEO_DFatigueAnalysisParametersGeoIndependent',[
 ['/ResultsLevel','Enum_ToggleResultsLevel:2'],# Default: 2
 ['/NumberCyclesCalculation','CaesamEnum_YesNo:No'],# Default: No
-['/CycleRules','Enum_ToggleCycleRules:1'],# Default: 1 (KSNUL=1)
+['/CycleRules','Enum_ToggleCycleRules:@ksnul@'],# Default: 1 (KSNUL=1)
 ['/GeneratePlotFiles','CaesamEnum_YesNo:Yes'],
 ['/PlotFilesSelection','Enum_PlotSelection:All'],
 ])
