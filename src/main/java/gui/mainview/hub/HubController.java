@@ -50,28 +50,9 @@ public class HubController implements Initializable, CoreListener {
         setupTable();
         getCoreEngine().addCoreEventListener(this);
 
-        hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
-            if (newSelection != null) {
-                HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
-                mainController.getSidePanelController().onJobSelected(selectedData.getId(),model.getJobLogger(UUID.fromString(selectedData.getId())));
-            }
-        });
-
-        runJobButton.setOnAction((event) -> {
-            ObservableList<HubTableModel.JobData> selection = hubTable.getSelectionModel().getSelectedItems();
-
-            if (selection.size() > -1) {
-                for (HubTableModel.JobData jobData: selection) {
-                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
-                }
-            }
-        });
-
-        URL s = HubController.class.getClassLoader().getResource("images/start-icon.png");
-        ImageView imageView = new ImageView(new Image(s.toString()));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        runJobButton.setGraphic(imageView);
+        setupActions();
+        decorateButton(runJobButton,"images/start-icon.png");
+        decorateButton(runAllButton,"images/start-icon.png");
     }
 
     @Override
@@ -129,7 +110,38 @@ public class HubController implements Initializable, CoreListener {
         hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
+    /**
+     * Set up actions
+     */
+    private void setupActions() {
+        hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
+            if (newSelection != null) {
+                HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
+                mainController.getSidePanelController().onJobSelected(selectedData.getId(),model.getJobLogger(UUID.fromString(selectedData.getId())));
+            }
+        });
 
+        runJobButton.setOnAction((event) -> {
+            ObservableList<HubTableModel.JobData> selection = hubTable.getSelectionModel().getSelectedItems();
+
+            if (selection.size() > -1) {
+                for (HubTableModel.JobData jobData: selection) {
+                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
+                }
+            }
+        });
+    }
+
+    /**
+     * Add icons to buttons
+     */
+    private void decorateButton(Button button,String imagePath) {
+        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        button.setGraphic(imageView);
+    }
 
 
 }
