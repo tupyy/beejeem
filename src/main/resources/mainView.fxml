@@ -35,14 +35,8 @@
             </menus>
         </MenuBar>
           <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <fx:define>
-                  <Image fx:id="newJobImage" url="images/newJob.png" />
-              </fx:define>
               <items>
                   <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New job">
-                      <graphic>
-                          <ImageView image="$newJobImage" />
-                      </graphic>
                   </Button>
               </items>
           </ToolBar>

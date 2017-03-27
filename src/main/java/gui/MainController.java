@@ -13,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -65,6 +67,12 @@ public class MainController implements Initializable, CoreListener {
         createActions();
         setupMenuAction();
         addJobButton.setOnAction(newJobEventHandler);
+
+        URL s = MainController.class.getClassLoader().getResource("images/newJob.png");
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        addJobButton.setGraphic(imageView);
 
     }
 
