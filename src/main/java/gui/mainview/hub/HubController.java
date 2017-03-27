@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.util.List;
@@ -64,6 +66,12 @@ public class HubController implements Initializable, CoreListener {
                 }
             }
         });
+
+        URL s = HubController.class.getClassLoader().getResource("images/start-icon.png");
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        runJobButton.setGraphic(imageView);
     }
 
     @Override
@@ -71,6 +79,8 @@ public class HubController implements Initializable, CoreListener {
         if (e.getAction() == CoreEventType.JOB_CREATED) {
             UUID id = e.getId();
             model.getTableModel().addJob(getCoreEngine().getJob(id));
+            runJobButton.setDisable(false);
+            runAllButton.setDisable(false);
         }
         else if (e.getAction() == CoreEventType.JOB_UPDATED) {
             Job j = getCoreEngine().getJob(e.getId());
@@ -81,6 +91,7 @@ public class HubController implements Initializable, CoreListener {
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
+
 
     /********************************************************************
      *
