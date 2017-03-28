@@ -20,5 +20,6 @@
     <orderEntry type="library" exported="" name="Maven: stes.isami:controlfx:8.40.12" level="project" />
     <orderEntry type="library" exported="" name="Maven: stes.isami:junit4:4.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: stes.isami:maven-jar:3.0.2" level="project" />
+    <orderEntry type="module" module-name="jstespreloader" />
   </component>
 </module>
