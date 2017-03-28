@@ -5,6 +5,7 @@ import core.configuration.JStesConfiguration;
 import core.configuration.JStesPreferences;
 import core.parameters.Parameter;
 import core.ssh.SshListener;
+import javafx.scene.control.Alert;
 import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,13 +55,18 @@ public class JStesCore implements CoreListener,SshListener{
             else {
                 getCoreEngine().getSshFactory().connect(host, username, password);
             }
-
-
         }
         catch (IllegalArgumentException ex) {
             logger.error("Cannot connect to remote host: {}",ex.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR,"Connect to remote host. ".concat(ex.getMessage()));
+            alert.setContentText("Cannot connect to remote host");
+            alert.show();
+
         }   catch (SshException e) {
             logger.error("Cannot connect to remote host: {}",e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR,"Connect to remote host");
+            alert.setContentText("Cannot connect to remote host. ".concat(e.getMessage()));
+            alert.show();
         }
 
 

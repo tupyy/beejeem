@@ -1,7 +1,9 @@
 package core.configuration;
 
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.CodeParameter;
+import core.parameters.parametertypes.ListParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;
 import org.slf4j.Logger;
@@ -92,8 +94,12 @@ public class JStesConfiguration {
                 JobDefinition jobDefinition = new JobDefinition();
 
                 try {
-                    readJobDefinitionFile(element.getTextContent(), jobDefinition);
-                    preferences.addJobDefition(jobDefinition);
+                    if (readJobDefinitionFile(element.getTextContent(), jobDefinition)) {
+                        preferences.addJobDefition(jobDefinition);
+                    }
+                    else {
+                        logger.error("The parameter set from {} is invalid.",element.getTextContent());
+                    }
                 } catch (IllegalArgumentException ex) {
                     logger.error(ex.getMessage());
                 } catch (ParserConfigurationException e) {
@@ -114,7 +120,7 @@ public class JStesConfiguration {
      * @param filename
      * @param jobDefinition
      */
-    private void readJobDefinitionFile(String filename, JobDefinition jobDefinition) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
+    private boolean readJobDefinitionFile(String filename, JobDefinition jobDefinition) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
 
         File confFile = new File(JStesConfiguration.class.getClassLoader().getResource(filename).getFile());
 
@@ -142,10 +148,26 @@ public class JStesConfiguration {
         }
 
         ParameterSet newSet = createParameters(parameters);
+        try {
+            StringParameter name = newSet.getParameter("name");
+
+            if ( !checkValue(newSet.getParameter("isamiVersion"))) {
+                return false;
+            }
+
+            if ( !checkValue(newSet.getParameter("destinationFolder"))) {
+                return false;
+            }
+        }
+        catch (IllegalArgumentException ex) {
+            return false;
+        }
+
         newSet.addParameter(createCodeParameter(code));
         jobDefinition.getParameters().addParameters(newSet);
         jobDefinition.setModuleElements(createModuleParameter(modules));
 
+        return true;
 
     }
 
@@ -235,5 +257,15 @@ public class JStesConfiguration {
         }
 
         return moduleSet;
+    }
+
+
+    private boolean checkValue(Parameter p) {
+         if (p.getValue().toString().isEmpty()) {
+            return false;
+        }
+
+        return true;
+
     }
 }
