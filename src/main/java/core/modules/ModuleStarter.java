@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -32,7 +33,7 @@ public class ModuleStarter implements Runnable{
 
         try {
             ClassLoader classLoader = ModuleStarter.class.getClassLoader();
-            FileInputStream fis = new FileInputStream(classLoader.getResource("modules.xml").getFile());
+            InputStream fis = classLoader.getResourceAsStream("modules.xml");
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory
                     .newInstance();

@@ -37,7 +37,7 @@ public final class CoreLogging {
         try {
             ClassLoader classLoader = CoreLogging.class.getClassLoader();
 
-            FileInputStream fis = new FileInputStream(classLoader.getResource("logging.properties").getFile());
+            InputStream fis = classLoader.getResourceAsStream("logging.properties");
             LogManager logMan = LogManager.getLogManager();
             logMan.readConfiguration(fis);
             fis.close();
