@@ -1,0 +1,19 @@
+.text-area {
+    -fx-background-image: url("images/logo_splash.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 584 555;
+    -fx-background-position: center center;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
