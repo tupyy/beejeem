@@ -26,7 +26,7 @@ import java.util.List;
 public class JStesConfiguration {
 
     private final String JOBS_TAG = "jobs";
-    private final String JOB_DEF_TAG ="job_definition";
+    private final String JOB_DEF_TAG ="job";
     private final String PARAMETERS_TAG="parameters";
     private final String CODE_TAG = "code";
     private final String MODULE_TAG = "module";
@@ -64,6 +64,8 @@ public class JStesConfiguration {
             e.printStackTrace();
         } catch (SAXException e) {
             e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
        ParameterSet userConfiguration = new ParameterSet();
@@ -122,7 +124,7 @@ public class JStesConfiguration {
      */
     private boolean readJobDefinitionFile(String filename, JobDefinition jobDefinition) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
 
-        File confFile = new File(JStesConfiguration.class.getClassLoader().getResource(filename).getFile());
+        File confFile = new File(filename);
 
         XMLWorker xmlWorker = new XMLWorker();
         Document document = xmlWorker.readFile(confFile);
