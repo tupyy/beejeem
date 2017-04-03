@@ -6,6 +6,7 @@ import core.job.Job;
 import core.job.JobException;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.plugin.Plugin;
 import gui.propertySheet.PropertyController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -85,6 +86,32 @@ public class CreatorController implements Initializable {
                     SpectreJobCreator creator = new SpectreJobCreator();
                     createJob(creator,model.getFiles(),model.getPropertyModel().getParameterSet());
                 }
+                else {
+                    String pluginClass = (String) model.getPropertyModel().getParameterSet().getParameter("plugin").getValue();
+                    if ( ! pluginClass.isEmpty() ) {
+                        Plugin plugin = getCoreEngine().getPluginLoader().getPlugin(pluginClass);
+                        if (plugin != null) {
+                            Creator creator = plugin.getCreator();
+                            createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
+                        } else {
+                            //parameter type don't exists
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Create job");
+                            alert.setHeaderText("Plugin not found");
+                            alert.setContentText(String.format("The plugin %s is not found", pluginClass));
+                            alert.show();
+                            return;
+                        }
+                    }
+                    else {
+                        //parameter type don't exists
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Create job");
+                        alert.setHeaderText("Plugin not found");
+                        alert.setContentText(String.format("The plugin class name is empty", pluginClass));
+                        alert.show();
+                    }
+                }
             }
             catch (IllegalArgumentException e) {
                 //parameter type don't exists
@@ -100,7 +127,7 @@ public class CreatorController implements Initializable {
 
         selectFileButton.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(new File("C:\\Users\\tctupangiu\\Desktop\\Nouveau dossier\\test\\STF"));
+            fileChooser.setInitialDirectory(new File("D:\\IW"));
             fileChooser.setTitle("Choose input files");
 
             Node  source = (Node)  event.getSource();
@@ -150,4 +177,6 @@ public class CreatorController implements Initializable {
             e.printStackTrace();
         }
     }
+
+
 }

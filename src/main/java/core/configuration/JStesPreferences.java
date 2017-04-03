@@ -21,6 +21,7 @@ public final class JStesPreferences  {
     private List<JobDefinition> jobs = new ArrayList<>();
 
     private ParameterSet userConfiguration = new ParameterSet();
+    private ParameterSet pluginConfiguration = new ParameterSet();
 
     public JStesPreferences() {
 
@@ -107,5 +108,13 @@ public final class JStesPreferences  {
 
     public List<JobDefinition> getJobs() {
         return jobs;
+    }
+
+    public ParameterSet getPluginConfiguration() {
+        return pluginConfiguration;
+    }
+
+    public void setPluginConfiguration(ParameterSet pluginConfiguration) {
+        this.pluginConfiguration = pluginConfiguration;
     }
 }

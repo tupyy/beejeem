@@ -5,6 +5,7 @@ import core.job.JobState;
 import core.job.ModuleController;
 import core.modules.Module;
 import core.modules.ModuleStarter;
+import core.modules.preprocessing.PreprocessingModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.*;
@@ -49,15 +50,16 @@ public class AbstractCreator implements Creator {
             if (elem.getNodeName().equals("module")) {
                 try {
                     ModuleController moduleController;
+                    Module module = new PreprocessingModule();
+
                     if (xmlWorker.getElementByName(elem,"trigger") != null) {
-                        moduleController = new ModuleController(xmlWorker.getElementByName(elem,"name").getTextContent(),getStatus(xmlWorker.getElementByName(elem,"trigger").getTextContent()));
+                        moduleController = new ModuleController(module,getStatus(xmlWorker.getElementByName(elem,"trigger").getTextContent()));
                     }
                     else {
-                        moduleController = new ModuleController(xmlWorker.getElementByName(elem,"name").getTextContent(), JobState.NONE);
+                        moduleController = new ModuleController(module, JobState.NONE);
                     }
 
                     Class<? extends Module> className = (Class<? extends Module>) Class.forName(xmlWorker.getElementByName(elem,"name").getTextContent());
-                    Module module = getCoreEngine().getModuleStarter().getModuleInstance(className);
                     for(String methodName: module.getMethodsName()) {
                         moduleController.addMethod(methodName);
                     }

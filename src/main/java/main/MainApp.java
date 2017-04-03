@@ -1,29 +1,17 @@
 package main;
 
-import com.sshtools.ssh.SshException;
-import com.sun.javafx.application.LauncherImpl;
 import core.JStesCore;
 import core.configuration.JStesConfiguration;
 import core.configuration.JStesPreferences;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.application.Preloader;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import preloader.JStesPreloader;
-import preloader.TextNotification;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
@@ -52,7 +40,7 @@ public class MainApp extends Application {
         Task task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-//                notifyPreloader(new TextNotification(String.format("Cleaning the temporary folder")));
+
                 TmpFileCleanup cleanup = new TmpFileCleanup();
                 Thread tmpCleanupThread = new Thread(cleanup);
                 tmpCleanupThread.setPriority(Thread.MIN_PRIORITY);
@@ -63,8 +51,6 @@ public class MainApp extends Application {
                  * Read config
                  */
                 try {
-//                    notifyPreloader(new TextNotification(String.format("Read configuration file...")));
-//                    notifyPreloader(new TextNotification(String.format("Configuration file: %s", System.getProperty("user.home") + File.separator + "configuration.xml")));
 
                     File fh = new File(System.getProperty("user.home") + File.separator + "configuration.xml");
 
@@ -75,7 +61,7 @@ public class MainApp extends Application {
                     /**
                      * Connect to ssh
                      */
-//                    notifyPreloader(new TextNotification(String.format("Connecting to remote host...")));
+
                     JStesPreferences preferences = JStesConfiguration.getPreferences();
                     String username = (String) preferences.getUserConfiguration().getParameter("username").getValue();
                     String host = (String) preferences.getUserConfiguration().getParameter("host").getValue();
@@ -100,17 +86,14 @@ public class MainApp extends Application {
                     }
                 }
 
-                catch (IllegalArgumentException ex) {
-//                    notifyPreloader(new TextNotification(String.format("Connect to remote host. ".concat(ex.getMessage()))));
-                }
-                catch (SSLException e) {
-//                    notifyPreloader(new TextNotification(String.format("Connect to remote host. ".concat(e.getMessage()))));
+                catch (IllegalArgumentException | SSLException ex) {
+                    ex.printStackTrace();
                 }
                 catch (IOException e) {
-//                    notifyPreloader(new TextNotification(String.format("ERROR: %s",e.getMessage())));
+                    e.printStackTrace();
                 }
                 catch (NullPointerException e) {
-//                    notifyPreloader(new TextNotification(String.format("ERROR: %s",e.getMessage())));
+                    e.printStackTrace();
                 }
 
                 return null;

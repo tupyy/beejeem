@@ -68,23 +68,11 @@ public class JStesConfiguration {
             ex.printStackTrace();
         }
 
-       ParameterSet userConfiguration = new ParameterSet();
-
-        //get user configuration
-        Element user = xmlWorker.getElementByName(confDocument.getDocumentElement(),"user");
-        if (user != null) {
-            for (int i = 0; i < user.getChildNodes().getLength(); i++) {
-                Node node = user.getChildNodes().item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element elem = (Element) node;
-                    StringParameter stringParameter = new StringParameter(elem.getTagName(), elem.getTagName(), "User configuration");
-                    stringParameter.setValue(elem.getTextContent());
-                    userConfiguration.addParameter(stringParameter);
-                }
-            }
-        }
+        ParameterSet userConfiguration = readConfigurationBlock(confDocument,"user");
         preferences.setUserConfiguration(userConfiguration);
 
+        ParameterSet pluginConfiguration = readConfigurationBlock(confDocument,"plugins");
+        preferences.setUserConfiguration(pluginConfiguration);
 
 
         //get the jobs element
@@ -152,10 +140,6 @@ public class JStesConfiguration {
         ParameterSet newSet = createParameters(parameters);
         try {
             StringParameter name = newSet.getParameter("name");
-
-            if ( !checkValue(newSet.getParameter("isamiVersion"))) {
-                return false;
-            }
 
             if ( !checkValue(newSet.getParameter("destinationFolder"))) {
                 return false;
@@ -269,5 +253,26 @@ public class JStesConfiguration {
 
         return true;
 
+    }
+
+    private ParameterSet readConfigurationBlock(Document confDocument,String blockname) {
+        ParameterSet blockParameterSet = new ParameterSet();
+        XMLWorker xmlWorker = new XMLWorker();
+
+        //get user configuration
+        Element user = xmlWorker.getElementByName(confDocument.getDocumentElement(),blockname);
+        if (user != null) {
+            for (int i = 0; i < user.getChildNodes().getLength(); i++) {
+                Node node = user.getChildNodes().item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elem = (Element) node;
+                    StringParameter stringParameter = new StringParameter(elem.getTagName(), elem.getTagName(), blockname);
+                    stringParameter.setValue(elem.getTextContent());
+                    blockParameterSet.addParameter(stringParameter);
+                }
+            }
+        }
+
+        return blockParameterSet;
     }
 }
