@@ -28,4 +28,6 @@ public interface Creator {
      * @return
      */
     public List<Job> createJobs(List<File> inputFiles, ParameterSet parameterSet, List<Element> moduleElements,CreatorLog creatorLog) throws IOException;
+
+    public String getJobType();
 }
