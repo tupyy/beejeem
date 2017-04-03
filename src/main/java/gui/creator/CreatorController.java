@@ -1,15 +1,13 @@
 package gui.creator;
 
 import core.creator.Creator;
+import core.creator.CreatorFactory;
 import core.creator.spectre.SpectreJobCreator;
 import core.job.Job;
 import core.job.JobException;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
-import core.plugin.Plugin;
 import gui.propertySheet.PropertyController;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -87,30 +85,18 @@ public class CreatorController implements Initializable {
                     createJob(creator,model.getFiles(),model.getPropertyModel().getParameterSet());
                 }
                 else {
-                    String pluginClass = (String) model.getPropertyModel().getParameterSet().getParameter("plugin").getValue();
-                    if ( ! pluginClass.isEmpty() ) {
-                        Plugin plugin = getCoreEngine().getPluginLoader().getPlugin(pluginClass);
-                        if (plugin != null) {
-                            Creator creator = plugin.getCreator();
-                            createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
-                        } else {
-                            //parameter type don't exists
-                            Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Create job");
-                            alert.setHeaderText("Plugin not found");
-                            alert.setContentText(String.format("The plugin %s is not found", pluginClass));
-                            alert.show();
-                            return;
-                        }
-                    }
-                    else {
+                    Creator creator = CreatorFactory.getCreator(jobType.toLowerCase());
+                    if ( creator!= null ) {
+                         createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
+                    } else {
                         //parameter type don't exists
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Create job");
                         alert.setHeaderText("Plugin not found");
-                        alert.setContentText(String.format("The plugin class name is empty", pluginClass));
+                        alert.setContentText(String.format("The creator for the job type %s is not found", jobType));
                         alert.show();
-                    }
+                        return;
+                        }
                 }
             }
             catch (IllegalArgumentException e) {
@@ -127,7 +113,7 @@ public class CreatorController implements Initializable {
 
         selectFileButton.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(new File("D:\\IW"));
+            fileChooser.setInitialDirectory(new File("C:\\Users\\tctupangiu\\Documents\\100_H\\Projects"));
             fileChooser.setTitle("Choose input files");
 
             Node  source = (Node)  event.getSource();

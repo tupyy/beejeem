@@ -38,6 +38,11 @@ public class AbstractCreator implements Creator {
         return null;
     }
 
+    @Override
+    public String getJobType() {
+        return null;
+    }
+
     /**
      * Create the module parameters
      * @param modulesElement

@@ -72,7 +72,7 @@ public class JStesConfiguration {
         preferences.setUserConfiguration(userConfiguration);
 
         ParameterSet pluginConfiguration = readConfigurationBlock(confDocument,"plugins");
-        preferences.setUserConfiguration(pluginConfiguration);
+        preferences.setPluginConfiguration(pluginConfiguration);
 
 
         //get the jobs element

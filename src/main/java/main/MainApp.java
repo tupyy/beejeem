@@ -58,11 +58,26 @@ public class MainApp extends Application {
                     jStesConfiguration.loadConfiguration(fh);
 //                    notifyPreloader(new Preloader.ProgressNotification(0.5));
 
+                    JStesPreferences preferences = JStesConfiguration.getPreferences();
+                    /**
+                     * Load plugins
+                     */
+                    try {
+                        String pluginPath = (String) preferences.getPluginConfiguration().getParameter("plugins_folder").getValue();
+                        getCoreEngine().loadPlugins(pluginPath);
+                    }
+                    catch (IllegalArgumentException ex) {
+
+                    }
+                    catch (IOException ex) {
+
+                    }
+
                     /**
                      * Connect to ssh
                      */
 
-                    JStesPreferences preferences = JStesConfiguration.getPreferences();
+
                     String username = (String) preferences.getUserConfiguration().getParameter("username").getValue();
                     String host = (String) preferences.getUserConfiguration().getParameter("host").getValue();
                     String password = (String) preferences.getUserConfiguration().getParameter("password").getValue();
