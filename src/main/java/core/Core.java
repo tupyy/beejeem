@@ -58,12 +58,6 @@ public interface Core {
     public void executeJob(UUID id, JobExecutionProgress progress);
 
     /**
-     * Run all jobs
-     * TODO temporary
-     */
-    public void runAll();
-
-    /**
      * Return the SshFactory
      * @return
      */
