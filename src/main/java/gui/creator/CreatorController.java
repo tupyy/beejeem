@@ -1,5 +1,6 @@
 package gui.creator;
 
+import core.configuration.JStesConfiguration;
 import core.creator.Creator;
 import core.creator.CreatorFactory;
 import core.creator.spectre.SpectreJobCreator;
@@ -113,7 +114,12 @@ public class CreatorController implements Initializable {
 
         selectFileButton.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(new File("C:\\Users\\tctupangiu\\Documents\\100_H\\Projects"));
+
+
+            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
+            if ( !initialFolder.isEmpty() ) {
+                fileChooser.setInitialDirectory(new File(initialFolder));
+            }
             fileChooser.setTitle("Choose input files");
 
             Node  source = (Node)  event.getSource();
