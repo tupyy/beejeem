@@ -132,7 +132,9 @@ public class HubController implements Initializable, CoreListener {
         });
 
         runAllButton.setOnAction((event) -> {
-           getCoreEngine().runAll();
+            for (HubTableModel.JobData jobData: model.getTableModel().getData()){
+                getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
+            }
         });
     }
 
