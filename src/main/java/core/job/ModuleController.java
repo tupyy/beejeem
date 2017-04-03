@@ -137,6 +137,13 @@ public class ModuleController extends Observable implements Executable {
 
                                                                     return null;
                                                                 });
+            completableFuture.exceptionally( (th) -> {
+                    logger.error(th.getMessage());
+                    StandardMethodResult methodResult = new StandardMethodResult(getName(),"unknown",parent.getID(),StandardMethodResult.ERROR,th.getMessage());
+                    setMethodResult(methodResult,progress);
+                    return null;
+                    });
+
 
         } catch (ModuleException e) {
             errorMessage = "Module exception: ".concat(e.toString());
@@ -185,24 +192,15 @@ public class ModuleController extends Observable implements Executable {
             }
         }
 
-       if ( isSuccessful()) {
+       if ( isSuccessful(result)) {
             progress.info(String.format("Module %s, Method %s successful",this.getName(),result.getMethodName()));
+            changeState(ModuleController.FINISHED);
         }
         else {
             progress.info(String.format("Module %s, Method %s failed",this.getName(),result.getMethodName()));
+            changeState(ModuleController.FAILED);
         }
-
-        if (isFinished()) {
-            if (isSuccessful()) {
-                changeState(ModuleController.FINISHED);
-            }
-            else {
-                changeState(ModuleController.FAILED);
-            }
-
-            progress.info(String.format("Module %s finished",this.getName(),result.getMethodName()));
-        }
-
+        progress.info(String.format("Module %s finished",this.getName(),result.getMethodName()));
     }
 
     /**
@@ -223,17 +221,12 @@ public class ModuleController extends Observable implements Executable {
      * Return true if all the methods has been executed successfully
      * @return
      */
-    public Boolean isSuccessful() {
-        for(Map.Entry entry: methods.entrySet()) {
-            if (entry.getValue() != null) {
-                MethodResult methodResult = (MethodResult) entry.getValue();
-                if (methodResult.getExitCode() != 0) {
-                    return false;
-                }
-            }
+    public Boolean isSuccessful(MethodResult result) {
+        if (result.getExitCode() == 0) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
