@@ -6,6 +6,8 @@ import core.job.JobExecutionProgress;
 import core.job.ModuleController;
 import core.modules.ModuleStarter;
 import core.parameters.ParameterSet;
+import core.plugin.Plugin;
+import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 
 import java.util.ArrayList;
@@ -96,6 +98,12 @@ public interface Core {
      * @return
      */
     public ModuleStarter getModuleStarter();
+
+    /**
+     * Return the plugin loader
+     * @return
+     */
+    public PluginLoader getPluginLoader();
 
     /**
      * Close the executors

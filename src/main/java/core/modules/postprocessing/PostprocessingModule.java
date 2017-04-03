@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class PostprocessingModule implements SshModule{
 
-    private org.slf4j.Logger logger = LoggerFactory.getLogger(ProcessingModule.class);
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(PostprocessingModule.class);
     private static final String MODULE_NAME = "PostprocessingModule";
     private final List<String> methodsName = new ArrayList<String>(
             Arrays.asList("PostprocessingMethod"));

@@ -3,6 +3,8 @@ package core;
 import core.job.*;
 import core.modules.ModuleStarter;
 import core.parameters.ParameterSet;
+import core.plugin.Plugin;
+import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
@@ -20,6 +22,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     private final QStatManager qstatManager;
     private final ModuleStarter moduleStarter;
+    private final PluginLoader pluginLoader;
 
     private transient Vector listeners;
     private SshRemoteFactory sshRemoteFactory;
@@ -53,6 +56,11 @@ public final class CoreEngine extends Observable implements Core, Observer {
         moduleStarter = new ModuleStarter();
         Thread readModuleThread = new Thread(moduleStarter);
         readModuleThread.start();
+
+        pluginLoader = new PluginLoader("D:\\IW\\JStes\\plugin");
+        Thread pluginThread = new Thread(pluginLoader);
+        pluginThread.start();
+
 
     }
 
@@ -196,6 +204,11 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public ModuleStarter getModuleStarter() {
         return moduleStarter;
+    }
+
+    @Override
+    public PluginLoader getPluginLoader() {
+        return pluginLoader;
     }
 
     @Override
