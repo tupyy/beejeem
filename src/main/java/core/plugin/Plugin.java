@@ -12,6 +12,6 @@ public interface Plugin {
 
     public  <T extends Module> T getModule(String moduleName);
 
-    public <CreatorType extends Creator> CreatorType getCreator();
+    public <T extends Creator> T getCreator();
 
 }

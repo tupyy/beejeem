@@ -30,9 +30,6 @@ public class ModuleStarter implements Runnable{
     public void run() {
 
         logger.info("Loading modules");
-        ModuleService service = ModuleService.getInstance();
-        service.loadPlugin("D:\\IW\\JStes\\plugin");
-        service.getModuleInstance("A400M");
 
         try {
             ClassLoader classLoader = ModuleStarter.class.getClassLoader();

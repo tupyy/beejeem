@@ -1,6 +1,7 @@
 package core.plugin;
 
 import core.CoreEngine;
+import core.creator.Creator;
 import core.modules.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,31 +12,34 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Created by cosmin on 01/04/2017.
  */
-public class PluginLoader implements Runnable{
+public class PluginLoader implements Supplier<Boolean>{
 
     private final String folderPath;
     private ServiceLoader<Plugin> loader;
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
 
-    private static Map<String, Plugin> initializedPlugins = Collections
-            .synchronizedMap(new Hashtable<>());
+    private List<Plugin> initializedPlugins = new ArrayList<>();
 
     public PluginLoader(String folderPath) {
         this.folderPath = folderPath;
     }
 
     @Override
-    public void run() {
+    public Boolean get() {
         try {
             loadPlugins(folderPath);
+            return Boolean.TRUE;
         }
         catch (Exception e) {
             logger.error(e.getMessage());
         }
+
+        return Boolean.FALSE;
     }
 
     private void loadPlugins(String folderPath) {
@@ -62,7 +66,7 @@ public class PluginLoader implements Runnable{
             Iterator<Plugin> plugins = loader.iterator();
             while (plugins.hasNext()) {
                 Plugin plugin = plugins.next();
-                initializedPlugins.put(plugin.getName(),plugin);
+                initializedPlugins.add(plugin);
                 logger.info("Plugin loaded: {}",plugin.getName());
 
             }
@@ -73,19 +77,8 @@ public class PluginLoader implements Runnable{
      * Returns the instance of a module of given class
      */
     @SuppressWarnings("unchecked")
-    public static Plugin getPlugin(String pluginClass) {
-        return initializedPlugins.get(pluginClass);
+    public  List<Plugin> getPlugins() {
+        return initializedPlugins;
     }
 
-    public static Module getModule(String moduleName) {
-        for(Map.Entry<String,Plugin> entry: initializedPlugins.entrySet()) {
-            Plugin plugin = entry.getValue();
-            Module module = plugin.getModule(moduleName);
-            if (module != null) {
-                return module;
-            }
-        }
-
-        return null;
-    }
 }
