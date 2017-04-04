@@ -115,31 +115,29 @@ public class SimpleJob extends AbstractJob {
      * @param newState new state
      */
     private void updateStatus(int newState) {
-        int state;
 
         if (getStatus() != newState) {
 
             logger.info("Job ID:{} Name:{} ---  Changed status from {} to {}",getName(),getID(),JobState.toString(getStatus()),JobState.toString(newState));
-            state = newState;
 
+            setStatus(newState);
             /**
              * if the staus is DONE (i.e finished running in batch)
              * than advance to PROCESSING
              * After DONE check if there any processing module installed
              */
-            if (newState == JobState.DONE) {
+            if (getStatus() == JobState.DONE) {
                 if(isJobFinished()) {
                     logger.info("Job ID:{} Name:{} -- No more module. FINISHED",getID(),getName());
-                    state = JobState.FINISHED;
+                    setStatus(JobState.FINISHED);
                 }
                 else {
                     logger.info("Job ID:{} Name:{} advanced to PROCESSING",getID(),getName());
-                    state = JobState.PROCESSING;
+                    setStatus(JobState.PROCESSING);
                 }
             }
 
             //notify observers (coreEngine)
-            setStatus(state);
             setChanged();
             notifyObservers(getStatus());
 
@@ -353,17 +351,9 @@ public class SimpleJob extends AbstractJob {
      * Return the module current result state
      * @return
      */
-    private boolean verifyModuleResult(String name) {
-        ModuleController moduleController = getModuleManager(name);
-        if (moduleController != null) {
-            return moduleController.isSuccessful();
-        }
-
-        return false;
-    }
 
     /**
-     * Check if a module can be executed
+     * Check if a module can be executedqdel
      * @return
      */
     private boolean canExecute()  {

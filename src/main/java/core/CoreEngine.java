@@ -1,15 +1,23 @@
 package core;
 
+import core.creator.Creator;
+import core.creator.CreatorFactory;
 import core.job.*;
 import core.modules.ModuleStarter;
 import core.parameters.ParameterSet;
+import core.plugin.Plugin;
+import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.FileHandler;
 
 /**
  * This class implements the Core interface. It represents the main class of the app.
@@ -20,6 +28,8 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     private final QStatManager qstatManager;
     private final ModuleStarter moduleStarter;
+
+    private CreatorFactory creatorFactory = new CreatorFactory();
 
     private transient Vector listeners;
     private SshRemoteFactory sshRemoteFactory;
@@ -54,6 +64,8 @@ public final class CoreEngine extends Observable implements Core, Observer {
         Thread readModuleThread = new Thread(moduleStarter);
         readModuleThread.start();
 
+
+
     }
 
     /**
@@ -69,17 +81,24 @@ public final class CoreEngine extends Observable implements Core, Observer {
     }
 
     //<editor-fold desc="CORE INTERFACE">
+
+
     @Override
-    public void createJob(ParameterSet parameterSet,List<ModuleController> modules) throws JobException {
+    public void loadPlugins(String pluginPath) throws IOException {
+        File file = new File(pluginPath);
+        if ( !file.isDirectory() ) {
+            throw new IOException("Plugin path not found");
+        }
 
-        String jobName = parameterSet.getParameter("name").getValue().toString();
-        SimpleJob job = new SimpleJob(parameterSet,modules);
-        jobList.add(job);
-        job.addObserver(this);
-
-        fireCoreEvent(CoreEventType.JOB_CREATED, job.getID());
-        logger.info("Job created: {}",job.getName());
-
+        PluginLoader pluginLoader = new PluginLoader(pluginPath);
+        CompletableFuture completableFuture = CompletableFuture.supplyAsync(pluginLoader).thenApply(result -> {
+            creatorFactory.loadCreators(pluginLoader);
+            return null;
+        });
+        completableFuture.exceptionally( th -> {
+            logger.error("Load plugins: {}" ,th.toString());
+            return null;
+        });
     }
 
     @Override
@@ -116,26 +135,17 @@ public final class CoreEngine extends Observable implements Core, Observer {
     public void executeJob(UUID id,JobExecutionProgress progress) {
 
 //        //check if the ssh client is connected before executing jobs
-//        if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
-//            qstatManager.start();
+        if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
+            qstatManager.start();
             Job job = getJob(id);
             try {
                 job.execute(progress);
             } catch (JobException e) {
                 e.printStackTrace();
             }
-//        }
-//        else {
-//            fireCoreEvent(CoreEventType.SSH_CONNECTION_ERROR,UUID.randomUUID());
-//        }
-    }
-
-    @Override
-    public void runAll() {
-        for (Job job : jobList) {
-            if (job.getStatus() == JobState.IDLE) {
-                executeJob(job.getID(), null);
-            }
+        }
+        else {
+            fireCoreEvent(CoreEventType.SSH_CONNECTION_ERROR,UUID.randomUUID());
         }
     }
 
@@ -205,10 +215,6 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
 
     //</editor-fold>
-
-    public SimpleJob getStandardJob(UUID id) {
-        return (SimpleJob) getJob(id);
-    }
 
     /**
      * Return true if the jobID exists

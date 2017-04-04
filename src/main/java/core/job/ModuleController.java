@@ -2,6 +2,7 @@ package core.job;
 
 import com.sshtools.ssh.SshException;
 import core.modules.*;
+import core.plugin.Plugin;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
 import core.tasks.ModuleTask;
@@ -45,6 +46,7 @@ public class ModuleController extends Observable implements Executable {
      * Module failed
      */
     public static final int FAILED = 4;
+    private final Module moduleInstance;
 
 
     //True if the module already run
@@ -63,11 +65,12 @@ public class ModuleController extends Observable implements Executable {
     private HashMap<String,MethodResult> methods = new HashMap<>();
 
     /**
-     *
-     * @param name module name
+     * @param parent
+     * @param moduleInstance
+     * @param triggerJobState
      */
-    public ModuleController(AbstractJob parent, String name, int triggerJobState) {
-        this.name = name;
+    public ModuleController(AbstractJob parent, Module moduleInstance, int triggerJobState) {
+        this.moduleInstance = moduleInstance;
         this.parent = parent;
 
         if (triggerJobState == JobState.NONE) {
@@ -80,11 +83,11 @@ public class ModuleController extends Observable implements Executable {
     }
 
     /**
-     *
-     * @param name module name
+     * @param moduleInstance
+     * @param triggerJobState
      */
-    public ModuleController(String name, int triggerJobState) {
-        this.name = name;
+    public ModuleController(Module moduleInstance, int triggerJobState) {
+        this.moduleInstance = moduleInstance;
 
         if (triggerJobState == JobState.NONE) {
             changeState(ModuleController.SCHEDULED);
@@ -110,21 +113,17 @@ public class ModuleController extends Observable implements Executable {
         String errorMessage = "";
 
         try {
-             Class<? extends Module> classModule = (Class<? extends Module>)Class.forName(name);
              ModuleTask moduleTask = null;
-             Module module = getModule(classModule);
-             progress.info("Module loaded: ".concat(classModule.getName()));
              ThreadPoolExecutor executor = null;
 
-             if (module instanceof LocalModule) {
-                 LocalModule localModule = (LocalModule) module;
+             if (moduleInstance instanceof LocalModule) {
+                 LocalModule localModule = (LocalModule) moduleInstance;
                  moduleTask = localModule.runModule(parent.getID(),parent.getParameterSet());
                  progress.info("Executing job in local executor");
                  executor = ModuleExecutor.getLocalPoolExecutor();
-
              }
-             else if (module instanceof SshModule) {
-                 SshModule sshModule = (SshModule) module;
+             else if (moduleInstance instanceof SshModule) {
+                 SshModule sshModule = (SshModule) moduleInstance;
                  moduleTask = sshModule.runModule(parent.getID(), SshRemoteFactory.getSshClient(),parent.getParameterSet());
                  progress.info("Executing job in ssh executor");
                  executor = ModuleExecutor.getSshPoolExecutor();
@@ -138,10 +137,14 @@ public class ModuleController extends Observable implements Executable {
 
                                                                     return null;
                                                                 });
+            completableFuture.exceptionally( (th) -> {
+                    logger.error(th.getMessage());
+                    StandardMethodResult methodResult = new StandardMethodResult(getName(),"unknown",parent.getID(),StandardMethodResult.ERROR,th.getMessage());
+                    setMethodResult(methodResult,progress);
+                    return null;
+                    });
 
-        } catch (ClassNotFoundException e) {
-            errorMessage = "Class not found";
-            progress.error(String.format("Module %s : Class not found",this.getName()));
+
         } catch (ModuleException e) {
             errorMessage = "Module exception: ".concat(e.toString());
             progress.error(String.format("Module %s : %s",this.getName(),errorMessage));
@@ -189,24 +192,15 @@ public class ModuleController extends Observable implements Executable {
             }
         }
 
-       if ( isSuccessful()) {
+       if ( isSuccessful(result)) {
             progress.info(String.format("Module %s, Method %s successful",this.getName(),result.getMethodName()));
+            changeState(ModuleController.FINISHED);
         }
         else {
             progress.info(String.format("Module %s, Method %s failed",this.getName(),result.getMethodName()));
+            changeState(ModuleController.FAILED);
         }
-
-        if (isFinished()) {
-            if (isSuccessful()) {
-                changeState(ModuleController.FINISHED);
-            }
-            else {
-                changeState(ModuleController.FAILED);
-            }
-
-            progress.info(String.format("Module %s finished",this.getName(),result.getMethodName()));
-        }
-
+        progress.info(String.format("Module %s finished",this.getName(),result.getMethodName()));
     }
 
     /**
@@ -221,23 +215,18 @@ public class ModuleController extends Observable implements Executable {
      * @return
      */
     public String getName() {
-        return name;
+        return moduleInstance.getName();
     }
     /**
      * Return true if all the methods has been executed successfully
      * @return
      */
-    public Boolean isSuccessful() {
-        for(Map.Entry entry: methods.entrySet()) {
-            if (entry.getValue() != null) {
-                MethodResult methodResult = (MethodResult) entry.getValue();
-                if (methodResult.getExitCode() != 0) {
-                    return false;
-                }
-            }
+    public Boolean isSuccessful(MethodResult result) {
+        if (result.getExitCode() == 0) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**

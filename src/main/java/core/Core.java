@@ -1,13 +1,17 @@
 package core;
 
+import core.creator.CreatorFactory;
 import core.job.Job;
 import core.job.JobException;
 import core.job.JobExecutionProgress;
 import core.job.ModuleController;
 import core.modules.ModuleStarter;
 import core.parameters.ParameterSet;
+import core.plugin.Plugin;
+import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,13 +23,11 @@ import java.util.UUID;
 public interface Core {
 
     /**
-     * Create a new job
-     * @param parameterSet
-     * @param modules
-     * @throws JobException
-     * @throws JobException
+     * Load plugin from folder {@code pluginPath}
+     * @param pluginPath
+     * @throws IOException of pluginPath not found
      */
-    public void createJob(ParameterSet parameterSet,List<ModuleController> modules) throws JobException, JobException;
+    public void loadPlugins(String pluginPath) throws IOException;
 
     /**
      * Add a new job
@@ -54,12 +56,6 @@ public interface Core {
      * @param id
      */
     public void executeJob(UUID id, JobExecutionProgress progress);
-
-    /**
-     * Run all jobs
-     * TODO temporary
-     */
-    public void runAll();
 
     /**
      * Return the SshFactory
