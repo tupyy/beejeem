@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * CreatorController class for the CommandView

@@ -1,8 +1,7 @@
 package main;
 
-import core.JStesCore;
-import core.configuration.JStesConfiguration;
-import core.configuration.JStesPreferences;
+import configuration.JStesConfiguration;
+import configuration.JStesPreferences;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -17,7 +16,7 @@ import javax.net.ssl.SSLException;
 import java.io.File;
 import java.io.IOException;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 public class MainApp extends Application {
 

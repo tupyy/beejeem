@@ -1,6 +1,6 @@
 package gui.creator;
 
-import core.configuration.JStesConfiguration;
+import configuration.JStesConfiguration;
 import core.creator.Creator;
 import core.creator.CreatorFactory;
 import core.creator.spectre.SpectreJobCreator;
@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * Created by tctupangiu on 15/03/2017.

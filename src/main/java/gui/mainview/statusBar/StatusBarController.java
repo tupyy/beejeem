@@ -1,7 +1,6 @@
 package gui.mainview.statusBar;
 
 import core.ssh.SshListener;
-import gui.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -9,11 +8,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import main.MainApp;
 
-import javax.xml.ws.WebFault;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * Created by tctupangiu on 27/03/2017.

@@ -1,9 +1,8 @@
-package core.configuration;
+package configuration;
 
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.CodeParameter;
-import core.parameters.parametertypes.ListParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;
 import org.slf4j.Logger;

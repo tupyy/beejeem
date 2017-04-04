@@ -4,15 +4,12 @@ import core.job.Job;
 import core.job.JobState;
 import core.job.ModuleController;
 import core.modules.Module;
-import core.modules.ModuleStarter;
 import core.modules.preprocessing.PreprocessingModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.*;
 import core.util.XMLWorker;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static core.JStesCore.getCoreEngine;
 
 /**
  * Created by tctupangiu on 21/03/2017.
