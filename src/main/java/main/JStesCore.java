@@ -1,18 +1,9 @@
-package core;
+package main;
 
-import com.sshtools.ssh.SshException;
-import core.configuration.JStesConfiguration;
-import core.configuration.JStesPreferences;
-import core.parameters.Parameter;
+import core.*;
 import core.ssh.SshListener;
-import javafx.scene.control.Alert;
-import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.FileHandler;
 
 /**
  * Created by tctupangiu on 09/03/2017.

@@ -4,7 +4,6 @@ import core.CoreEvent;
 import core.CoreEventType;
 import core.CoreListener;
 import core.job.Job;
-import core.job.JobListener;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.collections.ObservableList;
@@ -18,12 +17,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * CreatorController for the hubView
@@ -132,7 +129,9 @@ public class HubController implements Initializable, CoreListener {
         });
 
         runAllButton.setOnAction((event) -> {
-           getCoreEngine().runAll();
+            for (HubTableModel.JobData jobData: model.getTableModel().getData()){
+                getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
+            }
         });
     }
 

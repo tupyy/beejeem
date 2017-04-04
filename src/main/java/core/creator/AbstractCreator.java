@@ -4,14 +4,12 @@ import core.job.Job;
 import core.job.JobState;
 import core.job.ModuleController;
 import core.modules.Module;
-import core.modules.ModuleStarter;
+import core.modules.preprocessing.PreprocessingModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.*;
 import core.util.XMLWorker;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static core.JStesCore.getCoreEngine;
 
 /**
  * Created by tctupangiu on 21/03/2017.
@@ -37,6 +33,11 @@ public class AbstractCreator implements Creator {
         return null;
     }
 
+    @Override
+    public String getJobType() {
+        return null;
+    }
+
     /**
      * Create the module parameters
      * @param modulesElement
@@ -49,15 +50,16 @@ public class AbstractCreator implements Creator {
             if (elem.getNodeName().equals("module")) {
                 try {
                     ModuleController moduleController;
+                    Module module = new PreprocessingModule();
+
                     if (xmlWorker.getElementByName(elem,"trigger") != null) {
-                        moduleController = new ModuleController(xmlWorker.getElementByName(elem,"name").getTextContent(),getStatus(xmlWorker.getElementByName(elem,"trigger").getTextContent()));
+                        moduleController = new ModuleController(module,getStatus(xmlWorker.getElementByName(elem,"trigger").getTextContent()));
                     }
                     else {
-                        moduleController = new ModuleController(xmlWorker.getElementByName(elem,"name").getTextContent(), JobState.NONE);
+                        moduleController = new ModuleController(module, JobState.NONE);
                     }
 
                     Class<? extends Module> className = (Class<? extends Module>) Class.forName(xmlWorker.getElementByName(elem,"name").getTextContent());
-                    Module module = getCoreEngine().getModuleStarter().getModuleInstance(className);
                     for(String methodName: module.getMethodsName()) {
                         moduleController.addMethod(methodName);
                     }

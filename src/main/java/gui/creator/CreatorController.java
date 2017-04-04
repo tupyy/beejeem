@@ -1,14 +1,14 @@
 package gui.creator;
 
+import configuration.JStesConfiguration;
 import core.creator.Creator;
+import core.creator.CreatorFactory;
 import core.creator.spectre.SpectreJobCreator;
 import core.job.Job;
 import core.job.JobException;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import gui.propertySheet.PropertyController;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * Created by tctupangiu on 15/03/2017.
@@ -85,6 +85,20 @@ public class CreatorController implements Initializable {
                     SpectreJobCreator creator = new SpectreJobCreator();
                     createJob(creator,model.getFiles(),model.getPropertyModel().getParameterSet());
                 }
+                else {
+                    Creator creator = CreatorFactory.getCreator(jobType.toLowerCase());
+                    if ( creator!= null ) {
+                         createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
+                    } else {
+                        //parameter type don't exists
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Create job");
+                        alert.setHeaderText("Plugin not found");
+                        alert.setContentText(String.format("The creator for the job type %s is not found", jobType));
+                        alert.show();
+                        return;
+                        }
+                }
             }
             catch (IllegalArgumentException e) {
                 //parameter type don't exists
@@ -100,7 +114,12 @@ public class CreatorController implements Initializable {
 
         selectFileButton.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(new File("C:\\Users\\tctupangiu\\Desktop\\Nouveau dossier\\test\\STF"));
+
+
+            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
+            if ( !initialFolder.isEmpty() ) {
+                fileChooser.setInitialDirectory(new File(initialFolder));
+            }
             fileChooser.setTitle("Choose input files");
 
             Node  source = (Node)  event.getSource();
@@ -150,4 +169,6 @@ public class CreatorController implements Initializable {
             e.printStackTrace();
         }
     }
+
+
 }

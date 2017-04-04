@@ -1,4 +1,4 @@
-package core.configuration;
+package configuration;
 
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;

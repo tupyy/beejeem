@@ -19,30 +19,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <archiveBaseDirectory>${project.basedir}</archiveBaseDirectory>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <archive>
+                        <index>true</index>
                         <manifest>
+                            <addClasspath>true</addClasspath>
                             <mainClass>main.MainApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <!-- bind to the packaging phase -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
         </plugins>
     </build>
@@ -71,22 +58,6 @@
             <artifactId>controlfx</artifactId>
             <version>8.40.12</version>
         </dependency>
-        <dependency>
-            <groupId>stes.isami</groupId>
-            <artifactId>junit4</artifactId>
-            <version>4.4</version>
-        </dependency>
 
-        <dependency>
-            <groupId>stes.isami</groupId>
-            <artifactId>maven-jar</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>stes.isami</groupId>
-            <artifactId>maven-assembly</artifactId>
-            <version>3.0.0</version>
-        </dependency>
     </dependencies>
 </project>
