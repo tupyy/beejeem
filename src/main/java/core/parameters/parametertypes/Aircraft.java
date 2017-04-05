@@ -24,4 +24,19 @@ public enum Aircraft {
         return name;
     }
 
+    public static Aircraft fromString(String aircraft) {
+        switch (aircraft) {
+            case "A400m":
+                return Aircraft.MT;
+            case "MT":
+                return Aircraft.MT;
+            case "XWB900":
+                return Aircraft.XWB900;
+            case "A350-900":
+                return Aircraft.XWB900;
+            default:
+                return Aircraft.XWB900;
+        }
+    }
+
 }
