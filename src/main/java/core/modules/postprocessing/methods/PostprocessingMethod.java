@@ -128,7 +128,7 @@ public class PostprocessingMethod implements Method {
     /**
      * get the batch name
      */
-    private String getBatchName() {
+    protected String getBatchName() {
         try {
 
             StringParameter jobName = parameters.getParameter("name");
@@ -156,7 +156,7 @@ public class PostprocessingMethod implements Method {
      * @throws SshException
      * @throws SftpStatusException
      */
-    private String downloadFile(String localFolder,String remotePath,String remoteFile) throws TransferCancelledException, FileNotFoundException, SshException, SftpStatusException {
+    protected String downloadFile(String localFolder,String remotePath,String remoteFile) throws TransferCancelledException, FileNotFoundException, SshException, SftpStatusException {
 
         String remoteFilePath = remotePath.concat("/").concat(remoteFile);
         logger.debug("Job {}: Downloading file: {}",jobID,remoteFilePath);
@@ -175,7 +175,7 @@ public class PostprocessingMethod implements Method {
      * @return
      * @throws IOException
      */
-    private String readBatchFileContent(String localpath) throws IOException {
+    protected String readBatchFileContent(String localpath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(localpath));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
@@ -194,7 +194,7 @@ public class PostprocessingMethod implements Method {
      * @param batchContent the content of the batch file
      * @return list of output files downloaded from scratch to the remote folder by the batch system
      */
-    private ArrayList<String> getFileList(String batchContent)  {
+    protected ArrayList<String> getFileList(String batchContent)  {
         ArrayList<String> fileList = new ArrayList<>();
 
         String outputContent = batchContent;
@@ -226,7 +226,7 @@ public class PostprocessingMethod implements Method {
      * if present
      * @return
      */
-    private boolean isSuccessfully(String batchFileContent) {
+    protected boolean isSuccessfully(String batchFileContent) {
          for (String s: batchFileContent.split(("\\n"))) {
             if (s.contains("PyBusi TRACEBACK")) {
                 return false;
@@ -241,7 +241,7 @@ public class PostprocessingMethod implements Method {
      * @param filename
      * @return StringParameter which value is the absolute path of the downloaded file
      */
-    private StringParameter createParameter(String filename) {
+    protected StringParameter createParameter(String filename) {
 
         File f = new File(filename);
         StringParameter downloadedFile = new StringParameter(f.getName(),"Downloaded file","Result file",f.getAbsolutePath());

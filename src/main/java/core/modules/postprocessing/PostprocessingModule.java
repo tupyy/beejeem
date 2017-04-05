@@ -57,7 +57,7 @@ public class PostprocessingModule implements SshModule{
      * @return
      * @throws SshException
      */
-    private synchronized SftpClient getFtpClient(SshClient sshClient) throws SshException {
+    public synchronized SftpClient getFtpClient(SshClient sshClient) throws SshException {
 
         Ssh2Client ssh2 = (Ssh2Client) sshClient;
         try {
