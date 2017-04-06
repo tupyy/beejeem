@@ -88,12 +88,6 @@ public interface Core {
     public void removeCoreEventListener(CoreListener l);
 
     /**
-     * Return the module starter
-     * @return
-     */
-    public ModuleStarter getModuleStarter();
-
-    /**
      * Close the executors
      */
     public void shutdown();

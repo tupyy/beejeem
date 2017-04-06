@@ -27,7 +27,6 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
 
     private final QStatManager qstatManager;
-    private final ModuleStarter moduleStarter;
 
     private CreatorFactory creatorFactory = new CreatorFactory();
 
@@ -60,9 +59,9 @@ public final class CoreEngine extends Observable implements Core, Observer {
         /**
          * Load modules on a new thread after the GUI has started
          */
-        moduleStarter = new ModuleStarter();
-        Thread readModuleThread = new Thread(moduleStarter);
-        readModuleThread.start();
+//        moduleStarter = new ModuleStarter();
+//        Thread readModuleThread = new Thread(moduleStarter);
+//        readModuleThread.start();
 
 
 
@@ -201,11 +200,6 @@ public final class CoreEngine extends Observable implements Core, Observer {
             listeners = new Vector();
         }
         listeners.removeElement(l);
-    }
-
-    @Override
-    public ModuleStarter getModuleStarter() {
-        return moduleStarter;
     }
 
     @Override

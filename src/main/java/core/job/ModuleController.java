@@ -62,7 +62,7 @@ public class ModuleController extends Observable implements Executable {
     /**
      * Keep tracks of the methods executed and their results
      */
-    private HashMap<String,MethodResult> methods = new HashMap<>();
+    private MethodResult result;
 
     /**
      * @param parent
@@ -164,33 +164,12 @@ public class ModuleController extends Observable implements Executable {
     }
 
     /**
-     * Add a methods to the list of executed methods
-     * @param methodName
-     */
-    public void addMethod(String methodName) {
-        methods.put(methodName,null);
-    }
-
-    /**
      * Associate a result to a methods
      * @param result
      */
     public void setMethodResult(MethodResult result,JobExecutionProgress progress) {
 
-        if (! result.getMethodName().equals("unknown")) {
-            for (Map.Entry entry : methods.entrySet()) {
-                if (entry.getKey().equals(result.getMethodName())) {
-                    entry.setValue(result);
-                }
-            }
-        }
-        else {
-            for(Map.Entry entry: methods.entrySet()) {
-                if(entry.getValue() == null) {
-                    entry.setValue(result);
-                }
-            }
-        }
+        this.result = result;
 
        if ( isSuccessful(result)) {
             progress.info(String.format("Module %s, Method %s successful",this.getName(),result.getMethodName()));
@@ -265,23 +244,6 @@ public class ModuleController extends Observable implements Executable {
         notifyObservers(getState());
     }
 
-    /**
-     * Check if the module has finished
-     */
-    private boolean isFinished() {
-
-        for(Map.Entry entry: methods.entrySet()) {
-            if (entry.getValue() == null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private Module getModule(Class<? extends Module> moduleClass) {
-        return ModuleStarter.getModuleInstance(moduleClass);
-    }
 
 
 
