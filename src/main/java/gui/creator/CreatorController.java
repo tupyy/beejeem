@@ -40,6 +40,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static main.JStesCore.getCoreEngine;
 
@@ -265,7 +267,7 @@ public class CreatorController implements Initializable {
                         try {
                             List<File> myList = new ArrayList<File>();
                             Files.walk(Paths.get(folder.getPath()))
-                                    .filter(p -> p.toString().contains(fileSearchPattern))
+                                    .filter( p -> matchesFilter(p.toString(),fileSearchPattern))
                                     .forEach((file) ->{
                                         myList.add(file.toFile());
                                     });
@@ -295,9 +297,11 @@ public class CreatorController implements Initializable {
                     });
 
                 task.setOnFailed((e) -> {
+                    dialog.close();
                     Alert alertError = new Alert(Alert.AlertType.ERROR);
                     alertError.setTitle("Add folder");
-                    alertError.setContentText("Error".concat(e.toString()));
+                    alertError.setHeaderText("Error reading");
+                    alertError.setContentText("Error".concat(e.getSource().getException().getMessage()));
                     alertError.show();
                 });
 
@@ -345,6 +349,13 @@ public class CreatorController implements Initializable {
     private String lastVisitedFolder(File file) {
         String path = file.getPath();
         return path.substring(0,path.lastIndexOf("\\"));
+    }
+
+    private boolean matchesFilter(String filename,String fileSearchPattern) {
+        Pattern pattern = Pattern.compile(fileSearchPattern);
+        Matcher m = pattern.matcher(filename);
+
+        return m.find();
     }
 
     private Stage createDialogBox(String textMessage) {
