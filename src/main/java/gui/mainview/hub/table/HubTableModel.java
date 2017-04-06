@@ -3,7 +3,6 @@ package gui.mainview.hub.table;
 import core.job.Job;
 import core.job.JobState;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.AircraftParameter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,7 +45,7 @@ public class HubTableModel {
         private SimpleStringProperty name;
         private SimpleStringProperty destinationFolder;
         private SimpleStringProperty type;
-        private SimpleStringProperty aircraft;
+        private SimpleStringProperty localFolder;
         private SimpleStringProperty status;
         private SimpleStringProperty id;
 
@@ -58,8 +57,7 @@ public class HubTableModel {
                 this.destinationFolder = new SimpleStringProperty((String) parameterSet.getParameter("destinationFolder").getValue());
                 this.type = new SimpleStringProperty((String) parameterSet.getParameter("type").getValue());
 
-                AircraftParameter aircraftParameter = parameterSet.getParameter("aircraft");
-                this.aircraft = new SimpleStringProperty(aircraftParameter.getValue().toString());
+                this.localFolder = new SimpleStringProperty((String) parameterSet.getParameter("localFolder").getValue());
                 this.status = new SimpleStringProperty(JobState.toString(job.getStatus()));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
@@ -86,8 +84,8 @@ public class HubTableModel {
             return type.get();
         }
 
-        public String getAircraft() {
-            return aircraft.get();
+        public String getLocalFolder() {
+            return localFolder.get();
         }
 
         public String getStatus() {

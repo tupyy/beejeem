@@ -143,7 +143,11 @@ public class CreatorController implements Initializable {
                 addFolderButton.setDisable(false);
                 fileSearchPattern = "ABRE_";
             }
-            else {
+            else if (newJobType.equals("Spectre stes")){
+                addFolderButton.setDisable(false);
+                fileSearchPattern = "(\\.stf)|(SG_data_file)";
+            }
+            else  {
                 addFolderButton.setDisable(true);
             }
 

@@ -84,25 +84,29 @@ public class HubController implements Initializable, CoreListener {
         TableColumn destinationCol = new TableColumn("Destination");
         destinationCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("destinationFolder"));
 
+        TableColumn localFolderCol = new TableColumn("Local folder");
+        localFolderCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("localFolder"));
+
         TableColumn typeCol = new TableColumn("Type");
         typeCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("type"));
-        typeCol.setMaxWidth(400);
+        typeCol.setMaxWidth(100);
         typeCol.setMinWidth(100);
-
-        TableColumn aircraftCol = new TableColumn("Aircraft");
-        aircraftCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("aircraft"));
-        aircraftCol.setMaxWidth(400);
-        aircraftCol.setMinWidth(100);
+        typeCol.setPrefWidth(100);
+        typeCol.setResizable(false);
 
         TableColumn statusCol = new TableColumn("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("status"));
-        statusCol.setMaxWidth(400);
+        statusCol.setMaxWidth(100);
         statusCol.setMinWidth(100);
+        statusCol.setPrefWidth(100);
+        statusCol.setResizable(false);
+
 
         TableColumn idCol = new TableColumn("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
+        idCol.setVisible(false);
 
-        hubTable.getColumns().addAll(nameCol,destinationCol,typeCol,aircraftCol,statusCol,idCol);
+        hubTable.getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,idCol);
         hubTable.setItems(model.getTableModel().getData());
         hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
