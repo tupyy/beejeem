@@ -89,7 +89,7 @@ public abstract class SimpleSshMethod extends SshSessionMethod implements Method
      */
     public String parseBatchID(String line) {
         //try to match the jobid from batch
-        String patternJobSubmitted = ".*Your job ([\\d]+)\\s*\\(\"(\\w+)\"\\)";
+        String patternJobSubmitted = ".*Your job ([\\d]+)";
         Pattern jobSubmittedP = Pattern.compile(patternJobSubmitted);
         Matcher m = jobSubmittedP.matcher(line);
 
