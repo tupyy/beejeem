@@ -8,7 +8,6 @@ import com.sshtools.ssh.SshException;
 import com.sshtools.ssh2.Ssh2Client;
 import core.modules.ModuleException;
 import core.modules.SshModule;
-import core.modules.processing.ProcessingModule;
 import core.modules.postprocessing.methods.PostprocessingMethod;
 import core.parameters.ParameterSet;
 import core.tasks.ModuleTask;
@@ -17,38 +16,37 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * This module create the post processing method.
+ * This class implements the basics of a postprocessing module
  */
-public class PostprocessingModule implements SshModule{
+public abstract class PostprocessingModule implements SshModule{
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(PostprocessingModule.class);
-    private static final String MODULE_NAME = "PostprocessingModule";
-    private final List<String> methodsName = new ArrayList<String>(
-            Arrays.asList("PostprocessingMethod"));
+    private String moduleName = "PostprocessingModule";
+    private List<String> methodNames = new ArrayList<>();
+
+
+    public PostprocessingModule(String moduleName) {
+        this.moduleName = moduleName;
+    }
 
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return moduleName;
     }
 
     @Override
     public List<String> getMethodsName() {
-        return methodsName;
+        return methodNames;
     }
 
     @Override
     public ModuleTask runModule(UUID jobID, SshClient sshClient, ParameterSet parameterSet) throws ModuleException {
 
-        PostprocessingMethod postprocessingMethod = null;
+        return null;
+    }
 
-        try {
-            postprocessingMethod = new PostprocessingMethod(MODULE_NAME,jobID,parameterSet,getFtpClient(sshClient));
-        } catch (SshException e) {
-            throw new ModuleException(e.getMessage());
-        }
-
-        logger.info("Module {} Method {} created for job {}",MODULE_NAME,"PostprocessingMethod",jobID);
-        return new ModuleTask(jobID.toString(), postprocessingMethod);
+    public void addMethod(String methodName) {
+        methodNames.add(methodName);
     }
 
     /**

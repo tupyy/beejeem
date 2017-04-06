@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
     <module>core.modules.preprocessing.PreprocessingModule</module>
-    <module>core.modules.processing.ProcessingModule</module>
+    <module>core.modules.processing.SimpleSshModule</module>
     <module>core.modules.postprocessing.PostprocessingModule</module>
 </modules>

@@ -6,7 +6,6 @@ import com.sshtools.sftp.TransferCancelledException;
 import com.sshtools.ssh.SshException;
 import core.modules.Method;
 import core.modules.MethodResult;
-import core.modules.StandardMethodResult;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
@@ -32,18 +31,20 @@ import java.util.UUID;
  * </ul>
  * It return a StandardMethodResult which has every downloaded file absolute path as StringParameter.
  */
-public class PostprocessingMethod implements Method {
+public abstract class PostprocessingMethod implements Method {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private static final String METHOD_NAME = "PostprocessingMethod";
+    private String methodName = "PostprocessingMethod";
     private final ParameterSet parameters;
     private final String moduleName;
     private final UUID jobID;
     private final SftpClient sftpClient;
 
-    public PostprocessingMethod(String moduleName, UUID jobID, ParameterSet parameterSet,
+    public PostprocessingMethod(String moduleName, String methodName,UUID jobID, ParameterSet parameterSet,
                                 SftpClient sftpClient) {
+
+        this.methodName = methodName;
         this.sftpClient = sftpClient;
         this.jobID = jobID;
         this.moduleName = moduleName;
@@ -52,72 +53,13 @@ public class PostprocessingMethod implements Method {
 
     @Override
     public String getName() {
-        return METHOD_NAME;
+        return getMethodName();
     }
 
     @Override
     public MethodResult execute() {
 
-        if (sftpClient.isClosed()) {
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"SFtp client is closed");
-        }
-
-        String batchFileName = getBatchName();
-        if (batchFileName.isEmpty()) {
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"Cannot find batch file");
-        }
-
-        StringParameter temporaryFolder =  parameters.getParameter("temporaryFolder");
-        StringParameter destinationFolder =  parameters.getParameter("destinationFolder");
-
-        StandardMethodResult methodResult = new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.OK);
-        try {
-            String localBatchFile = downloadFile(temporaryFolder.getValue(),destinationFolder.getValue(),batchFileName);
-
-            String content = readBatchFileContent(localBatchFile);
-            if (isSuccessfully(content)) {
-
-                logger.debug("Job: {} Batch file OK",jobID);
-                for(String file: getFileList(content)) {
-                    try {
-                        downloadFile(temporaryFolder.getValue(), destinationFolder.getValue(), file);
-                        methodResult.addParameter(createParameter(file));
-                    }
-                    catch (SftpStatusException ex) {
-                        logger.error("Job ID:{} File not found",jobID,file);
-                        return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"File not found ".concat(file));
-                    }
-                    finally {
-                        sftpClient.exit();
-                    }
-                }
-            }
-            else {
-                logger.error("The Job: {} encounter an error during execution.Check the batch file at: {}",jobID,localBatchFile);
-                return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"Job finished with error.Check the batch file for more informations");
-            }
-        } catch (SftpStatusException e) {
-            logger.debug("Batch file not found:{}",batchFileName);
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"Batch file not found ".concat(batchFileName));
-
-        } catch (FileNotFoundException e) {
-            logger.debug(e.getMessage());
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"Batch file not found");
-
-        } catch (TransferCancelledException e) {
-            logger.debug(e.getMessage());
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,"Transfer of the batch file has been cancelled");
-
-        } catch (SshException e) {
-            logger.debug(e.getMessage());
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,e.getMessage());
-
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.ERROR,e.getMessage());
-        }
-
-        return methodResult;
+        return null;
     }
 
     @Override
@@ -126,15 +68,15 @@ public class PostprocessingMethod implements Method {
     }
 
     /**
-     * get the batch name
+     * Get the name of batch file
      */
-    protected String getBatchName() {
+    public String getBatchName() {
         try {
 
-            StringParameter jobName = parameters.getParameter("name");
-            StringParameter queueName = parameters.getParameter("queue");
-            StringParameter batchID = parameters.getParameter("batchID");
-            StringParameter destinationFolder = parameters.getParameter("destinationFolder");
+            StringParameter jobName = getParameters().getParameter("name");
+            StringParameter queueName = getParameters().getParameter("queue");
+            StringParameter batchID = getParameters().getParameter("batchID");
+            StringParameter destinationFolder = getParameters().getParameter("destinationFolder");
 
             String batchfilename = jobName.getValue().concat("_").concat(queueName.getValue()).concat("_TF_tse.o").concat(batchID.getValue());
 
@@ -146,7 +88,7 @@ public class PostprocessingMethod implements Method {
     }
 
     /**
-     * Download the batch file to the localPath
+     * Download a file to the localPath
      * @param localFolder local path
      * @param remotePath remote path
      * @param remoteFile source file
@@ -156,15 +98,15 @@ public class PostprocessingMethod implements Method {
      * @throws SshException
      * @throws SftpStatusException
      */
-    protected String downloadFile(String localFolder,String remotePath,String remoteFile) throws TransferCancelledException, FileNotFoundException, SshException, SftpStatusException {
+    public String downloadFile(String localFolder,String remotePath,String remoteFile) throws TransferCancelledException, FileNotFoundException, SshException, SftpStatusException {
 
         String remoteFilePath = remotePath.concat("/").concat(remoteFile);
-        logger.debug("Job {}: Downloading file: {}",jobID,remoteFilePath);
+        logger.debug("Job {}: Downloading file: {}", getJobID(),remoteFilePath);
 
-        sftpClient.lcd(localFolder);
-        sftpClient.get(remoteFilePath);
+        getSftpClient().lcd(localFolder);
+        getSftpClient().get(remoteFilePath);
 
-        logger.debug("Job {}: File {} downloaded to {}",jobID,remoteFilePath,localFolder);
+        logger.debug("Job {}: File {} downloaded to {}", getJobID(),remoteFilePath,localFolder);
 
         return localFolder.concat("\\").concat(remoteFilePath.substring(remoteFilePath.lastIndexOf("/")+1,remoteFilePath.length()));
     }
@@ -172,10 +114,10 @@ public class PostprocessingMethod implements Method {
     /**
      * Read the content of the batch file
      * @param localpath
-     * @return
+     * @return the content of the batch file
      * @throws IOException
      */
-    protected String readBatchFileContent(String localpath) throws IOException {
+    public String readBatchFileContent(String localpath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(localpath));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
@@ -194,7 +136,7 @@ public class PostprocessingMethod implements Method {
      * @param batchContent the content of the batch file
      * @return list of output files downloaded from scratch to the remote folder by the batch system
      */
-    protected ArrayList<String> getFileList(String batchContent)  {
+    public ArrayList<String> getFileList(String batchContent)  {
         ArrayList<String> fileList = new ArrayList<>();
 
         String outputContent = batchContent;
@@ -226,7 +168,7 @@ public class PostprocessingMethod implements Method {
      * if present
      * @return
      */
-    protected boolean isSuccessfully(String batchFileContent) {
+    public boolean isBatchSuccessfully(String batchFileContent) {
          for (String s: batchFileContent.split(("\\n"))) {
             if (s.contains("PyBusi TRACEBACK")) {
                 return false;
@@ -241,7 +183,7 @@ public class PostprocessingMethod implements Method {
      * @param filename
      * @return StringParameter which value is the absolute path of the downloaded file
      */
-    protected StringParameter createParameter(String filename) {
+    public StringParameter createParameter(String filename) {
 
         File f = new File(filename);
         StringParameter downloadedFile = new StringParameter(f.getName(),"Downloaded file","Result file",f.getAbsolutePath());
@@ -249,4 +191,23 @@ public class PostprocessingMethod implements Method {
         return  downloadedFile;
     }
 
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public ParameterSet getParameters() {
+        return parameters;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public UUID getJobID() {
+        return jobID;
+    }
+
+    public SftpClient getSftpClient() {
+        return sftpClient;
+    }
 }
