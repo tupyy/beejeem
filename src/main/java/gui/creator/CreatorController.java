@@ -3,45 +3,68 @@ package gui.creator;
 import configuration.JStesConfiguration;
 import core.creator.Creator;
 import core.creator.CreatorFactory;
-import core.creator.spectre.SpectreJobCreator;
 import core.job.Job;
 import core.job.JobException;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import gui.propertySheet.PropertyController;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import javafx.stage.*;
 import org.controlsfx.control.PropertySheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static main.JStesCore.getCoreEngine;
 
 /**
- * Created by tctupangiu on 15/03/2017.
+ * Controller class for the Creator view
  */
 public class CreatorController implements Initializable {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @FXML
     private Button okButton;
 
     @FXML
-    private Button selectFileButton;
+    private Button addFileButton;
 
     @FXML
-    private ListView fileList;
+    private Button addFolderButton;
+
+    @FXML
+    private Button clearFileButton;
+
+    @FXML
+    private Button removeFileButton;
+
+    @FXML
+    private ListView fileListView;
 
     @FXML
     private Button cancelButton;
@@ -66,6 +89,7 @@ public class CreatorController implements Initializable {
         properySheet = propertyController.getPropertySheet();
 
         propertyVBox.getChildren().add(properySheet);
+        fileListView.setItems(model.getObsFileNameList());
 
         cancelButton.setOnAction((event) -> {
             // close the dialog.
@@ -73,67 +97,33 @@ public class CreatorController implements Initializable {
             Stage stage  = (Stage) source.getScene().getWindow();
             stage.close();
 
-        });
-
-        okButton.setOnAction((event) -> {
-
-             try {
-                //get the type of the job
-                Parameter type = model.getPropertyModel().getParameterSet().getParameter("type");
-                String jobType = (String) type.getValue();
-                if (type.getValue().equals("stesSpectre")) {
-                    SpectreJobCreator creator = new SpectreJobCreator();
-                    createJob(creator,model.getFiles(),model.getPropertyModel().getParameterSet());
-                }
-                else {
-                    Creator creator = CreatorFactory.getCreator(jobType.toLowerCase());
-                    if ( creator!= null ) {
-                         createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
-                    } else {
-                        //parameter type don't exists
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Create job");
-                        alert.setHeaderText("Plugin not found");
-                        alert.setContentText(String.format("The creator for the job type %s is not found", jobType));
-                        alert.show();
-                        return;
-                        }
-                }
-            }
-            catch (IllegalArgumentException e) {
-                //parameter type don't exists
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Create job");
-                alert.setHeaderText("Creation error");
-                alert.setContentText("The current job type has no value defined");
-                alert.show();
-                return;
-            }
 
         });
 
-        selectFileButton.setOnAction((event) -> {
-            FileChooser fileChooser = new FileChooser();
+        fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        fileListView.setCellFactory(param -> new ListCell<CreatorModel.FileEntry>() {
+            @Override
+            protected void updateItem(CreatorModel.FileEntry item, boolean empty) {
+                super.updateItem(item, empty);
 
-
-            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
-            if ( !initialFolder.isEmpty() ) {
-                fileChooser.setInitialDirectory(new File(initialFolder));
-            }
-            fileChooser.setTitle("Choose input files");
-
-            Node  source = (Node)  event.getSource();
-            Stage stage  = (Stage) source.getScene().getWindow();
-            List<File> files = fileChooser.showOpenMultipleDialog(stage);
-            if (files != null) {
-                model.addFiles(files);
-                fileList.setItems(model.getObsFileNameList());
-
-                if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
-                    okButton.setDisable(false);
+                if (empty || item == null || item.getName() == null) {
+                    setText(null);
+                } else {
+                    setText(item.getName());
                 }
             }
         });
+
+        //if the user selects a item in the list enable remove button
+        fileListView.getSelectionModel().getSelectedItems().addListener((ListChangeListener) (event) -> {
+                int selectedIndex = fileListView.getSelectionModel().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    removeFileButton.setDisable(false);
+                }
+        });
+
+        setButtonActions();
+
 
         jobTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             String newJobType = (String) newValue;
@@ -170,5 +160,204 @@ public class CreatorController implements Initializable {
         }
     }
 
+    /**
+     * Set action handlers for the fileList buttons
+     */
+    private void setButtonActions() {
+
+        /**
+         * Ok button action handler
+         */
+        okButton.setOnAction((event) -> {
+
+            try {
+                //get the type of the job
+                Parameter type = model.getPropertyModel().getParameterSet().getParameter("type");
+                String jobType = (String) type.getValue();
+                Creator creator = CreatorFactory.getCreator(jobType.toLowerCase());
+                if ( creator!= null ) {
+                    createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
+                } else {
+                    //parameter type don't exists
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Create job");
+                    alert.setHeaderText("Plugin not found");
+                    alert.setContentText(String.format("The creator for the job type %s is not found", jobType));
+                    alert.show();
+                    return;
+                }
+            }
+            catch (IllegalArgumentException e) {
+                //parameter type don't exists
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Create job");
+                alert.setHeaderText("Creation error");
+                alert.setContentText("The current job type has no value defined");
+                alert.show();
+                return;
+            }
+
+        });
+
+        /**
+         * Add file button
+         */
+        addFileButton.setOnAction((event) -> {
+            FileChooser fileChooser = new FileChooser();
+
+
+            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
+            if ( !initialFolder.isEmpty() ) {
+                fileChooser.setInitialDirectory(new File(initialFolder));
+            }
+            fileChooser.setTitle("Choose input files");
+
+            Node  source = (Node)  event.getSource();
+            Stage stage  = (Stage) source.getScene().getWindow();
+            List<File> files = fileChooser.showOpenMultipleDialog(stage);
+            if (files != null) {
+                model.addFiles(files);
+                fileListView.setItems(model.getObsFileNameList());
+                clearFileButton.setDisable(false);
+
+                JStesConfiguration.getPreferences().setUserConfValue("lastVisitedFolder",lastVisitedFolder(files.get(0)));
+                if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
+                    okButton.setDisable(false);
+                }
+            }
+        });
+
+        addFolderButton.setOnAction((event) -> {
+            DirectoryChooser folderChooser = new DirectoryChooser();
+
+
+            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
+            if ( !initialFolder.isEmpty() ) {
+                folderChooser.setInitialDirectory(new File(initialFolder));
+            }
+            folderChooser.setTitle("Choose folder");
+
+            Node  source = (Node)  event.getSource();
+            Stage stage  = (Stage) source.getScene().getWindow();
+            File folder = folderChooser.showDialog(stage);
+            if (folder != null) {
+
+                Task<List<File>> task = new Task<List<File>>() {
+
+                    @Override
+                    protected List<File> call() throws Exception {
+                        try {
+                            List<File> myList = new ArrayList<File>();
+                            Files.walk(Paths.get(folder.getPath()))
+                                    .filter(p -> p.toString().contains("ABRE_"))
+                                    .forEach((file) ->{
+                                        myList.add(file.toFile());
+                                    });
+                            return myList;
+                        } catch (IOException e) {
+                            return new ArrayList<>();
+                        }
+                    }
+                };
+
+                Stage dialog = createDialogBox(folder.getPath());
+
+                task.setOnRunning( e -> {
+                    Platform.runLater(() -> {
+                      dialog.setOnCloseRequest(ee -> {
+                            logger.info("Task is closing");
+                            task.cancel();
+                        });
+                        dialog.showAndWait();
+                    });
+                });
+
+                task.setOnSucceeded(e -> {
+                        dialog.close();
+                        List<File> fileList = task.getValue();
+                        model.addFiles(fileList);
+                    });
+
+                task.setOnFailed((e) -> {
+                    Alert alertError = new Alert(Alert.AlertType.ERROR);
+                    alertError.setTitle("Add folder");
+                    alertError.setContentText("Error".concat(e.toString()));
+                    alertError.show();
+                });
+
+                new Thread(task).start();
+
+                clearFileButton.setDisable(false);
+
+                JStesConfiguration.getPreferences().setUserConfValue("lastVisitedFolder",folder.getPath());
+                if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
+                    okButton.setDisable(false);
+                }
+            }
+        });
+
+        /**
+         * Clear button action handler
+         */
+        clearFileButton.setOnAction((event) -> {
+            model.clear();
+
+            if (model.countFiles() == 0)  {
+                removeFileButton.setDisable(true);
+                clearFileButton.setDisable(true);
+            }
+        });
+
+        /**
+         * Set on action removeButton
+         */
+        removeFileButton.setOnAction((event) -> {
+
+             ObservableList<Integer> selectedIndices = FXCollections.observableArrayList( //copy
+                     fileListView.getSelectionModel().getSelectedItems());
+             model.removeFileEntry(selectedIndices);
+
+            if (model.countFiles() == 0)  {
+                removeFileButton.setDisable(true);
+                clearFileButton.setDisable(true);
+            }
+
+        });
+
+    }
+
+    private String lastVisitedFolder(File file) {
+        String path = file.getPath();
+        return path.substring(0,path.lastIndexOf("\\"));
+    }
+
+    private Stage createDialogBox(String textMessage) {
+        Stage dialog = new Stage();
+        dialog.initStyle(StageStyle.UTILITY);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setWidth(600);
+        dialog.setHeight(100);
+        dialog.setResizable(false);
+
+        VBox newGroup = new VBox(new Text(25, 25, "Looking for files in folder:\n".concat(textMessage)));
+
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+
+//        Button cancelButton = new Button("Cancel");
+//        cancelButton.setPrefWidth(100);
+//        cancelButton.setPrefHeight(30);
+//        hBox.getChildren().add(cancelButton);
+        newGroup.getChildren().add(hBox);
+
+//        cancelButton.setOnAction(e -> {
+//            dialog.close();
+//        });
+
+
+        Scene scene = new Scene((Parent) newGroup);
+        dialog.setScene(scene);
+        return dialog;
+    }
 
 }
