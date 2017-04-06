@@ -1,16 +1,23 @@
 package main;
 
+import com.sun.javafx.application.LauncherImpl;
 import configuration.JStesConfiguration;
 import configuration.JStesPreferences;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.application.Preloader;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import preloader.JStesPreloader;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
@@ -44,7 +51,7 @@ public class MainApp extends Application {
                 Thread tmpCleanupThread = new Thread(cleanup);
                 tmpCleanupThread.setPriority(Thread.MIN_PRIORITY);
                 tmpCleanupThread.start();
-//                notifyPreloader(new Preloader.ProgressNotification(0.33));
+                notifyPreloader(new Preloader.ProgressNotification(0.33));
 
                 /**
                  * Read config
@@ -55,7 +62,7 @@ public class MainApp extends Application {
 
                     JStesConfiguration jStesConfiguration = new JStesConfiguration();
                     jStesConfiguration.loadConfiguration(fh);
-//                    notifyPreloader(new Preloader.ProgressNotification(0.5));
+                    notifyPreloader(new Preloader.ProgressNotification(0.5));
 
                     JStesPreferences preferences = JStesConfiguration.getPreferences();
                     /**
@@ -76,28 +83,21 @@ public class MainApp extends Application {
                      * Connect to ssh
                      */
 
-
                     String username = (String) preferences.getUserConfiguration().getParameter("username").getValue();
                     String host = (String) preferences.getUserConfiguration().getParameter("host").getValue();
                     String password = (String) preferences.getUserConfiguration().getParameter("password").getValue();
 
-                    if (username.isEmpty() || host.isEmpty() || password.isEmpty()) {
-//                        notifyPreloader(new TextNotification(String.format("Cannot connect to remote host. Username or host or password is missing")));
-                    } else {
+                    notifyPreloader(new Preloader.ProgressNotification(0.8));
 
-//                        notifyPreloader(new Preloader.ProgressNotification(0.8));
+                    getCoreEngine().getSshFactory().connect(host, username, password);
 
-                        getCoreEngine().getSshFactory().connect(host, username, password);
-                        if (getCoreEngine().getSshFactory().isConnected() && getCoreEngine().getSshFactory().isAuthenticated()) {
-//                        notifyPreloader(new TextNotification(String.format("Connected to host")));
-//                        notifyPreloader(new Preloader.ProgressNotification(1));
+                    notifyPreloader(new Preloader.ProgressNotification(1));
 
-                        ready.setValue(Boolean.TRUE);
+                    ready.setValue(Boolean.TRUE);
 
-//                        notifyPreloader(new Preloader.StateChangeNotification(
-//                                Preloader.StateChangeNotification.Type.BEFORE_START));
-                        }
-                    }
+                    notifyPreloader(new Preloader.StateChangeNotification(
+                            Preloader.StateChangeNotification.Type.BEFORE_START));
+
                 }
 
                 catch (IllegalArgumentException | SSLException ex) {
@@ -130,21 +130,21 @@ public class MainApp extends Application {
 
         primaryStage.setTitle("JStes");
         primaryStage.setScene(new Scene(root, 1024, 800));
-        primaryStage.show();
 
 //        // After the app is ready, show the stage
-//        ready.addListener(new ChangeListener<Boolean>(){
-//            public void changed(
-//                    ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-//                if (Boolean.TRUE.equals(t1)) {
-//                    Platform.runLater(new Runnable() {
-//                        public void run() {
-//
-//                        }
-//                    });
-//                }
-//            }
-//        });;
+        ready.addListener(new ChangeListener<Boolean>(){
+            public void changed(
+                    ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (Boolean.TRUE.equals(t1)) {
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            primaryStage.show();
+
+                        }
+                    });
+                }
+            }
+        });;
 
     }
 
@@ -160,8 +160,8 @@ public class MainApp extends Application {
     public static void main(String[] args) {
 
         //launch app
-        Application.launch(MainApp.class,args);
-//        LauncherImpl.launchApplication(MainApp.class, JStesPreloader.class, args);
+       // Application.launch(MainApp.class,args);
+        LauncherImpl.launchApplication(MainApp.class, JStesPreloader.class, args);
 
     }
 }

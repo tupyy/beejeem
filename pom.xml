@@ -7,6 +7,7 @@
     <groupId>stes.isami</groupId>
     <artifactId>gui</artifactId>
     <version>0.1</version>
+
     <build>
         <plugins>
             <plugin>
@@ -27,8 +28,9 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <mainClass>main.MainApp</mainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
-                    </archive>
+                      </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -57,6 +59,12 @@
             <groupId>stes.isami</groupId>
             <artifactId>controlfx</artifactId>
             <version>8.40.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>stes.isami</groupId>
+            <artifactId>preloader</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
