@@ -12,7 +12,8 @@ public enum Aircraft {
     LR("A330/340"),
     SA("A320"),
     WB("A300/310"),
-    MT("A400M");
+    MT("A400M"),
+    ALL("All");
 
     private final String name;
 
@@ -35,7 +36,7 @@ public enum Aircraft {
             case "A350-900":
                 return Aircraft.XWB900;
             default:
-                return Aircraft.XWB900;
+                return Aircraft.ALL;
         }
     }
 

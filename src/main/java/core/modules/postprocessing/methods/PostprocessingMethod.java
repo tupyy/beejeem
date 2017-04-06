@@ -6,7 +6,9 @@ import com.sshtools.sftp.TransferCancelledException;
 import com.sshtools.ssh.SshException;
 import core.modules.Method;
 import core.modules.MethodResult;
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.ListParameter;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,12 +75,12 @@ public abstract class PostprocessingMethod implements Method {
     public String getBatchName() {
         try {
 
-            StringParameter jobName = getParameters().getParameter("name");
-            StringParameter queueName = getParameters().getParameter("queue");
-            StringParameter batchID = getParameters().getParameter("batchID");
-            StringParameter destinationFolder = getParameters().getParameter("destinationFolder");
+            Parameter jobName = getParameters().getParameter("name");
+            Parameter queueName = getParameters().getParameter("queue");
+            Parameter batchID = getParameters().getParameter("batchID");
+            Parameter destinationFolder = getParameters().getParameter("destinationFolder");
 
-            String batchfilename = jobName.getValue().concat("_").concat(queueName.getValue()).concat("_TF_tse.o").concat(batchID.getValue());
+            String batchfilename = jobName.getValue().toString().concat("_").concat(queueName.getValue().toString()).concat("_TF_tse.o").concat(batchID.getValue().toString());
 
             return batchfilename;
         }
