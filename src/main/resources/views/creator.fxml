@@ -26,7 +26,7 @@
                   <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="611.0" VBox.vgrow="NEVER">
                      <children>
                         <Separator prefWidth="10.0" visible="false" />
-                        <Button fx:id="addFolderButton" mnemonicParsing="false" prefWidth="100.0" text="Add folder" />
+                        <Button fx:id="addFolderButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Add folder" />
                         <Separator prefWidth="200.0" visible="false" />
                         <Button fx:id="addFileButton" mnemonicParsing="false" prefWidth="100.0" text="Add ">
                            <HBox.margin>

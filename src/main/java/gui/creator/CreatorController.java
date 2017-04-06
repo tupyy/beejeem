@@ -17,12 +17,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.print.Printer;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.*;
@@ -80,6 +82,8 @@ public class CreatorController implements Initializable {
     private CreatorModel model = new CreatorModel();
     private PropertyController propertyController;
 
+    private String fileSearchPattern = "ABRE_";
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -128,6 +132,18 @@ public class CreatorController implements Initializable {
         jobTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             String newJobType = (String) newValue;
             model.loadParameters(newJobType);
+
+            /**
+             * TODO change
+             * Active the addFolderButton only for the A400M
+             */
+            if (newJobType.equals("Spectre stes A400M")) {
+                addFolderButton.setDisable(false);
+                fileSearchPattern = "ABRE_";
+            }
+            else {
+                addFolderButton.setDisable(true);
+            }
 
             if (model.getFiles().size() > 0) {
                 okButton.setDisable(false);
@@ -249,7 +265,7 @@ public class CreatorController implements Initializable {
                         try {
                             List<File> myList = new ArrayList<File>();
                             Files.walk(Paths.get(folder.getPath()))
-                                    .filter(p -> p.toString().contains("ABRE_"))
+                                    .filter(p -> p.toString().contains(fileSearchPattern))
                                     .forEach((file) ->{
                                         myList.add(file.toFile());
                                     });
@@ -343,11 +359,16 @@ public class CreatorController implements Initializable {
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
+        hBox.setPrefWidth(600);
 
-//        Button cancelButton = new Button("Cancel");
-//        cancelButton.setPrefWidth(100);
-//        cancelButton.setPrefHeight(30);
-//        hBox.getChildren().add(cancelButton);
+
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setPrefHeight(10);
+        progressBar.setPrefWidth(600);
+        progressBar.setStyle("-fx-padding: 20px 0 0 0");
+
+        hBox.getChildren().add(progressBar);
+        hBox.setHgrow(progressBar, Priority.ALWAYS);
         newGroup.getChildren().add(hBox);
 
 //        cancelButton.setOnAction(e -> {
