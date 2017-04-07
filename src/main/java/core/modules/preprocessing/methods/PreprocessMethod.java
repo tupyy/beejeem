@@ -132,13 +132,17 @@ public abstract class PreprocessMethod implements Method {
         /**
          * Stes spectre options
          */
-        if (getParameterValue(parameterSet,"czmFile").equalsIgnoreCase("yes")) {
+        if (getParameters().getParameter("czmFile").getValue().toString().toLowerCase().equals("true")) {
             fileContent.append(jobName).append(".czm\n");
         }
 
-        if (getParameterValue(parameterSet,"traceFile").equalsIgnoreCase("yes")) {
-            fileContent.append(jobName).append("_Hist1.trace\n");
-            fileContent.append(jobName).append("_Hist2.trace\n");
+        if (getParameters().getParameter("sigmaFile").getValue().toString().toLowerCase().equals("true")) {
+//            fileContent.append(jobName).append(".sigma\n");
+        }
+
+        if (getParameters().getParameter("traceFile").getValue().toString().toLowerCase().equals("true")) {
+            fileContent.append(jobName).append("_HIST1_N.trace\n");
+            fileContent.append(jobName).append("_HIST1_N.trace\n");
         }
 
         String jobCodeFile = getParameterValue(parameterSet,"temporaryFolder")  + File.separator +  jobName + ".job";
