@@ -42,6 +42,8 @@ public class HubTableModel {
      */
     public class JobData {
 
+        private SimpleStringProperty aircraft;
+        private SimpleStringProperty batchID;
         private SimpleStringProperty name;
         private SimpleStringProperty destinationFolder;
         private SimpleStringProperty type;
@@ -58,6 +60,8 @@ public class HubTableModel {
                 this.type = new SimpleStringProperty((String) parameterSet.getParameter("type").getValue());
 
                 this.localFolder = new SimpleStringProperty((String) parameterSet.getParameter("localFolder").getValue());
+                this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));
+                this.aircraft = new SimpleStringProperty(getParameterValue(parameterSet,"aircraft"));
                 this.status = new SimpleStringProperty(JobState.toString(job.getStatus()));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
@@ -69,6 +73,7 @@ public class HubTableModel {
         public void updateJob(Job j) {
             this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
             this.status.set(JobState.toString(j.getStatus()));
+            this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
         }
 
 
@@ -103,12 +108,25 @@ public class HubTableModel {
         public SimpleStringProperty nameProperty() {
             return name;
         }
-
+        public SimpleStringProperty aircraftProperty() {
+            return aircraft;
+        }
         public SimpleStringProperty destinationFolderProperty() {
             return destinationFolder;
         }
 
+        public SimpleStringProperty batchIDProperty() {
+            return batchID;
+        }
 
+        private String getParameterValue(ParameterSet parameters, String parameterName) {
+            try {
+                return parameters.getParameter(parameterName).getValue().toString();
+            }
+            catch (IllegalArgumentException ex) {
+                return "";
+            }
+        }
     }
     //</editor-fold>
 

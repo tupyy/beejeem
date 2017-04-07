@@ -101,12 +101,23 @@ public class HubController implements Initializable, CoreListener {
         statusCol.setPrefWidth(100);
         statusCol.setResizable(false);
 
+        TableColumn batchIDCol = new TableColumn("Batch ID");
+        batchIDCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("batchID"));
+        batchIDCol.setMaxWidth(100);
+        batchIDCol.setMinWidth(100);
+        batchIDCol.setPrefWidth(100);
+        batchIDCol.setResizable(false);
+
+
+        TableColumn aircraftCol = new TableColumn("Aircraft");
+        aircraftCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("aircraft"));
+        aircraftCol.setVisible(false);
 
         TableColumn idCol = new TableColumn("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
         idCol.setVisible(false);
 
-        hubTable.getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,idCol);
+        hubTable.getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
         hubTable.setItems(model.getTableModel().getData());
         hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
