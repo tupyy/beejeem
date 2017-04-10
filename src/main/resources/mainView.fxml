@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
 
 <VBox prefHeight="706.0" prefWidth="918.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainController">
     <children>
@@ -14,32 +15,16 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="New" />
+                        <MenuItem fx:id="newJobMenuItem" mnemonicParsing="false" text="New" />
                         <MenuItem mnemonicParsing="false" text="Open…" />
                         <Menu mnemonicParsing="false" text="Open Recent" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Close" />
                         <MenuItem mnemonicParsing="false" text="Save" />
                         <MenuItem mnemonicParsing="false" text="Save As…" />
-                        <MenuItem mnemonicParsing="false" text="Revert" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" text="Preferences…" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Quit" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Undo" />
-                        <MenuItem mnemonicParsing="false" text="Redo" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Cut" />
-                        <MenuItem mnemonicParsing="false" text="Copy" />
-                        <MenuItem mnemonicParsing="false" text="Paste" />
-                        <MenuItem mnemonicParsing="false" text="Delete" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Select All" />
-                        <MenuItem mnemonicParsing="false" text="Unselect All" />
+                        <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" text="Quit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -51,7 +36,8 @@
         </MenuBar>
           <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="70.0" text="Add job" />
+                  <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New job">
+                  </Button>
               </items>
           </ToolBar>
       <SplitPane fx:id="splitPane" dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
@@ -60,6 +46,6 @@
             <VBox fx:id="splitPaneHub" />
          </items>
       </SplitPane>
-      <HBox fx:id="statusBarPane" prefHeight="50.0" prefWidth="200.0" VBox.vgrow="NEVER" />
+      <HBox fx:id="statusBarPane" alignment="CENTER_RIGHT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" VBox.vgrow="NEVER" />
     </children>
 </VBox>

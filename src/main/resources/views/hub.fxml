@@ -13,9 +13,9 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="runJobButton" mnemonicParsing="false" prefWidth="70.0" text="Run job" />
+                  <Button fx:id="runJobButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run job" />
                   <Separator prefWidth="10.0" visible="false" HBox.hgrow="NEVER" />
-                  <Button fx:id="runAllButton" mnemonicParsing="false" prefWidth="70.0" text="Run all" />
+                  <Button fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
                </children>
             </HBox>
             <TextField promptText="Filter">

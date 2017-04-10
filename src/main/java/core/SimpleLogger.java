@@ -2,7 +2,6 @@ package core;
 
 import core.creator.CreatorLog;
 import core.job.JobExecutionProgress;
-import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

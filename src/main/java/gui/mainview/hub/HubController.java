@@ -4,7 +4,6 @@ import core.CoreEvent;
 import core.CoreEventType;
 import core.CoreListener;
 import core.job.Job;
-import core.job.JobListener;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.collections.ObservableList;
@@ -14,14 +13,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * CreatorController for the hubView
@@ -48,6 +47,85 @@ public class HubController implements Initializable, CoreListener {
         setupTable();
         getCoreEngine().addCoreEventListener(this);
 
+        setupActions();
+        decorateButton(runJobButton,"images/start-icon.png");
+        decorateButton(runAllButton,"images/start-icon.png");
+    }
+
+    @Override
+    public void coreEvent(CoreEvent e) {
+        if (e.getAction() == CoreEventType.JOB_CREATED) {
+            UUID id = e.getId();
+            model.getTableModel().addJob(getCoreEngine().getJob(id));
+            runJobButton.setDisable(false);
+            runAllButton.setDisable(false);
+        }
+        else if (e.getAction() == CoreEventType.JOB_UPDATED) {
+            Job j = getCoreEngine().getJob(e.getId());
+            model.getTableModel().updateJob(j);
+        }
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+
+    /********************************************************************
+     *
+     *                          P R I V A T E
+     *
+     ********************************************************************/
+
+    private void setupTable() {
+        TableColumn nameCol = new TableColumn("Name");
+        nameCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("name"));
+
+        TableColumn destinationCol = new TableColumn("Destination");
+        destinationCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("destinationFolder"));
+
+        TableColumn localFolderCol = new TableColumn("Local folder");
+        localFolderCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("localFolder"));
+
+        TableColumn typeCol = new TableColumn("Type");
+        typeCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("type"));
+        typeCol.setMaxWidth(100);
+        typeCol.setMinWidth(100);
+        typeCol.setPrefWidth(100);
+        typeCol.setResizable(false);
+
+        TableColumn statusCol = new TableColumn("Status");
+        statusCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("status"));
+        statusCol.setMaxWidth(100);
+        statusCol.setMinWidth(100);
+        statusCol.setPrefWidth(100);
+        statusCol.setResizable(false);
+
+        TableColumn batchIDCol = new TableColumn("Batch ID");
+        batchIDCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("batchID"));
+        batchIDCol.setMaxWidth(100);
+        batchIDCol.setMinWidth(100);
+        batchIDCol.setPrefWidth(100);
+        batchIDCol.setResizable(false);
+
+
+        TableColumn aircraftCol = new TableColumn("Aircraft");
+        aircraftCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("aircraft"));
+        aircraftCol.setVisible(false);
+
+        TableColumn idCol = new TableColumn("ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
+        idCol.setVisible(false);
+
+        hubTable.getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
+        hubTable.setItems(model.getTableModel().getData());
+        hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    /**
+     * Set up actions
+     */
+    private void setupActions() {
         hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
             if (newSelection != null) {
                 HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
@@ -64,61 +142,24 @@ public class HubController implements Initializable, CoreListener {
                 }
             }
         });
+
+        runAllButton.setOnAction((event) -> {
+            for (HubTableModel.JobData jobData: model.getTableModel().getData()){
+                getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
+            }
+        });
     }
 
-    @Override
-    public void coreEvent(CoreEvent e) {
-        if (e.getAction() == CoreEventType.JOB_CREATED) {
-            UUID id = e.getId();
-            model.getTableModel().addJob(getCoreEngine().getJob(id));
-        }
-        else if (e.getAction() == CoreEventType.JOB_UPDATED) {
-            Job j = getCoreEngine().getJob(e.getId());
-            model.getTableModel().updateJob(j);
-        }
+    /**
+     * Add icons to buttons
+     */
+    private void decorateButton(Button button,String imagePath) {
+        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        button.setGraphic(imageView);
     }
-
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    /********************************************************************
-     *
-     *                          P R I V A T E
-     *
-     ********************************************************************/
-
-    private void setupTable() {
-        TableColumn nameCol = new TableColumn("Name");
-        nameCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("name"));
-
-        TableColumn destinationCol = new TableColumn("Destination");
-        destinationCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("destinationFolder"));
-
-        TableColumn typeCol = new TableColumn("Type");
-        typeCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("type"));
-        typeCol.setMaxWidth(400);
-        typeCol.setMinWidth(100);
-
-        TableColumn aircraftCol = new TableColumn("Aircraft");
-        aircraftCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("aircraft"));
-        aircraftCol.setMaxWidth(400);
-        aircraftCol.setMinWidth(100);
-
-        TableColumn statusCol = new TableColumn("Status");
-        statusCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("status"));
-        statusCol.setMaxWidth(400);
-        statusCol.setMinWidth(100);
-
-        TableColumn idCol = new TableColumn("ID");
-        idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
-
-        hubTable.getColumns().addAll(nameCol,destinationCol,typeCol,aircraftCol,statusCol,idCol);
-        hubTable.setItems(model.getTableModel().getData());
-        hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    }
-
-
 
 
 }

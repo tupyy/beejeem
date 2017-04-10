@@ -1,5 +1,6 @@
-package core.configuration;
+package configuration;
 
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.CodeParameter;
 import core.parameters.parametertypes.StringParameter;
@@ -24,7 +25,7 @@ import java.util.List;
 public class JStesConfiguration {
 
     private final String JOBS_TAG = "jobs";
-    private final String JOB_DEF_TAG ="job_definition";
+    private final String JOB_DEF_TAG ="job";
     private final String PARAMETERS_TAG="parameters";
     private final String CODE_TAG = "code";
     private final String MODULE_TAG = "module";
@@ -62,25 +63,15 @@ public class JStesConfiguration {
             e.printStackTrace();
         } catch (SAXException e) {
             e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
-       ParameterSet userConfiguration = new ParameterSet();
-
-        //get user configuration
-        Element user = xmlWorker.getElementByName(confDocument.getDocumentElement(),"user");
-        if (user != null) {
-            for (int i = 0; i < user.getChildNodes().getLength(); i++) {
-                Node node = user.getChildNodes().item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element elem = (Element) node;
-                    StringParameter stringParameter = new StringParameter(elem.getTagName(), elem.getTagName(), "User configuration");
-                    stringParameter.setValue(elem.getTextContent());
-                    userConfiguration.addParameter(stringParameter);
-                }
-            }
-        }
+        ParameterSet userConfiguration = readConfigurationBlock(confDocument,"user");
         preferences.setUserConfiguration(userConfiguration);
 
+        ParameterSet pluginConfiguration = readConfigurationBlock(confDocument,"plugins");
+        preferences.setPluginConfiguration(pluginConfiguration);
 
 
         //get the jobs element
@@ -92,8 +83,12 @@ public class JStesConfiguration {
                 JobDefinition jobDefinition = new JobDefinition();
 
                 try {
-                    readJobDefinitionFile(element.getTextContent(), jobDefinition);
-                    preferences.addJobDefition(jobDefinition);
+                    if (readJobDefinitionFile(element.getTextContent(), jobDefinition)) {
+                        preferences.addJobDefition(jobDefinition);
+                    }
+                    else {
+                        logger.error("The parameter set from {} is invalid.",element.getTextContent());
+                    }
                 } catch (IllegalArgumentException ex) {
                     logger.error(ex.getMessage());
                 } catch (ParserConfigurationException e) {
@@ -114,9 +109,9 @@ public class JStesConfiguration {
      * @param filename
      * @param jobDefinition
      */
-    private void readJobDefinitionFile(String filename, JobDefinition jobDefinition) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
+    private boolean readJobDefinitionFile(String filename, JobDefinition jobDefinition) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
 
-        File confFile = new File(JStesConfiguration.class.getClassLoader().getResource(filename).getFile());
+        File confFile = new File(filename);
 
         XMLWorker xmlWorker = new XMLWorker();
         Document document = xmlWorker.readFile(confFile);
@@ -142,10 +137,22 @@ public class JStesConfiguration {
         }
 
         ParameterSet newSet = createParameters(parameters);
+        try {
+            StringParameter name = newSet.getParameter("name");
+
+            if ( !checkValue(newSet.getParameter("destinationFolder"))) {
+                return false;
+            }
+        }
+        catch (IllegalArgumentException ex) {
+            return false;
+        }
+
         newSet.addParameter(createCodeParameter(code));
         jobDefinition.getParameters().addParameters(newSet);
         jobDefinition.setModuleElements(createModuleParameter(modules));
 
+        return true;
 
     }
 
@@ -235,5 +242,36 @@ public class JStesConfiguration {
         }
 
         return moduleSet;
+    }
+
+
+    private boolean checkValue(Parameter p) {
+         if (p.getValue().toString().isEmpty()) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    private ParameterSet readConfigurationBlock(Document confDocument,String blockname) {
+        ParameterSet blockParameterSet = new ParameterSet();
+        XMLWorker xmlWorker = new XMLWorker();
+
+        //get user configuration
+        Element user = xmlWorker.getElementByName(confDocument.getDocumentElement(),blockname);
+        if (user != null) {
+            for (int i = 0; i < user.getChildNodes().getLength(); i++) {
+                Node node = user.getChildNodes().item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elem = (Element) node;
+                    StringParameter stringParameter = new StringParameter(elem.getTagName(), elem.getTagName(), blockname);
+                    stringParameter.setValue(elem.getTextContent());
+                    blockParameterSet.addParameter(stringParameter);
+                }
+            }
+        }
+
+        return blockParameterSet;
     }
 }

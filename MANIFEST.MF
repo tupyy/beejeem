@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: core.jar controlfx-8.40.12.jar JStesPreloader.jar
+Main-Class: main.MainApp
+

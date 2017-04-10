@@ -33,7 +33,7 @@ public class ModulesModel {
                 trigger = JobState.toString(moduleController.getTrigger());
             }
 
-            getData().add(new SimpleEntry(moduleController.getName(),trigger));
+            getData().add(new SimpleEntry(moduleController.getName(),trigger,moduleController.getState()));
         }
     }
 
@@ -54,10 +54,12 @@ public class ModulesModel {
 
         private SimpleStringProperty name;
         private SimpleStringProperty trigger;
+        private SimpleStringProperty status;
 
-        public SimpleEntry(String name,String trigger) {
+        public SimpleEntry(String name,String trigger,int status) {
             this.name = new SimpleStringProperty(formatName(name));
             this.trigger = new SimpleStringProperty(trigger);
+            this.status = new SimpleStringProperty(parseState(status));
         }
 
 
@@ -69,9 +71,32 @@ public class ModulesModel {
             return trigger.get();
         }
 
+        public String getStatus() {
+            return status.get();
+        }
+
         private String formatName(String name) {
             return name.substring(name.lastIndexOf(".")+1);
         }
+
+        private String parseState(int state) {
+
+            switch (state) {
+                case 0:
+                    return "READY";
+                case 1:
+                    return "SCHEDULED";
+                case 2:
+                    return "RUNNING";
+                case 3:
+                    return "FINISHED";
+                case 4:
+                    return "FAILED";
+                default:
+                    return "";
+            }
+        }
+
 
     }
     //</editor-fold>

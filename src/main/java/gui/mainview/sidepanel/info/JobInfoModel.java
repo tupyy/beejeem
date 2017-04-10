@@ -8,19 +8,16 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.ListChangeListener;
-import javafx.concurrent.Worker;
 import javafx.scene.web.WebEngine;
-import main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
 /**
  * Model class for the Information Pane of the SidePanelView
  */
 public class JobInfoModel {
     private static final Logger logger = LoggerFactory
-            .getLogger(Main.class);
+            .getLogger(JobInfoModel.class);
 
     private final JobInfoController controller;
     private SimpleStringProperty jobName = new SimpleStringProperty();

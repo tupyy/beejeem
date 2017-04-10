@@ -37,6 +37,9 @@ public class ModulesController implements Initializable,ComponentController{
     private TableColumn moduleNameColumn;
 
     @FXML
+    private TableColumn statusColumn;
+
+    @FXML
     private TableColumn triggerColumn;
 
     private UUID selectedJobId;
@@ -85,17 +88,18 @@ public class ModulesController implements Initializable,ComponentController{
      ********************************************************************/
 
     private void setEditable(boolean editable) {
-        modulesTable.setEditable(editable);
-        addModuleButton.setDisable((editable == true) ? false : true);
-        removeButtonModule.setDisable((editable == true) ? false : true);
-        moveupButton.setDisable((editable == true) ? false : true);
-        movedownButton.setDisable((editable == true) ? false : true);
+//        modulesTable.setEditable(editable);
+//        addModuleButton.setDisable((editable == true) ? false : true);
+//        removeButtonModule.setDisable((editable == true) ? false : true);
+//        moveupButton.setDisable((editable == true) ? false : true);
+//        movedownButton.setDisable((editable == true) ? false : true);
     }
     private void setupTable() {
 
         if (model != null) {
             moduleNameColumn.setCellValueFactory(new PropertyValueFactory<ModulesModel.SimpleEntry, String>("name"));
             triggerColumn.setCellValueFactory(new PropertyValueFactory<ModulesModel.SimpleEntry, String>("trigger"));
+            statusColumn.setCellValueFactory(new PropertyValueFactory<ModulesModel.SimpleEntry, String>("status"));
             modulesTable.setItems(getModel().getData());
         }
     }

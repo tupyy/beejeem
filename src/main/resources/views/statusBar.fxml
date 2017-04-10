@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+<HBox alignment="CENTER_RIGHT" prefHeight="30.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.statusBar.StatusBarController">
+   <children>
+      <Separator prefWidth="200.0" visible="false" />
+      <HBox HBox.hgrow="ALWAYS" />
+      <Separator orientation="VERTICAL" prefHeight="200.0" />
+      <HBox alignment="CENTER_LEFT" maxWidth="-Infinity" prefWidth="100.0" HBox.hgrow="ALWAYS">
+         <children>
+            <ImageView fx:id="imageViewer" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin></ImageView>
+            <Label fx:id="sshLabel" minWidth="-Infinity" prefHeight="17.0" prefWidth="100.0" text="Label" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </children>
+</HBox>

@@ -3,7 +3,6 @@ package gui.mainview.hub.table;
 import core.job.Job;
 import core.job.JobState;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.AircraftParameter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -43,10 +42,12 @@ public class HubTableModel {
      */
     public class JobData {
 
+        private SimpleStringProperty aircraft;
+        private SimpleStringProperty batchID;
         private SimpleStringProperty name;
         private SimpleStringProperty destinationFolder;
         private SimpleStringProperty type;
-        private SimpleStringProperty aircraft;
+        private SimpleStringProperty localFolder;
         private SimpleStringProperty status;
         private SimpleStringProperty id;
 
@@ -54,13 +55,14 @@ public class HubTableModel {
 
             try {
                 ParameterSet parameterSet = job.getParameters();
-                this.name = new SimpleStringProperty((String) parameterSet.getParameter("name").getValue());
-                this.destinationFolder = new SimpleStringProperty((String) parameterSet.getParameter("destinationFolder").getValue());
-                this.type = new SimpleStringProperty((String) parameterSet.getParameter("type").getValue());
+                this.name = new SimpleStringProperty(getParameterValue(parameterSet,"name"));
+                this.destinationFolder = new SimpleStringProperty(getParameterValue(parameterSet,"destinationFolder"));
+                this.type = new SimpleStringProperty(getParameterValue(parameterSet,"type"));
 
-                AircraftParameter aircraftParameter = parameterSet.getParameter("aircraft");
-                this.aircraft = new SimpleStringProperty(aircraftParameter.getValue().toString());
-                this.status = new SimpleStringProperty(JobState.toString(job.getStatus()));
+                this.localFolder = new SimpleStringProperty(getParameterValue(parameterSet,"localFolder"));
+                this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));
+                this.aircraft = new SimpleStringProperty(getParameterValue(parameterSet,"aircraft"));
+                this.status = new SimpleStringProperty(getParameterValue(parameterSet,"status"));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
             catch (IllegalArgumentException ex) {
@@ -71,6 +73,7 @@ public class HubTableModel {
         public void updateJob(Job j) {
             this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
             this.status.set(JobState.toString(j.getStatus()));
+            this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
         }
 
 
@@ -86,8 +89,8 @@ public class HubTableModel {
             return type.get();
         }
 
-        public String getAircraft() {
-            return aircraft.get();
+        public String getLocalFolder() {
+            return localFolder.get();
         }
 
         public String getStatus() {
@@ -105,12 +108,25 @@ public class HubTableModel {
         public SimpleStringProperty nameProperty() {
             return name;
         }
-
+        public SimpleStringProperty aircraftProperty() {
+            return aircraft;
+        }
         public SimpleStringProperty destinationFolderProperty() {
             return destinationFolder;
         }
 
+        public SimpleStringProperty batchIDProperty() {
+            return batchID;
+        }
 
+        private String getParameterValue(ParameterSet parameters, String parameterName) {
+            try {
+                return parameters.getParameter(parameterName).getValue().toString();
+            }
+            catch (IllegalArgumentException ex) {
+                return "";
+            }
+        }
     }
     //</editor-fold>
 

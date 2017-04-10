@@ -6,16 +6,13 @@ import core.CoreListener;
 import core.job.Job;
 import core.job.JobExecutionProgress;
 import gui.MainController;
-import gui.mainview.sidepanel.info.JobInfoController;
 import gui.mainview.sidepanel.modules.ModulesController;
 import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,30 +23,23 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import static core.JStesCore.getCoreEngine;
+import static main.JStesCore.getCoreEngine;
 
 /**
  * CreatorController class for the CommandView
  */
 public class SidePanelController implements Initializable, CoreListener{
     private static final Logger logger = LoggerFactory
-            .getLogger(Main.class);
+            .getLogger(SidePanelController.class);
 
     @FXML
     private VBox vboxContentPane;
 
     @FXML
-    private AnchorPane parametersPane;
+    private ScrollPane parametersPane;
 
     @FXML
     private VBox vboxModulePanel;
-
-    @FXML
-    private VBox vboxInfoPanel;
-
-    @FXML
-    private TitledPane codePane;
-
 
     private PropertyController propertyController;
     private MainController mainController;
@@ -66,20 +56,14 @@ public class SidePanelController implements Initializable, CoreListener{
     public void initialize(URL location, ResourceBundle resources) {
 
         assert parametersPane != null : "fx:id=\"parametersPane\" was not injected: check your FXML file 'parametersPane";
-        assert codePane != null : "fx:id=\"codePane\" was not injected: check your FXML file 'codePane";
 
         propertyController = new PropertyController();
-        parametersPane.getChildren().add(propertyController.getPropertySheet());
+        parametersPane.setContent(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
         componentControllerList.add(propertyController);
 
         //add module view
         addModuleView(vboxModulePanel);
-
-        //add info view
-        addInfoView(vboxInfoPanel);
-
-
     }
 
     /**
@@ -155,26 +139,6 @@ public class SidePanelController implements Initializable, CoreListener{
             ex.printStackTrace();
         }
     }
-
-    /**
-     * Show sidepanel view
-     * @param parentNode
-     */
-    private void addInfoView(VBox parentNode) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/infoView.fxml"));
-            VBox command = (VBox) loader.load();
-
-            JobInfoController jobInfoController = loader.getController();
-            componentControllerList.add(jobInfoController);
-            parentNode.getChildren().add(command);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
 
 
 }

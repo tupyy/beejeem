@@ -11,14 +11,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="core" exported="" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:sshLib:1.5.2" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:oro:2.0.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:jzlib:1.1.3" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:slf4j-api:1.7.21" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:slf4j-jdk:1.7.21" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:controlfx:8.40.12" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:junit4:4.4" level="project" />
-    <orderEntry type="library" exported="" name="Maven: stes.isami:maven-jar:3.0.2" level="project" />
+    <orderEntry type="module" module-name="core" />
+    <orderEntry type="library" name="Maven: stes.isami:sshLib:1.5.2" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:oro:2.0.8" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:jzlib:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:slf4j-api:1.7.21" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:slf4j-jdk:1.7.21" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:controlfx:8.40.12" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:preloader:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.0.24" level="project" />
   </component>
 </module>
