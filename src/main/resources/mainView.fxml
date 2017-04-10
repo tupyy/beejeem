@@ -36,8 +36,9 @@
         </MenuBar>
           <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New job">
+                  <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New">
                   </Button>
+            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
               </items>
           </ToolBar>
       <SplitPane fx:id="splitPane" dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
