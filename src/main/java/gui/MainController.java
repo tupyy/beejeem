@@ -37,6 +37,9 @@ public class MainController implements Initializable, CoreListener {
     private Button addJobButton;
 
     @FXML
+    private Button deleteButton;
+
+    @FXML
     private SplitPane splitPane;
 
     @FXML
@@ -74,6 +77,12 @@ public class MainController implements Initializable, CoreListener {
         imageView.setFitWidth(20);
         addJobButton.setGraphic(imageView);
 
+        s = MainController.class.getClassLoader().getResource("images/remove.png");
+        ImageView imageView1 = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        deleteButton.setGraphic(imageView1);
+
     }
 
     public SidePanelController getSidePanelController() {
@@ -89,6 +98,9 @@ public class MainController implements Initializable, CoreListener {
 
     }
 
+    public void onJobSelected() {
+        deleteButton.setDisable(false);
+    }
     /********************************************************************
      *
      *                          P R I V A T E
