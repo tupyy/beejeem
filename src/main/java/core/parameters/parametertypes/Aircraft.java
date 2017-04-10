@@ -12,7 +12,8 @@ public enum Aircraft {
     LR("A330/340"),
     SA("A320"),
     WB("A300/310"),
-    MT("A400M");
+    MT("A400M"),
+    ALL("All");
 
     private final String name;
 
@@ -22,6 +23,21 @@ public enum Aircraft {
 
     public String toString() {
         return name;
+    }
+
+    public static Aircraft fromString(String aircraft) {
+        switch (aircraft) {
+            case "A400m":
+                return Aircraft.MT;
+            case "MT":
+                return Aircraft.MT;
+            case "XWB900":
+                return Aircraft.XWB900;
+            case "A350-900":
+                return Aircraft.XWB900;
+            default:
+                return Aircraft.ALL;
+        }
     }
 
 }

@@ -31,9 +31,8 @@ public class AircraftParameter extends AbstractParameter<Aircraft> {
         NodeList nodeList = xmlElement.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
-            if (node.getNodeName().equalsIgnoreCase("value")) {
-                setValue(Aircraft.valueOf(node.getTextContent()));
-            }
+                setValue(Aircraft.fromString(node.getTextContent()));
+
         }
     }
 

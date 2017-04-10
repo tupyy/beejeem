@@ -32,12 +32,6 @@ public class SshRemoteFactory implements SshFactory {
     private SshConnector con;
 
     /**
-     * UUID is the job ID
-     */
-    private Map<UUID,SshSession> initializedSessions = Collections
-            .synchronizedMap(new Hashtable<>());
-
-    /**
      *  used to listen to closing events in order to notigy the GUI
      */
     private SshSession mainSession;
@@ -117,7 +111,14 @@ public class SshRemoteFactory implements SshFactory {
 
     @Override
     public void disconnect() {
-        ssh.disconnect();
+
+        if (ssh != null) {
+            if (ssh.isConnected()) {
+                ssh.disconnect();
+                logger.info("SSH disconnected");
+            }
+        }
+
     }
 
     @Override
@@ -195,4 +196,5 @@ public class SshRemoteFactory implements SshFactory {
             }
         }
     }
+
 }

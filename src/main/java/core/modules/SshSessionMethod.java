@@ -43,7 +43,7 @@ public class SshSessionMethod {
 
                 in.close();
                 sshSession.close();
-                logger.debug("Output sidepanel: {}", new String(out.toByteArray()));
+                logger.debug("Output command: {}", new String(out.toByteArray()));
                 return new String(out.toByteArray());
             }
             else {

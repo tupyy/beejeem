@@ -49,27 +49,26 @@ public class SimpleJob extends AbstractJob {
         ModuleController moduleController = (ModuleController) o;
 
         if ((int) arg == ModuleController.FINISHED) {
-            if (moduleController.isSuccessful()) {
-                logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
+            logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
 
-                //run next module
-                String nextModule = getNextModuleName();
-                if ( !nextModule.isEmpty() && canExecute() ) {
-                    getModuleManager(nextModule).execute(this.jobProgress);
-                }
+            //run next module
+            String nextModule = getNextModuleName();
+            if ( !nextModule.isEmpty() && canExecute() ) {
+                getModuleManager(nextModule).execute(this.jobProgress);
             }
-            else {
-                updateStatus(JobState.ERROR);
-                setEditable(true);
-            }
+
         }
         else if ( (int) arg == ModuleController.SCHEDULED && canExecute()) {
             moduleController.execute(this.jobProgress);
         }
+        else if ((int) arg == ModuleController.FAILED) {
+            setEditable(true);
+            updateStatus(JobState.ERROR);
+        }
 
         if(isJobFinished()) {
-            updateStatus(JobState.DONE);
             setEditable(true);
+            updateStatus(JobState.DONE);
         }
 
     }
@@ -89,8 +88,9 @@ public class SimpleJob extends AbstractJob {
 
         String nextModule = getNextModuleName();
         if ( !nextModule.isEmpty() ) {
-            updateStatus(JobState.SUBMITTING);
             setEditable(false);
+            updateStatus(JobState.SUBMITTING);
+            progress.info("Executing job");
             getModuleManager(nextModule).execute(this.jobProgress);
         }
         else {
@@ -115,31 +115,29 @@ public class SimpleJob extends AbstractJob {
      * @param newState new state
      */
     private void updateStatus(int newState) {
-        int state;
 
         if (getStatus() != newState) {
 
             logger.info("Job ID:{} Name:{} ---  Changed status from {} to {}",getName(),getID(),JobState.toString(getStatus()),JobState.toString(newState));
-            state = newState;
 
+            setStatus(newState);
             /**
              * if the staus is DONE (i.e finished running in batch)
              * than advance to PROCESSING
              * After DONE check if there any processing module installed
              */
-            if (newState == JobState.DONE) {
+            if (getStatus() == JobState.DONE) {
                 if(isJobFinished()) {
                     logger.info("Job ID:{} Name:{} -- No more module. FINISHED",getID(),getName());
-                    state = JobState.FINISHED;
+                    setStatus(JobState.FINISHED);
                 }
                 else {
                     logger.info("Job ID:{} Name:{} advanced to PROCESSING",getID(),getName());
-                    state = JobState.PROCESSING;
+                    setStatus(JobState.PROCESSING);
                 }
             }
 
             //notify observers (coreEngine)
-            setStatus(state);
             setChanged();
             notifyObservers(getStatus());
 
@@ -353,17 +351,9 @@ public class SimpleJob extends AbstractJob {
      * Return the module current result state
      * @return
      */
-    private boolean verifyModuleResult(String name) {
-        ModuleController moduleController = getModuleManager(name);
-        if (moduleController != null) {
-            return moduleController.isSuccessful();
-        }
-
-        return false;
-    }
 
     /**
-     * Check if a module can be executed
+     * Check if a module can be executedqdel
      * @return
      */
     private boolean canExecute()  {

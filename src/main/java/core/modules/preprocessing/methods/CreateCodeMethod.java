@@ -2,8 +2,10 @@ package core.modules.preprocessing.methods;
 
 import core.modules.Method;
 import core.modules.MethodResult;
+import core.modules.StandardMethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.BooleanParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,7 @@ public class CreateCodeMethod implements Method {
 
     @Override
     public MethodResult execute() {
-        CreateCodeMethodResult result = new CreateCodeMethodResult(moduleName,jobID,MethodResult.OK);
+        StandardMethodResult result = new StandardMethodResult(moduleName,METHOD_NAME,jobID,MethodResult.OK);
         String code = (String) parameterSet.getParameter("pythonCode").getValue();
         filePath = createPythonFilePath((String)parameterSet.getParameter("filename").getValue(),
                 (String) parameterSet.getParameter("temporaryFolder").getValue());
@@ -59,7 +61,7 @@ public class CreateCodeMethod implements Method {
             else if (name.equals("mission")) {
                 String mission = getMissionName((String)parameterSet.getParameter("filename").getValue());
                 if (mission.isEmpty()) {
-                    return new CreateCodeMethodResult(moduleName, jobID, MethodResult.ERROR, "Cannot find mission definition in the filename");
+                    return new StandardMethodResult(moduleName,METHOD_NAME, jobID, MethodResult.ERROR, "Cannot find mission definition in the filename");
                 }
                 code = code.replace("@".concat(name).concat("@"), mission);
             }
@@ -68,8 +70,21 @@ public class CreateCodeMethod implements Method {
             }
             else{
                 try {
-                    Parameter<?> param = parameterSet.getParameter(name);
-                    code = code.replace("@".concat(name).concat("@"), (String) param.getValue());
+                    Parameter param = parameterSet.getParameter(name);
+
+                    if (param instanceof BooleanParameter) {
+                        Boolean value = (Boolean) ((BooleanParameter) param).getValue();
+                        if (value) {
+                            code = code.replace("@".concat(name).concat("@"), "Yes");
+                        }
+                        else {
+                            code = code.replace("@".concat(name).concat("@"), "No");
+                        }
+                    }
+                    else {
+                        code = code.replace("@".concat(name).concat("@"), param.getValue().toString());
+
+                    }
                 } catch (IllegalArgumentException ex) {
                     logger.info(ex.getMessage());
                     result.addErrorMessage(ex.getMessage());
@@ -86,7 +101,7 @@ public class CreateCodeMethod implements Method {
             out.close();
         }
         catch (IOException ex) {
-            return new CreateCodeMethodResult(moduleName,jobID,MethodResult.ERROR,ex.getMessage());
+            return new StandardMethodResult(moduleName,METHOD_NAME,jobID,MethodResult.ERROR,ex.getMessage());
         }
 
         return result;

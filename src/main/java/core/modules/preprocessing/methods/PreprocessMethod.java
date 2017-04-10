@@ -16,24 +16,24 @@ import java.nio.file.Files;
 import java.util.UUID;
 
 /**
- * This methods creates the temporary folder, copy the input file to the temp folder.
- * Also, it creates the job file.
+ * This class provides a set of methods to help the preprocessing of the job.
  */
-public class PreprocessMethod implements Method {
+public abstract class PreprocessMethod implements Method {
     private Logger logger = LoggerFactory.getLogger(PreprocessMethod.class);
 
-    private static final String METHOD_NAME = "PreprocessMethod";
+    private String methodName = "PreprocessMethod";
     private final UUID jobID;
     private final String moduleName;
     private ParameterSet parameters;
 
 
     /**
-     *
-     * @param moduleName
-     * @param parameterSet
+     * @param moduleName the name of the module
+     * @param parameterSet the set of parameters of the job
      */
-    public PreprocessMethod(String moduleName, UUID jobID,ParameterSet parameterSet) {
+    public PreprocessMethod(String moduleName, String methodName,UUID jobID,ParameterSet parameterSet) {
+
+        this.methodName = methodName;
         this.moduleName = moduleName;
         this.jobID = jobID;
         this.parameters = parameterSet;
@@ -41,51 +41,12 @@ public class PreprocessMethod implements Method {
 
     @Override
     public String getName() {
-        return METHOD_NAME;
+        return methodName;
     }
 
     @Override
     public MethodResult execute() {
-        try {
-            String inputFile = (String) parameters.getParameter("filename").getValue();
-            String tempFolder = (String)parameters.getParameter("temporaryFolder").getValue();
-
-            //create the temporary folder
-            if (!createFolder(tempFolder)) {
-                return new StandardMethodResult(moduleName, METHOD_NAME,jobID,StandardMethodResult.ERROR, "Cannot create the temporary folder");
-            }
-
-            //copy file to temp folder
-            try {
-                copyFile(inputFile, tempFolder);
-            } catch (IOException e) {
-                return new StandardMethodResult(moduleName, METHOD_NAME,jobID, StandardMethodResult.ERROR, e.getMessage());
-            }
-
-            //create the job file
-            try {
-                createJobFile(parameters);
-            }
-            catch (IOException ex) {
-                return new StandardMethodResult(moduleName, METHOD_NAME,jobID, StandardMethodResult.ERROR, ex.getMessage());
-            }
-            catch (NullPointerException ex) {
-                return new StandardMethodResult(moduleName, METHOD_NAME,jobID, StandardMethodResult.ERROR, ex.getMessage());
-            }
-
-            logger.info("Creating code file for: {}",jobID);
-            CreateCodeMethod createCodeMethod = new CreateCodeMethod(moduleName,jobID,parameters);
-            MethodResult result = createCodeMethod.execute();
-            if (result.getExitCode() != 0) {
-                return new StandardMethodResult(moduleName, METHOD_NAME,jobID, StandardMethodResult.ERROR, result.getErrorMessages().get(0));
-            }
-        }
-        catch (IllegalArgumentException ex) {
-            logger.error("Method Preprocess failed: {}",ex.getMessage());
-            return new StandardMethodResult(moduleName, METHOD_NAME,jobID, StandardMethodResult.ERROR, ex.getMessage());
-        }
-
-        return new StandardMethodResult(moduleName,METHOD_NAME,jobID, StandardMethodResult.OK);
+       return null;
 
     }
 
@@ -94,12 +55,24 @@ public class PreprocessMethod implements Method {
 
     }
 
+    public UUID getJobID() {
+        return jobID;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public ParameterSet getParameters() {
+        return parameters;
+    }
+
     /**
      * Create a folder
      * @param folder
      * @return true if the folder has been created, false otherwise
      */
-    private boolean createFolder(String folder) {
+    public boolean createFolder(String folder) {
 
         File folderF = new File(folder);
         if ( !folderF.mkdir() ) {
@@ -111,11 +84,11 @@ public class PreprocessMethod implements Method {
 
     /**
      * Copy file
-     * @param file
-     * @param destinationFolder
+     * @param file source file
+     * @param destinationFolder destination folder
      * @throws IOException
      */
-    private void copyFile(String file, String destinationFolder) throws IOException{
+    public void copyFile(String file, String destinationFolder) throws IOException{
 
         File sourceFile = new File(file);
         File destinationFile;
@@ -136,10 +109,10 @@ public class PreprocessMethod implements Method {
     }
 
     /**
-     * Create the job file
+     * Create the job file for the Isami runIsami.sh script
      * @param parameterSet
      */
-    private void createJobFile(ParameterSet parameterSet) throws IOException,NullPointerException {
+    public void createJobFile(ParameterSet parameterSet,String... resultFileNames) throws IOException,NullPointerException {
         String jobName = parameterSet.getParameter("name").getValue().toString();
 
         StringBuilder fileContent = new StringBuilder("JOBNAME: ".concat(jobName).concat("\n"));
@@ -151,13 +124,25 @@ public class PreprocessMethod implements Method {
         fileContent.append(jobName).append(".stf\n\n");
         fileContent.append("RESULT:\n");
         fileContent.append(jobName).append(".html\n");
-        if (getParameterValue(parameterSet,"czmFile").equalsIgnoreCase("yes")) {
+
+        for(String resultFile: resultFileNames) {
+            fileContent.append(resultFile).append("\n");
+        }
+
+        /**
+         * Stes spectre options
+         */
+        if (getParameters().getParameter("czmFile").getValue().toString().toLowerCase().equals("true")) {
             fileContent.append(jobName).append(".czm\n");
         }
 
-        if (getParameterValue(parameterSet,"traceFile").equalsIgnoreCase("yes")) {
-            fileContent.append(jobName).append("_Hist1.trace\n");
-            fileContent.append(jobName).append("_Hist2.trace\n");
+        if (getParameters().getParameter("sigmaFile").getValue().toString().toLowerCase().equals("true")) {
+//            fileContent.append(jobName).append(".sigma\n");
+        }
+
+        if (getParameters().getParameter("traceFile").getValue().toString().toLowerCase().equals("true")) {
+            fileContent.append(jobName).append("_HIST1_N.trace\n");
+            fileContent.append(jobName).append("_HIST1_N.trace\n");
         }
 
         String jobCodeFile = getParameterValue(parameterSet,"temporaryFolder")  + File.separator +  jobName + ".job";
@@ -183,4 +168,6 @@ public class PreprocessMethod implements Method {
         }
         return parameter.getValue().toString();
     }
+
+
 }
