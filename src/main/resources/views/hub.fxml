@@ -18,7 +18,7 @@
                   <Button fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
                </children>
             </HBox>
-            <TextField promptText="Filter">
+            <TextField fx:id="filterField" promptText="Filter">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

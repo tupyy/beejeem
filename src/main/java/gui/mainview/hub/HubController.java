@@ -7,11 +7,11 @@ import core.job.Job;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,6 +36,9 @@ public class HubController implements Initializable, CoreListener {
     @FXML
     private Button runAllButton;
 
+    @FXML
+    private TextField filterField;
+
     private MainController mainController;
 
     private HubModel model = new HubModel();
@@ -50,6 +53,8 @@ public class HubController implements Initializable, CoreListener {
         setupActions();
         decorateButton(runJobButton,"images/start-icon.png");
         decorateButton(runAllButton,"images/start-icon.png");
+
+
     }
 
     @Override
@@ -118,8 +123,52 @@ public class HubController implements Initializable, CoreListener {
         idCol.setVisible(false);
 
         hubTable.getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
-        hubTable.setItems(model.getTableModel().getData());
         hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // 1. Wrap the ObservableList in a FilteredList (initially display all data).
+        FilteredList<HubTableModel.JobData> filteredData = new FilteredList<>(model.getTableModel().getData(), p -> true);
+
+        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(jobData -> {
+                // If filter text is empty, display all persons.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Compare first name and last name of every person with filter text.
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (jobData.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches first name.
+                } else if (jobData.getDestinationFolder().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches last name.
+                }
+                else if (jobData.getLocalFolder().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                else if (jobData.getType().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                else if (jobData.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                else if (jobData.getId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false; // Does not match.
+            });
+        });
+
+        SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
+
+        //Bind the SortedList comparator to the TableView comparator.
+        sortedData.comparatorProperty().bind(hubTable.comparatorProperty());
+
+        // Add sorted (and filtered) data to the table.
+        hubTable.setItems(sortedData);
+
+
+
     }
 
     /**
