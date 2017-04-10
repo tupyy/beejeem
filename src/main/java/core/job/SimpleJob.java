@@ -100,6 +100,22 @@ public class SimpleJob extends AbstractJob {
     //</editor-fold>
 
 
+    @Override
+    public void updateParameter(Parameter<?> newParameter) throws JobException {
+        try {
+            Parameter oldParameter = getParameter(newParameter.getName());
+
+            if (oldParameter.getClass().toString().equals(newParameter.getClass().toString())) {
+                oldParameter.setValue(newParameter.getValue());
+            }
+            else {
+                throw new JobException(JobException.UPDATE_EXCEPTION,"The new parameters is of different class than the old one.");
+            }
+        }
+        catch (IllegalArgumentException ex) {
+            throw new JobException(JobException.UPDATE_EXCEPTION,ex.getMessage());
+        }
+    }
 
     /****
      *
@@ -310,14 +326,8 @@ public class SimpleJob extends AbstractJob {
      */
     private ModuleController getModuleManager(String name) {
 
-        //FIX FOR NOW
-        //TODO
-        if (name.startsWith("core.modules.")) {
-            name = stripModuleName(name);
-        }
-
         for(ModuleController moduleController : getModules()) {
-            if (stripModuleName(moduleController.getName()).equals(name)) {
+            if (moduleController.getName().equals(name)) {
                 return moduleController;
             }
         }
@@ -363,10 +373,6 @@ public class SimpleJob extends AbstractJob {
         }
 
         return true;
-    }
-
-    private String stripModuleName(String name) {
-        return name = name.substring(name.lastIndexOf(".")+1,name.length());
     }
 
     /**
