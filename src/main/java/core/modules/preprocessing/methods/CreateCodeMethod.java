@@ -5,6 +5,7 @@ import core.modules.MethodResult;
 import core.modules.StandardMethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.BooleanParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +70,21 @@ public class CreateCodeMethod implements Method {
             }
             else{
                 try {
-                    Parameter<?> param = parameterSet.getParameter(name);
-                    code = code.replace("@".concat(name).concat("@"), (String) param.getValue());
+                    Parameter param = parameterSet.getParameter(name);
+
+                    if (param instanceof BooleanParameter) {
+                        Boolean value = (Boolean) ((BooleanParameter) param).getValue();
+                        if (value) {
+                            code = code.replace("@".concat(name).concat("@"), "Yes");
+                        }
+                        else {
+                            code = code.replace("@".concat(name).concat("@"), "No");
+                        }
+                    }
+                    else {
+                        code = code.replace("@".concat(name).concat("@"), param.getValue().toString());
+
+                    }
                 } catch (IllegalArgumentException ex) {
                     logger.info(ex.getMessage());
                     result.addErrorMessage(ex.getMessage());

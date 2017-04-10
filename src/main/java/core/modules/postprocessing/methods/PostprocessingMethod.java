@@ -103,7 +103,7 @@ public abstract class PostprocessingMethod implements Method {
     public String downloadFile(String localFolder,String remotePath,String remoteFile) throws TransferCancelledException, FileNotFoundException, SshException, SftpStatusException {
 
         String remoteFilePath = remotePath.concat("/").concat(remoteFile);
-        logger.debug("Job {}: Downloading file: {}", getJobID(),remoteFilePath);
+        logger.debug("Job {}: Downloading file: {} to {}", getJobID(),remoteFilePath,localFolder);
 
         getSftpClient().lcd(localFolder);
         getSftpClient().get(remoteFilePath);
