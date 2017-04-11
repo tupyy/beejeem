@@ -49,14 +49,14 @@ public interface Job extends Executable {
     public ParameterSet getParameters();
 
     /**
-     * A running job has to be marked for deletion before deleting it. Otherwise the job cannot be deleted.
+     * Delete the job.
+     * If the job is running, it tries to delete itself from the batch system. If it succeed, it change the
+     * state to DELETED.
+     * <br> In case of batch error, it throws a {@code JobExceltion}
+     * <pre>If the job is not running, it changes the state immediately to DELETED</pre>
+     * @return
      */
-    public void markForDeletion();
-
-    /**
-     * Return true if the job is marked of deletion.
-     */
-    public boolean isMarkedForDeletion();
+    public void delete() throws JobException;
 
     /**
      * Return a {@link JobRecord} object containing informations about the job

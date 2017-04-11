@@ -134,12 +134,15 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         return status;
     }
 
-    @Override
+
+
     public boolean isMarkedForDeletion() {
         return markedForDeletion;
     }
 
-    @Override
+    /**
+     * Mark the job for deletion
+     */
     public void markForDeletion() {
         this.markedForDeletion = true;
     }
