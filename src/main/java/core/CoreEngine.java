@@ -117,7 +117,15 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public void deleteJob(UUID id) throws JobException {
+        Job j = getJob(id);
+        j.delete();
+    }
 
+    @Override
+    public void deleteJobs(List<UUID> ids) throws JobException {
+        for (UUID id: ids) {
+            getJob(id).delete();
+        }
     }
 
     @Override
@@ -161,12 +169,19 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public void update(Observable o, Object arg) {
         SimpleJob j = (SimpleJob) o;
-        fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
+
+        if (j.getStatus() == JobState.DELETED) {
+            jobList.remove(j);
+            fireCoreEvent(CoreEventType.JOB_DELETED, j.getID());
+            return;
+        }
 
         if (j.getStatus() == JobState.FINISHED) {
             finishedJobs++;
             logger.info("Finished jobs: {}", finishedJobs);
         }
+
+        fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
     }
 
     @Override
