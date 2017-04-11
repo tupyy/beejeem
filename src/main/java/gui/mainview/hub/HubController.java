@@ -4,8 +4,12 @@ import core.CoreEvent;
 import core.CoreEventType;
 import core.CoreListener;
 import core.job.Job;
+import gui.ComponentEvent;
+import gui.ComponentEventHandler;
+import gui.DefaultComponentEvent;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
+import gui.mainview.sidepanel.ComponentController;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -15,17 +19,21 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import main.JStesCore;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static main.JStesCore.getCoreEngine;
 
 /**
  * CreatorController for the hubView
  */
-public class HubController implements Initializable, CoreListener {
+public class HubController implements Initializable, CoreListener, ComponentEventHandler {
 
     @FXML
     private TableView hubTable;
@@ -49,6 +57,7 @@ public class HubController implements Initializable, CoreListener {
 
         setupTable();
         getCoreEngine().addCoreEventListener(this);
+        JStesCore.registerController(this);
 
         setupActions();
         decorateButton(runJobButton,"images/start-icon.png");
@@ -75,6 +84,11 @@ public class HubController implements Initializable, CoreListener {
         this.mainController = mainController;
     }
 
+
+    @Override
+    public void onComponentEvent(ComponentEvent event) {
+
+    }
 
     /********************************************************************
      *
@@ -176,10 +190,17 @@ public class HubController implements Initializable, CoreListener {
      */
     private void setupActions() {
         hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
+
             if (newSelection != null) {
-                HubTableModel.JobData selectedData = (HubTableModel.JobData) newSelection;
-                mainController.getSidePanelController().onJobSelected(selectedData.getId(),model.getJobLogger(UUID.fromString(selectedData.getId())));
-            }
+
+                List<UUID> ids = new ArrayList<UUID>();
+                for(Object obj: hubTable.getSelectionModel().getSelectedItems()) {
+                    HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
+                    ids.add(UUID.fromString(jobData.getId()));
+                }
+                    JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,ids));
+             }
+
         });
 
         runJobButton.setOnAction((event) -> {
@@ -209,6 +230,7 @@ public class HubController implements Initializable, CoreListener {
         imageView.setFitWidth(20);
         button.setGraphic(imageView);
     }
+
 
 
 }

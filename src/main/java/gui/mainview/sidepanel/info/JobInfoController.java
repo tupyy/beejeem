@@ -55,11 +55,6 @@ public class JobInfoController implements Initializable,ComponentController {
         getModel().populate(job);
     }
 
-    @Override
-    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
-        getModel().setJobLogger(jobProgressLogger);
-    }
-
 
     public JobInfoModel getModel() {
         return jobInfoModel;

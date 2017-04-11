@@ -76,10 +76,6 @@ public class ModulesController implements Initializable,ComponentController{
         loadJob(job);
     }
 
-    @Override
-    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
-
-    }
 
     /********************************************************************
      *

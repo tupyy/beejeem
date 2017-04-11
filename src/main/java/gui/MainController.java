@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.JStesCore;
 import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class MainController implements Initializable, CoreListener {
+public class MainController implements Initializable, CoreListener,ComponentEventHandler {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
@@ -61,6 +62,10 @@ public class MainController implements Initializable, CoreListener {
     private HubController hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
 
+    public MainController() {
+        JStesCore.registerController(this);
+    }
+
     public void initialize(URL location, ResourceBundle resources) {
 
         showSidePanelView(splitPaneVBox);
@@ -85,21 +90,19 @@ public class MainController implements Initializable, CoreListener {
 
     }
 
-    public SidePanelController getSidePanelController() {
-        return sidePanelController;
-    }
-
-    public HubController getHubController() {
-        return hubController;
-    }
-
     @Override
     public void coreEvent(CoreEvent e) {
 
     }
 
-    public void onJobSelected() {
-        deleteButton.setDisable(false);
+    @Override
+    public void onComponentEvent(ComponentEvent event) {
+        if (event.getAction() == ComponentEvent.JOB_SELECTED) {
+            deleteButton.setDisable(false);
+        }
+        else if (event.getAction() == ComponentEvent.TABLE_CLEAR) {
+            deleteButton.setDisable(true);
+        }
     }
     /********************************************************************
      *
@@ -202,6 +205,7 @@ public class MainController implements Initializable, CoreListener {
             }
         };
     }
+
 
 
 }

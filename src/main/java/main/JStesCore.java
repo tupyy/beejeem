@@ -1,7 +1,10 @@
 package main;
 
+import com.google.common.eventbus.EventBus;
 import core.*;
 import core.ssh.SshListener;
+import gui.ComponentEventHandler;
+import gui.mainview.sidepanel.ComponentController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +15,8 @@ public class JStesCore implements CoreListener,SshListener{
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    private static final EventBus eventBus = new EventBus();
 
     public JStesCore() {
 
@@ -25,6 +30,22 @@ public class JStesCore implements CoreListener,SshListener{
      */
     public static Core getCoreEngine() {
         return coreEngine;
+    }
+
+    /**
+     * Register the componentController to the {@code eventBus}
+     * @param componentController
+     */
+    public static void registerController(ComponentEventHandler componentController) {
+        eventBus.register(componentController);
+    }
+
+    /**
+     * Get the event bus
+     * @return
+     */
+    public static EventBus getEventBus() {
+        return eventBus;
     }
 
     public void shutdown() {

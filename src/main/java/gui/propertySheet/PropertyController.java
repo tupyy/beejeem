@@ -51,11 +51,6 @@ public class PropertyController implements ComponentController{
         model.updateParameterSet(job.getParameters());
     }
 
-    @Override
-    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
-
-    }
-
 
     private void initializeController(PropertyModel model) {
         propertySheet = new PropertySheet(model.getPropertySheetItems());
