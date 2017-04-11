@@ -1,6 +1,7 @@
 package core.job;
 
 import core.modules.MethodResult;
+import core.modules.qdel.QDelModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
@@ -42,6 +43,8 @@ public class SimpleJob extends AbstractJob {
             mm.setParent(this);
             mm.addObserver(this);
         }
+
+        getqDelModuleController().setParent(this);
     }
     //<editor-fold desc="Observable implementation">
     @Override
@@ -117,6 +120,33 @@ public class SimpleJob extends AbstractJob {
         }
     }
 
+    public void delete() throws JobException {
+
+        //if is already marked for deletion return
+        if (isMarkedForDeletion()) return;
+
+
+        markForDeletion();
+
+        /**
+         * If the job has been submitted, wait for its completion in the batch system
+         */
+        if (getStatus() > JobState.SUBMITTING && getStatus() < JobState.DONE) {
+
+            /**
+             * If the qStatMissFire < 1 the job has already finished running in batch
+             */
+            if (getQstatMissFire() == 1) {
+                updateStatus(JobState.DELETION);
+                getqDelModuleController().execute(this.jobProgress);
+            }
+        }
+        else {
+            updateStatus(JobState.DELETED);
+        }
+
+        logger.info("Job deleted {}",getID());
+    }
     /****
      *
      *  PRIVATE

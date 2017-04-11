@@ -1,4 +1,4 @@
-package core.modules.preprocessing.methods;
+package core.modules.preprocessing;
 
 import core.modules.Method;
 import core.modules.MethodResult;

@@ -1,8 +1,7 @@
-package core.modules.qstat.method;
+package core.modules;
 
 import com.sshtools.ssh.SshClient;
 import com.sshtools.ssh.SshException;
-import com.sshtools.ssh.SshSession;
 import core.modules.Method;
 import core.modules.MethodResult;
 import core.modules.SshSessionMethod;
@@ -17,13 +16,13 @@ import java.util.UUID;
 /**
  * This method runs the qstat command and return the output
  */
-public class QStatMethod extends SshSessionMethod implements Method {
+public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    private static final String METHOD_NAME = "QStatMethod";
+    private static final String METHOD_NAME = "SimpleCommandMethod";
     private final String command;
 
-    public QStatMethod(SshClient sshClient, String command) {
+    public SimpleCommandMethod(SshClient sshClient, String command) {
         super(sshClient);
         this.command = command;
     }
@@ -37,10 +36,10 @@ public class QStatMethod extends SshSessionMethod implements Method {
     public MethodResult execute() {
 
         try {
-            String outString = executeSessionCommand(createQStatCommand(command));
-            StringParameter qstatOutput = new StringParameter("qstatOutput","Output from qstat","core",outString);
+            String outString = executeSessionCommand(createCommand(command));
+            StringParameter commandOutput = new StringParameter("qdelOutput","Output from qdel","core",outString);
             StandardMethodResult result = new StandardMethodResult("core",METHOD_NAME, UUID.randomUUID(), StandardMethodResult.OK, "");
-            result.addParameter(qstatOutput);
+            result.addParameter(commandOutput);
             return  result;
         } catch (SshException e) {
             logger.error(e.getMessage());
@@ -57,7 +56,7 @@ public class QStatMethod extends SshSessionMethod implements Method {
 
     }
 
-    private String createQStatCommand(String command) {
+    private String createCommand(String command) {
         StringBuilder sb = new StringBuilder();
         sb.append(". /opt/sge/default/common/settings.sh;").append(command);
 

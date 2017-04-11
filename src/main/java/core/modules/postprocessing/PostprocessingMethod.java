@@ -1,4 +1,4 @@
-package core.modules.postprocessing.methods;
+package core.modules.postprocessing;
 
 import com.sshtools.sftp.SftpClient;
 import com.sshtools.sftp.SftpStatusException;

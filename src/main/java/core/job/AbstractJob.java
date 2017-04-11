@@ -1,6 +1,7 @@
 package core.job;
 
 import core.modules.MethodResult;
+import core.modules.qdel.QDelModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.BooleanParameter;
@@ -38,6 +39,8 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      */
     private JobExecutionProgress jobProgress = null;
 
+    private ModuleController qDelModuleController;
+
     /**
      * Status of the job
      */
@@ -73,6 +76,9 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
     public AbstractJob() {
         this.status = JobState.IDLE;
+
+        //create the qdelModuleController
+        qDelModuleController = new ModuleController(new QDelModule(),JobState.NONE);
 
         //create the temporary folder parameter
         StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
@@ -266,5 +272,12 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      */
     protected boolean isJobFinished() {
         return false;
+    }
+
+    /**
+     * Qdel  module controller
+     */
+    public ModuleController getqDelModuleController() {
+        return qDelModuleController;
     }
 }
