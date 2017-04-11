@@ -9,7 +9,6 @@ import gui.ComponentEventHandler;
 import gui.DefaultComponentEvent;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
-import gui.mainview.sidepanel.ComponentController;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static main.JStesCore.getCoreEngine;
 
@@ -52,7 +50,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
     private HubModel model = new HubModel();
 
     public void initialize(URL location, ResourceBundle resources) {
-        assert hubTable != null : "fx:id=\"hubTable\" was not injected: check your FXML file 'hubTable";
+        assert getHubTable() != null : "fx:id=\"hubTable\" was not injected: check your FXML file 'hubTable";
         assert runJobButton != null : "fx:id=\"runJobButton\" was not injected: check your FXML file 'hubTable";
 
         setupTable();
@@ -87,6 +85,10 @@ public class HubController implements Initializable, CoreListener, ComponentEven
     @Override
     public void onComponentEvent(ComponentEvent event) {
 
+    }
+
+    public TableView getHubTable() {
+        return hubTable;
     }
 
     /********************************************************************
@@ -135,8 +137,8 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
         idCol.setVisible(false);
 
-        hubTable.getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
-        hubTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        getHubTable().getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
+        getHubTable().setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // 1. Wrap the ObservableList in a FilteredList (initially display all data).
         FilteredList<HubTableModel.JobData> filteredData = new FilteredList<>(model.getTableModel().getData(), p -> true);
@@ -175,10 +177,10 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
 
         //Bind the SortedList comparator to the TableView comparator.
-        sortedData.comparatorProperty().bind(hubTable.comparatorProperty());
+        sortedData.comparatorProperty().bind(getHubTable().comparatorProperty());
 
         // Add sorted (and filtered) data to the table.
-        hubTable.setItems(sortedData);
+        getHubTable().setItems(sortedData);
 
 
 
@@ -188,12 +190,12 @@ public class HubController implements Initializable, CoreListener, ComponentEven
      * Set up actions
      */
     private void setupActions() {
-        hubTable.getSelectionModel().selectedItemProperty().addListener((obs,oldSelection,newSelection) -> {
+        getHubTable().getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
             if (newSelection != null) {
 
                 List<UUID> ids = new ArrayList<UUID>();
-                for(Object obj: hubTable.getSelectionModel().getSelectedItems()) {
+                for(Object obj: getHubTable().getSelectionModel().getSelectedItems()) {
                     HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
                     ids.add(UUID.fromString(jobData.getId()));
                 }
@@ -203,7 +205,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         });
 
         runJobButton.setOnAction((event) -> {
-            ObservableList<HubTableModel.JobData> selection = hubTable.getSelectionModel().getSelectedItems();
+            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
 
             if (selection.size() > -1) {
                 for (HubTableModel.JobData jobData: selection) {

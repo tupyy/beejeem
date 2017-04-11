@@ -2,7 +2,9 @@ package gui;
 
 import core.CoreEvent;
 import core.CoreListener;
+import core.job.JobException;
 import gui.mainview.hub.HubController;
+import gui.mainview.hub.table.HubTableModel;
 import gui.mainview.sidepanel.SidePanelController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +31,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
+
+import static main.JStesCore.getCoreEngine;
 
 
 public class MainController implements Initializable, CoreListener,ComponentEventHandler {
@@ -76,17 +82,9 @@ public class MainController implements Initializable, CoreListener,ComponentEven
         setupMenuAction();
         addJobButton.setOnAction(newJobEventHandler);
 
-        URL s = MainController.class.getClassLoader().getResource("images/newJob.png");
-        ImageView imageView = new ImageView(new Image(s.toString()));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        addJobButton.setGraphic(imageView);
+        decorateButton(addJobButton,"images/newJob.png");
+        decorateButton(deleteButton,"images/remove.png");
 
-        s = MainController.class.getClassLoader().getResource("images/remove.png");
-        ImageView imageView1 = new ImageView(new Image(s.toString()));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        deleteButton.setGraphic(imageView1);
 
     }
 
@@ -201,8 +199,31 @@ public class MainController implements Initializable, CoreListener,ComponentEven
                 }
             }
         };
+
+        deleteButton.setOnAction(event -> {
+
+            for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
+                HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
+                try {
+                    getCoreEngine().deleteJob(UUID.fromString(jobData.getId()));
+                } catch (JobException e) {
+                    logger.debug("Exception delete job: {}",e.getMessage());
+                }
+            }
+
+        });
     }
 
 
+    /**
+     * Add icons to buttons
+     */
+    private void decorateButton(Button button,String imagePath) {
+        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        button.setGraphic(imageView);
+    }
 
 }
