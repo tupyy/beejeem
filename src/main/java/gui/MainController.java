@@ -121,7 +121,6 @@ public class MainController implements Initializable, CoreListener,ComponentEven
             VBox command = (VBox) loader.load();
 
             sidePanelController = loader.getController();
-            sidePanelController.setMainController(this);
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
@@ -141,8 +140,6 @@ public class MainController implements Initializable, CoreListener,ComponentEven
             parentNode.getChildren().add(hubPane);
 
             hubController = loader.getController();
-            hubController.setMainController(this);
-
         }
         catch (IOException ex) {
             ex.printStackTrace();

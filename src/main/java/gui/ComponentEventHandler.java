@@ -7,6 +7,10 @@ import com.google.common.eventbus.Subscribe;
  */
 public interface ComponentEventHandler {
 
+    /**
+     * Method called when a ComponentEvent is received. The {@code ComponentEvent} is delivered by the EventBus
+     * @param event
+     */
     @Subscribe
     public void onComponentEvent(ComponentEvent event);
 

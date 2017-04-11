@@ -80,11 +80,10 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         }
     }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-
+    /**
+     * {@inheritDoc}
+     * @param event
+     */
     @Override
     public void onComponentEvent(ComponentEvent event) {
 

@@ -46,7 +46,6 @@ public class SidePanelController implements Initializable, CoreListener,Componen
     private VBox vboxModulePanel;
 
     private PropertyController propertyController;
-    private MainController mainController;
 
     private List<ComponentController> componentControllerList = new ArrayList<>();
     private UUID currentJobID;
@@ -71,14 +70,6 @@ public class SidePanelController implements Initializable, CoreListener,Componen
         addModuleView(vboxModulePanel);
     }
 
-    /**
-     * Set the main controller
-     * @param mainController
-     */
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
     @Override
     public void onComponentEvent(ComponentEvent event) {
 
@@ -96,14 +87,6 @@ public class SidePanelController implements Initializable, CoreListener,Componen
                 }
             }
         }
-    }
-
-    /**
-     * Get the main controller
-     * @return
-     */
-    public MainController getMainController() {
-        return mainController;
     }
 
 
