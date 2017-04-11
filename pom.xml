@@ -76,9 +76,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>3.0.24</version>
+            <groupId>stes.isami</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
         </dependency>
 
 

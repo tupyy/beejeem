@@ -12,6 +12,4 @@ public interface ComponentController {
 
     public void updateJob(Job job);
 
-    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger);
-
 }

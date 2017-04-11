@@ -5,6 +5,9 @@ import core.CoreEventType;
 import core.CoreListener;
 import core.job.Job;
 import core.job.JobExecutionProgress;
+import gui.ComponentEvent;
+import gui.ComponentEventHandler;
+import gui.DefaultComponentEvent;
 import gui.MainController;
 import gui.mainview.sidepanel.modules.ModulesController;
 import gui.propertySheet.PropertyController;
@@ -13,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +32,7 @@ import static main.JStesCore.getCoreEngine;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController implements Initializable, CoreListener{
+public class SidePanelController implements Initializable, CoreListener,ComponentEventHandler{
     private static final Logger logger = LoggerFactory
             .getLogger(SidePanelController.class);
 
@@ -42,7 +46,6 @@ public class SidePanelController implements Initializable, CoreListener{
     private VBox vboxModulePanel;
 
     private PropertyController propertyController;
-    private MainController mainController;
 
     private List<ComponentController> componentControllerList = new ArrayList<>();
     private UUID currentJobID;
@@ -50,6 +53,7 @@ public class SidePanelController implements Initializable, CoreListener{
     public SidePanelController() {
 
         getCoreEngine().addCoreEventListener(this);
+        JStesCore.registerController(this);
 
     }
 
@@ -66,36 +70,23 @@ public class SidePanelController implements Initializable, CoreListener{
         addModuleView(vboxModulePanel);
     }
 
-    /**
-     * Perform action when a job has been selected in the hubView
-     * @param id
-     */
-    public void onJobSelected(String id, JobExecutionProgress jobExecutionProgress) {
+    @Override
+    public void onComponentEvent(ComponentEvent event) {
 
-        logger.info("Selected job id {}",id);
-        Job j = getCoreEngine().getJob(UUID.fromString(id));
-        currentJobID = j.getID();
+        //Job selected
+        if (event.getAction() == ComponentEvent.JOB_SELECTED) {
+            if (event.getJobIds().size() > 0) {
+                UUID id = event.getJobIds().get(event.getJobIds().size()-1);
 
-        for (ComponentController componentController: componentControllerList) {
-            componentController.loadJob(j);
-            componentController.setJobProgressLogger(jobExecutionProgress);
+                logger.debug("Selected job id {}",id);
+                Job j = getCoreEngine().getJob(id);
+                currentJobID = j.getID();
+
+                for (ComponentController componentController: componentControllerList) {
+                    componentController.loadJob(j);
+                }
+            }
         }
-     }
-
-    /**
-     * Set the main controller
-     * @param mainController
-     */
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    /**
-     * Get the main controller
-     * @return
-     */
-    public MainController getMainController() {
-        return mainController;
     }
 
 
@@ -139,6 +130,7 @@ public class SidePanelController implements Initializable, CoreListener{
             ex.printStackTrace();
         }
     }
+
 
 
 }
