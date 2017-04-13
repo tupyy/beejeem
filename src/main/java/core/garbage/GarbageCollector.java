@@ -43,6 +43,8 @@ public final class GarbageCollector {
     }
 
     public void shutdown() {
+
+        logger.debug("Shutting down the garbage collector");
         thread.interrupt();
     }
 

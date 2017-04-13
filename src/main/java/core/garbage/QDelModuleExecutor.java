@@ -26,7 +26,7 @@ public class QDelModuleExecutor implements Runnable {
     @Override
     public void run() {
 
-        while(true) {
+        while(!(Thread.currentThread().isInterrupted())) {
             try {
                 GarbageCollector.JobEntry jobEntry = queue.take();
                 ModuleTask moduleTask = jobEntry.getTask();
@@ -46,7 +46,7 @@ public class QDelModuleExecutor implements Runnable {
 
                 }
             } catch (InterruptedException e) {
-                ;
+                Thread.currentThread().interrupt();
             }
         }
 
