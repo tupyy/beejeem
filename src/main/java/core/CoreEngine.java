@@ -128,6 +128,14 @@ public final class CoreEngine extends Observable implements Core, Observer {
         }
     }
 
+    public void stopJob(UUID jobId) {
+        Job job = getJob(jobId);
+
+        if (job !=null) {
+            job.stop();
+        }
+    }
+
     @Override
     public Job getJob(UUID id) {
         for (Job j : jobList) {

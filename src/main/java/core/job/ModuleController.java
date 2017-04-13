@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -46,8 +47,15 @@ public class ModuleController extends Observable implements Executable {
      * Module failed
      */
     public static final int FAILED = 4;
+
+    /**
+     * Module stopped
+     */
+    public static final int STOPPED = 5 ;
+
     private final Module moduleInstance;
 
+    private boolean stopFlag;
 
     //True if the module already run
     private int state;
@@ -58,6 +66,8 @@ public class ModuleController extends Observable implements Executable {
     private String name;
 
     private AbstractJob parent;
+
+    CompletableFuture<MethodResult> completableFuture;
 
     /**
      * Keep tracks of the methods executed and their results
@@ -88,6 +98,7 @@ public class ModuleController extends Observable implements Executable {
      */
     public ModuleController(Module moduleInstance, int triggerJobState) {
         this.moduleInstance = moduleInstance;
+        setStopFlag(false);
 
         if (triggerJobState == JobState.NONE) {
             changeState(ModuleController.SCHEDULED);
@@ -112,6 +123,10 @@ public class ModuleController extends Observable implements Executable {
     public void execute(JobExecutionProgress progress) {
         String errorMessage = "";
 
+        if (getState() == STOPPED) {
+            return;
+        }
+
         try {
              ModuleTask moduleTask = null;
              ThreadPoolExecutor executor = null;
@@ -129,15 +144,26 @@ public class ModuleController extends Observable implements Executable {
                  executor = ModuleExecutor.getSshPoolExecutor();
              }
 
-            CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(moduleTask,executor)
+            completableFuture = CompletableFuture.supplyAsync(moduleTask,executor)
                                                                 .thenApply(methodResult -> {
 
-                                                                    parent.updateParametersFromResult(methodResult);
-                                                                    setMethodResult(methodResult,progress);
+                                                                    if (methodResult != null) {
+                                                                        parent.updateParametersFromResult(methodResult);
+                                                                        setMethodResult(methodResult, progress);
+                                                                    }
 
                                                                     return null;
                                                                 });
             completableFuture.exceptionally( (th) -> {
+
+                    //we intentionally stopped the module
+                    if (isStopFlag()) {
+                        logger.debug("Future stopped: {}",moduleInstance.getName());
+                        StandardMethodResult methodResult = new StandardMethodResult(getName(),"unknown",parent.getID(),StandardMethodResult.OK);
+                        return null;
+                    }
+
+                    //error
                     logger.error(th.getMessage());
                     StandardMethodResult methodResult = new StandardMethodResult(getName(),"unknown",parent.getID(),StandardMethodResult.ERROR,th.getMessage());
                     setMethodResult(methodResult,progress);
@@ -153,13 +179,7 @@ public class ModuleController extends Observable implements Executable {
             progress.error(String.format("Module %s : %s",this.getName(),errorMessage));
         }
         finally {
-            if (! errorMessage.isEmpty() ) {
 
-                //TODO change it. it is horrible!!
-                logger.error(errorMessage);
-                StandardMethodResult methodResult = new StandardMethodResult(getName(),"unknown",parent.getID(),StandardMethodResult.ERROR,errorMessage);
-                setMethodResult(methodResult,progress);
-            }
         }
     }
 
@@ -187,6 +207,31 @@ public class ModuleController extends Observable implements Executable {
      */
     public void start() {
         changeState(ModuleController.RUNNING);
+    }
+
+    public void stop() {
+
+        switch (getState()) {
+            case RUNNING:
+                if (completableFuture != null) {
+                    setStopFlag(true);
+                    logger.debug("Comptable future cancelling {}", moduleInstance.getName());
+                    completableFuture.cancel(true);
+                    if (completableFuture.isCancelled()) {
+                        logger.info("Comptable future cancelled");
+                        try {
+                            completableFuture.join();
+                        }
+                        catch (CancellationException ex) {
+                            changeState(ModuleController.STOPPED);
+                        }
+                    }
+                }
+                break;
+            case READY:
+            case SCHEDULED:
+                changeState(STOPPED);
+        }
     }
 
     /**
@@ -239,12 +284,19 @@ public class ModuleController extends Observable implements Executable {
      *
      */
     private void changeState(int newState) {
+
         state = newState;
         setChanged();
         notifyObservers(getState());
+
     }
 
 
+    private boolean isStopFlag() {
+        return stopFlag;
+    }
 
-
+    private void setStopFlag(boolean stopFlag) {
+        this.stopFlag = stopFlag;
+    }
 }

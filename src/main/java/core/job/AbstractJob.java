@@ -20,8 +20,6 @@ import java.util.*;
 
 public abstract class AbstractJob extends Observable implements Job,Observer{
 
-    private boolean markedForDeletion;
-
     private int qstatMissFire = 1;
 
     private final Logger logger = LoggerFactory.getLogger(SimpleJob.class);
@@ -38,8 +36,6 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * Keeps track of the job execution progress
      */
     private JobExecutionProgress jobProgress = null;
-
-    private ModuleController qDelModuleController;
 
     /**
      * Status of the job
@@ -77,16 +73,12 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     public AbstractJob() {
         this.status = JobState.IDLE;
 
-        //create the qdelModuleController
-        qDelModuleController = new ModuleController(new QDelModule(),JobState.NONE);
-
         //create the temporary folder parameter
         StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
         temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(id.toString().substring(0,7)));
         this.parameterSet.addParameter(temporaryParameter);
 
     }
-
 
     //<editor-fold desc="Job interface">
     @Override
@@ -140,18 +132,11 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         return status;
     }
 
+    @Override
+    public abstract void stop();
 
-
-    public boolean isMarkedForDeletion() {
-        return markedForDeletion;
-    }
-
-    /**
-     * Mark the job for deletion
-     */
-    public void markForDeletion() {
-        this.markedForDeletion = true;
-    }
+    @Override
+    public abstract void delete();
 
     @Override
     public JobRecord collectData() {
@@ -196,7 +181,6 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         }
         return clone;
     }
-
 
     //<editor-fold desc="Executable interface">
     @Override
@@ -274,10 +258,4 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         return false;
     }
 
-    /**
-     * Qdel  module controller
-     */
-    public ModuleController getqDelModuleController() {
-        return qDelModuleController;
-    }
 }

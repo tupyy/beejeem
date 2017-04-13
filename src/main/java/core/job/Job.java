@@ -59,6 +59,11 @@ public interface Job extends Executable {
     public void delete() throws JobException;
 
     /**
+     * Stop the job
+     */
+    public void stop();
+
+    /**
      * Return a {@link JobRecord} object containing informations about the job
      * @return {@link JobRecord} object
      */
