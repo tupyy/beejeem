@@ -1,11 +1,8 @@
 package core;
 
-import core.creator.Creator;
 import core.creator.CreatorFactory;
+import core.garbage.GarbageCollector;
 import core.job.*;
-import core.modules.ModuleStarter;
-import core.parameters.ParameterSet;
-import core.plugin.Plugin;
 import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
@@ -17,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.FileHandler;
 
 /**
  * This class implements the Core interface. It represents the main class of the app.
@@ -27,6 +23,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
 
     private final QStatManager qstatManager;
+    private final GarbageCollector garbageCollector;
 
     private CreatorFactory creatorFactory = new CreatorFactory();
 
@@ -53,18 +50,10 @@ public final class CoreEngine extends Observable implements Core, Observer {
         sshRemoteFactory = new SshRemoteFactory();
         this.qstatManager = new QStatManager(this,executor);
 
+        garbageCollector = new GarbageCollector(this);
+
         //init the states
         JobState jobState = new JobState();
-
-        /**
-         * Load modules on a new thread after the GUI has started
-         */
-//        moduleStarter = new ModuleStarter();
-//        Thread readModuleThread = new Thread(moduleStarter);
-//        readModuleThread.start();
-
-
-
     }
 
     /**
@@ -124,7 +113,16 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public void deleteJobs(List<UUID> ids) throws JobException {
         for (UUID id: ids) {
-            getJob(id).delete();
+            try {
+                Job j = getJob(id);
+                getGarbageCollector().registerJobForDeletion(j.getID(),j.getParameter("batchID"));
+            }
+            catch (IllegalArgumentException ex) {
+                ;
+            }
+            finally {
+                getJob(id).delete();
+            }
         }
     }
 
@@ -203,6 +201,16 @@ public final class CoreEngine extends Observable implements Core, Observer {
         return idList;
     }
 
+    public GarbageCollector getGarbageCollector() {
+        return garbageCollector;
+    }
+
+    @Override
+    public void shutdown() {
+        garbageCollector.shutdown();
+        executor.shutDownExecutor();
+    }
+
     /**
      * Register a listener for JobEvents
      */
@@ -224,12 +232,6 @@ public final class CoreEngine extends Observable implements Core, Observer {
         }
         listeners.removeElement(l);
     }
-
-    @Override
-    public void shutdown() {
-        executor.shutDownExecutor();
-    }
-
 
     //</editor-fold>
 

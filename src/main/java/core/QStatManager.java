@@ -101,6 +101,10 @@ public class QStatManager {
 
         //check the content
         if (qstatOutput.getExitCode() == 0) {
+
+            //set the content to GarbageCollector
+            core.getGarbageCollector().setQStatOutput(qstatOutput);
+
             StringParameter qstatOutputP = qstatOutput.getResultParameters().getParameter("qstatOutput");
             if (qstatOutputP.getValue().isEmpty()) {
                 missFired--;
