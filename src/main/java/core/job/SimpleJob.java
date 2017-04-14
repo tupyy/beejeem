@@ -105,8 +105,6 @@ public class SimpleJob extends AbstractJob {
             return;
         }
 
-        initializeJob();
-
         //save the progress for later use
         this.jobProgress = progress;
 
@@ -442,22 +440,6 @@ public class SimpleJob extends AbstractJob {
         //notify modules about the state change
         for (ModuleController mm : getModules()) {
             mm.stop();
-        }
-    }
-
-    private void initializeJob() {
-        //notify modules about the state change
-        for (ModuleController mm : getModules()) {
-            mm.initialize();
-        }
-
-        File folder = new File(getParameter("temporaryFolder").getValue().toString());
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            for (File file: files) {
-                file.delete();
-            }
-            folder.delete();
         }
     }
 
