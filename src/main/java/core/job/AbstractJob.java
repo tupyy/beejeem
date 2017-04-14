@@ -123,9 +123,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
 
     @Override
-    public void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
-
-    }
+    public abstract void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException;
 
     @Override
     public int getStatus() {
@@ -184,9 +182,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
 
     //<editor-fold desc="Executable interface">
     @Override
-    public void execute(JobExecutionProgress progress) throws JobException {
-
-    }
+    public abstract void execute(JobExecutionProgress progress) throws JobException;
     //</editor-fold>
 
     //<editor-fold desc="QStat section">
@@ -246,9 +242,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * Update job parameters from the results of a methods
      * @param methodResult
      */
-    protected void updateParametersFromResult(MethodResult methodResult) {
-
-    }
+    protected abstract void updateParametersFromResult(MethodResult methodResult);
 
     /**
      * Verify if all the modules has finished

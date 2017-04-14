@@ -57,33 +57,29 @@ public final class GarbageCollector {
 
         if (qStatOutput.getExitCode() == 0) {
 
-            Thread newThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Parameter qstatOutputP = qStatOutput.getResultParameters().getParameter("qstatOutput");
+            Thread newThread = new Thread(() -> {
+                Parameter qstatOutputP = qStatOutput.getResultParameters().getParameter("qstatOutput");
 
-                    List<String> batchIDList = parseQStatOutput(qstatOutputP.getValue().toString());
-                    List<UUID> jobListID = coreEngine.getJobIDList();
+                List<String> batchIDList = parseQStatOutput(qstatOutputP.getValue().toString());
+                List<UUID> jobListID = coreEngine.getJobIDList();
 
-                    for (String batchID: batchIDList) {
-                        boolean batchFound = false;
-                        for (UUID jobID: jobListID) {
-                            try {
-                                Parameter batchIDParameter = coreEngine.getJob(jobID).getParameter("batchID");
-                                if (batchID.equals(batchIDParameter.getValue().toString())) {
-                                    batchFound = true;
-                                    break;
-                                }
+                for (String batchID : batchIDList) {
+                    boolean batchFound = false;
+                    for (UUID jobID : jobListID) {
+                        try {
+                            Parameter batchIDParameter = coreEngine.getJob(jobID).getParameter("batchID");
+                            if (batchID.equals(batchIDParameter.getValue().toString())) {
+                                batchFound = true;
+                                break;
                             }
-                            catch (IllegalArgumentException ex) {
-                                ;
-                            }
+                        } catch (IllegalArgumentException ex) {
+                            ;
                         }
+                    }
 
-                        if (!batchFound) {
-                            logger.debug("Job with batchID {} will be deleted",batchID);
-                            registerJobForDeletion(UUID.randomUUID(),batchID);
-                        }
+                    if (!batchFound) {
+                        logger.debug("Job with batchID {} will be deleted", batchID);
+                        registerJobForDeletion(UUID.randomUUID(), batchID);
                     }
                 }
             });

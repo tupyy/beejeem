@@ -7,6 +7,7 @@ import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.Observable;
 
@@ -73,8 +74,8 @@ public class SimpleJob extends AbstractJob {
 
                 boolean allModuleStopped = true;
                 for(ModuleController mc: getModules()) {
-                    if (mc.getState() != ModuleController.STOPPED || mc.getState() != ModuleController.FINISHED
-                        || mc.getState() != ModuleController.FAILED) {
+                    if (mc.getState() != ModuleController.STOPPED && mc.getState() != ModuleController.FINISHED
+                        && mc.getState() != ModuleController.FAILED) {
                         allModuleStopped = false;
                         break;
                     }
@@ -82,7 +83,6 @@ public class SimpleJob extends AbstractJob {
 
                 if (allModuleStopped) {
                     updateStatus(JobState.STOP);
-
                 }
 
                 break;
@@ -104,6 +104,8 @@ public class SimpleJob extends AbstractJob {
         if (getStatus() != JobState.IDLE && getStatus() != JobState.STOP) {
             return;
         }
+
+        initializeJob();
 
         //save the progress for later use
         this.jobProgress = progress;
@@ -140,6 +142,11 @@ public class SimpleJob extends AbstractJob {
     }
 
     @Override
+    public void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
+
+    }
+
+    @Override
     public void delete() {
         updateStatus(JobState.DELETION);
         //Type to stop all the modules
@@ -154,10 +161,21 @@ public class SimpleJob extends AbstractJob {
      */
     public void stop() {
 
-        stopModules();
         updateStatus(JobState.STOPPING);
+        stopModules();
+
+        //remove batchid from job if any
+        try {
+            getParameterSet().removeParameter("batchID");
+            setChanged();
+            notifyObservers();
+        }
+        catch (IllegalArgumentException ex) {
+            ;
+        }
 
     }
+
     /****
      *
      *  PRIVATE
@@ -332,7 +350,11 @@ public class SimpleJob extends AbstractJob {
      */
     public void setQstatResult(MethodResult qstatOutput) {
 
-        if ((getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING) || getStatus() == JobState.STOPPING) {
+        if (getStatus() == JobState.STOPPING || getStatus() == JobState.STOP) {
+            return;
+        }
+
+        if ((getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING)) {
             logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getID(), qstatOutput.getMethodName());
 
             StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
@@ -420,6 +442,22 @@ public class SimpleJob extends AbstractJob {
         //notify modules about the state change
         for (ModuleController mm : getModules()) {
             mm.stop();
+        }
+    }
+
+    private void initializeJob() {
+        //notify modules about the state change
+        for (ModuleController mm : getModules()) {
+            mm.initialize();
+        }
+
+        File folder = new File(getParameter("temporaryFolder").getValue().toString());
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            for (File file: files) {
+                file.delete();
+            }
+            folder.delete();
         }
     }
 

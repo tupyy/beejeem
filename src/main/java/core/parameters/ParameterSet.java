@@ -120,6 +120,10 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
         parameters.add(parameter);
     }
 
+    /**
+     * Remove parameter
+     * @param parametername
+     */
     public void removeParameter(String parametername) {
         for (Parameter<?> p : parameters) {
             if (p.getName().equals(parametername)) {

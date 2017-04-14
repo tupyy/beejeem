@@ -18,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -125,11 +126,21 @@ public class QStatManager {
                 ThreadPoolExecutor executor =  ModuleExecutor.getSshPoolExecutor();
                 QStatModule qStatModule = createModule();
                 ModuleTask task = qStatModule.runModule(UUID.randomUUID(), SshRemoteFactory.getSshClient(),null);
-                CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(task,executor)
-                        .thenApply(methodResult -> {
-                            receiveOutput(methodResult);
-                            return null;
-                        });
+
+                try {
+                    CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(task, executor)
+                            .thenApply(methodResult -> {
+                                receiveOutput(methodResult);
+                                return null;
+                            });
+
+                    completableFuture.exceptionally((th) -> null);
+                }
+                catch (RejectedExecutionException ex) {
+                    logger.debug("Executor rejected execution of QStatmodule");
+                    return;
+                }
+
                 qstatFlag = false;
             } catch (ModuleException e) {
                 e.printStackTrace();

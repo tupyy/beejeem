@@ -176,18 +176,28 @@ public final class CoreEngine extends Observable implements Core, Observer {
     public void update(Observable o, Object arg) {
         SimpleJob j = (SimpleJob) o;
 
-        if (j.getStatus() == JobState.DELETED) {
-            jobList.remove(j);
-            fireCoreEvent(CoreEventType.JOB_DELETED, j.getID());
-            return;
-        }
+        switch (j.getStatus()) {
 
-        if (j.getStatus() == JobState.FINISHED) {
-            finishedJobs++;
-            logger.info("Finished jobs: {}", finishedJobs);
-        }
+            case JobState.DELETED:
+                jobList.remove(j);
+                fireCoreEvent(CoreEventType.JOB_DELETED, j.getID());
+                break;
 
-        fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
+            case JobState.FINISHED:
+                finishedJobs++;
+                logger.info("Finished jobs: {}", finishedJobs);
+                break;
+
+            case JobState.STOP:
+                try {
+                    garbageCollector.registerJobForDeletion(j.getID(), j.getParameter("batchID"));
+                }
+                catch (IllegalArgumentException ex) {
+                    ;
+                }
+            default:
+                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
+        }
     }
 
     @Override
