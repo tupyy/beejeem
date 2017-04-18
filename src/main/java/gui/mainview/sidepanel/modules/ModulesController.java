@@ -42,8 +42,6 @@ public class ModulesController implements Initializable,ComponentController{
     @FXML
     private TableColumn triggerColumn;
 
-    private UUID selectedJobId;
-
     private ModulesModel model;
 
     public ModulesController() {
@@ -74,6 +72,11 @@ public class ModulesController implements Initializable,ComponentController{
     @Override
     public void updateJob(Job job) {
         loadJob(job);
+    }
+
+    @Override
+    public void clear() {
+        model.clear();
     }
 
 

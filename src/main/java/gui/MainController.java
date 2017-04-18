@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -95,11 +97,22 @@ public class MainController implements Initializable, CoreListener,ComponentEven
 
     @Override
     public void onComponentEvent(ComponentEvent event) {
-        if (event.getAction() == ComponentEvent.JOB_SELECTED) {
-            deleteButton.setDisable(false);
-        }
-        else if (event.getAction() == ComponentEvent.TABLE_CLEAR) {
-            deleteButton.setDisable(true);
+
+        switch (event.getAction()) {
+            case ComponentEvent.JOB_SELECTED:
+                deleteButton.setDisable(false);
+                break;
+            case ComponentEvent.JOB_DELETED:
+                if (getCoreEngine().count() == 0) {
+                    deleteButton.setDisable(true);
+                }
+                break;
+            case ComponentEvent.DELETE_DISABLE:
+                deleteButton.setDisable(true);
+                break;
+            case ComponentEvent.SELECTION_CLEARED:
+                deleteButton.setDisable(true);
+                break;
         }
     }
     /********************************************************************
@@ -202,13 +215,16 @@ public class MainController implements Initializable, CoreListener,ComponentEven
 
         deleteButton.setOnAction(event -> {
 
+            List<UUID> ids = new ArrayList<>();
             for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
-                try {
-                    getCoreEngine().deleteJob(UUID.fromString(jobData.getId()));
-                } catch (JobException e) {
-                    logger.debug("Exception delete job: {}",e.getMessage());
-                }
+                ids.add(UUID.fromString(jobData.getId()));
+            }
+
+            try {
+                getCoreEngine().deleteJobs(ids);
+            } catch (JobException e) {
+                logger.debug("Exception delete job: {}",e.getMessage());
             }
 
         });

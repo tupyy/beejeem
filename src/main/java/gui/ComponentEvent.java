@@ -13,7 +13,9 @@ public interface ComponentEvent  {
 
     public static final int JOB_DELETED = 2;
 
-    public static final int TABLE_CLEAR = 3;
+    public static final int DELETE_DISABLE = 3;
+
+    public static final int SELECTION_CLEARED = 4;
 
     /**
      * Get the list of job ids on which the event occured

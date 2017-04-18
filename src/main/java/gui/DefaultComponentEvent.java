@@ -23,6 +23,12 @@ public class DefaultComponentEvent extends AbstractComponentEvent {
         this(source,action,new ArrayList<>());
     }
 
+    public DefaultComponentEvent(Object source,int action,UUID jobID) {
+        this(source,action,new ArrayList<>());
+        jobIds.add(jobID);
+
+    }
+
     public List<UUID> getJobIds() {
         return jobIds;
     }

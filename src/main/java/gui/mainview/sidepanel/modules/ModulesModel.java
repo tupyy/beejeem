@@ -23,7 +23,7 @@ public class ModulesModel {
 
     public void populate(Job j) {
 
-        getData().clear();
+        clear();
 
         List<ModuleController> moduleList = j.getModules();
         for(ModuleController moduleController: moduleList) {
@@ -42,7 +42,7 @@ public class ModulesModel {
     }
 
     public void clear() {
-        data.clear();
+       data.removeAll(data);
     }
 
 
@@ -92,6 +92,8 @@ public class ModulesModel {
                     return "FINISHED";
                 case 4:
                     return "FAILED";
+                case 5:
+                    return "STOPPED";
                 default:
                     return "";
             }

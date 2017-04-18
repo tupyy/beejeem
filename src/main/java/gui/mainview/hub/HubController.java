@@ -21,10 +21,8 @@ import javafx.scene.image.ImageView;
 import main.JStesCore;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collector;
 
 import static main.JStesCore.getCoreEngine;
 
@@ -69,12 +67,20 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         if (e.getAction() == CoreEventType.JOB_CREATED) {
             UUID id = e.getId();
             model.getTableModel().addJob(getCoreEngine().getJob(id));
-            runJobButton.setDisable(false);
             runAllButton.setDisable(false);
         }
         else if (e.getAction() == CoreEventType.JOB_UPDATED) {
             Job j = getCoreEngine().getJob(e.getId());
             model.getTableModel().updateJob(j);
+        }
+        else if (e.getAction() == CoreEventType.JOB_DELETED) {
+            model.getTableModel().deleteJob(e.getId());
+            JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_DELETED, Arrays.asList(e.getId())));
+
+            if (getCoreEngine().count() == 0) {
+                runAllButton.setDisable(true);
+                runJobButton.setDisable(true);
+            }
         }
     }
 
@@ -85,6 +91,20 @@ public class HubController implements Initializable, CoreListener, ComponentEven
     @Override
     public void onComponentEvent(ComponentEvent event) {
 
+        switch (event.getAction()) {
+            case ComponentEvent.JOB_SELECTED:
+                 runJobButton.setDisable(false);
+                 break;
+            case ComponentEvent.JOB_DELETED:
+                runJobButton.setDisable(true);
+                runAllButton.setDisable(true);
+                 break;
+            case ComponentEvent.DELETE_DISABLE:
+                break;
+            case ComponentEvent.SELECTION_CLEARED:
+                runJobButton.setDisable(true);
+                break;
+        }
     }
 
     public TableView getHubTable() {
@@ -140,7 +160,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         getHubTable().getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
         getHubTable().setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // 1. Wrap the ObservableList in a FilteredList (initially display all data).
+        //Wrap the ObservableList in a FilteredList (initially display all data).
         FilteredList<HubTableModel.JobData> filteredData = new FilteredList<>(model.getTableModel().getData(), p -> true);
 
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -172,6 +192,8 @@ public class HubController implements Initializable, CoreListener, ComponentEven
                 }
                 return false; // Does not match.
             });
+
+            getHubTable().getSelectionModel().clearSelection();
         });
 
         SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
@@ -181,6 +203,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
 
         // Add sorted (and filtered) data to the table.
         getHubTable().setItems(sortedData);
+        getHubTable().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 
 
@@ -194,13 +217,24 @@ public class HubController implements Initializable, CoreListener, ComponentEven
 
             if (newSelection != null) {
 
+                if ( getHubTable().getSelectionModel().getSelectedItems().size() == 1) {
+                    HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
+                    if (jobData.getStatus().equals("Deletion")) {
+                        JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.DELETE_DISABLE,UUID.randomUUID()));
+                        return;
+                    }
+                }
                 List<UUID> ids = new ArrayList<UUID>();
                 for(Object obj: getHubTable().getSelectionModel().getSelectedItems()) {
                     HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
                     ids.add(UUID.fromString(jobData.getId()));
                 }
-                    JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,ids));
+
+                JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,ids));
              }
+             else {
+                JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.SELECTION_CLEARED,new ArrayList<UUID>()));
+            }
 
         });
 
@@ -219,6 +253,16 @@ public class HubController implements Initializable, CoreListener, ComponentEven
                 getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
             }
         });
+
+//        stopButton.setOnAction(event -> {
+//            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+//
+//            if (selection.size() > -1) {
+//                for (HubTableModel.JobData jobData: selection) {
+//                    getCoreEngine().stopJob(UUID.fromString(jobData.getId()));
+//                }
+//            }
+//        });
     }
 
     /**

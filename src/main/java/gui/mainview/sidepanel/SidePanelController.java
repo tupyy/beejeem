@@ -87,6 +87,16 @@ public class SidePanelController implements Initializable, CoreListener,Componen
                 }
             }
         }
+        else if(event.getAction() == ComponentEvent.JOB_DELETED) {
+            for (UUID id : event.getJobIds()) {
+                if (currentJobID.equals(id)) {
+                    for (ComponentController componentController: componentControllerList) {
+                        componentController.clear();
+                    }
+                    currentJobID = null;
+                }
+            }
+        }
     }
 
 

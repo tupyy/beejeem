@@ -8,8 +8,16 @@ import core.job.JobExecutionProgress;
  */
 public interface ComponentController {
 
+    /**
+     * Load a job
+     * @param job
+     */
     public void loadJob(Job job);
 
     public void updateJob(Job job);
 
+    /**
+     * Clear models
+     */
+    public void clear();
 }

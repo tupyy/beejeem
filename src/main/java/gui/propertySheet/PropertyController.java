@@ -28,10 +28,6 @@ public class PropertyController implements ComponentController{
         initializeController(model);
     }
 
-    public void clearPropertySheet() {
-        model.getPropertySheetItems().clear();
-    }
-
     public PropertySheet getPropertySheet() {
         return propertySheet;
     }
@@ -49,6 +45,11 @@ public class PropertyController implements ComponentController{
     @Override
     public void updateJob(Job job) {
         model.updateParameterSet(job.getParameters());
+    }
+
+    @Override
+    public void clear() {
+        model.clear();
     }
 
 
