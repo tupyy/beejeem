@@ -4,6 +4,7 @@ import core.CoreEvent;
 import core.CoreEventType;
 import core.CoreListener;
 import core.job.Job;
+import core.job.JobState;
 import gui.ComponentEvent;
 import gui.ComponentEventHandler;
 import gui.DefaultComponentEvent;
@@ -93,7 +94,19 @@ public class HubController implements Initializable, CoreListener, ComponentEven
 
         switch (event.getAction()) {
             case ComponentEvent.JOB_SELECTED:
-                 runJobButton.setDisable(false);
+
+                if (event.getJobIds().size() > 1) {
+                    runJobButton.setDisable(true);
+                }
+                else {
+                    if (isJobIdle(event.getJobIds().get(event.getJobIds().size()-1))) {
+                        runJobButton.setDisable(false);
+                    }
+                    else {
+                        runJobButton.setDisable(true);
+                    }
+                }
+
                  break;
             case ComponentEvent.JOB_DELETED:
                 runJobButton.setDisable(true);
@@ -224,13 +237,16 @@ public class HubController implements Initializable, CoreListener, ComponentEven
                         return;
                     }
                 }
-                List<UUID> ids = new ArrayList<UUID>();
-                for(Object obj: getHubTable().getSelectionModel().getSelectedItems()) {
-                    HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
-                    ids.add(UUID.fromString(jobData.getId()));
+                else {
+                    List<UUID> ids = new ArrayList<UUID>();
+                    for (Object obj : getHubTable().getSelectionModel().getSelectedItems()) {
+                        HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
+                        ids.add(UUID.fromString(jobData.getId()));
+                    }
+                    JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,ids));
                 }
 
-                JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,ids));
+
              }
              else {
                 JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.SELECTION_CLEARED,new ArrayList<UUID>()));
@@ -276,6 +292,18 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         button.setGraphic(imageView);
     }
 
+    /**
+     * Check if a job can be executed (i.e. the state is IDLE)
+     * @param id
+     * @return
+     */
+    private boolean isJobIdle(UUID id) {
+        if (getCoreEngine().getJob(id).getStatus() == JobState.IDLE) {
+            return true;
+        }
+
+        return false;
+    }
 
 
 }
