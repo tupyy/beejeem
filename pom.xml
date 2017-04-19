@@ -6,7 +6,7 @@
 
     <groupId>stes.isami</groupId>
     <artifactId>gui</artifactId>
-    <version>0.2</version>
+    <version>0.3.1</version>
 
     <build>
         <plugins>
@@ -35,12 +35,6 @@
                       </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.3</version>
-            </plugin>
-
         </plugins>
     </build>
 
@@ -48,7 +42,7 @@
         <dependency>
             <groupId>stes.isami</groupId>
             <artifactId>core</artifactId>
-            <version>0.2</version>
+            <version>0.3.1</version>
         </dependency>
 
         <dependency>
@@ -76,11 +70,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>3.0.24</version>
+            <groupId>stes.isami</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
         </dependency>
-
 
     </dependencies>
 </project>

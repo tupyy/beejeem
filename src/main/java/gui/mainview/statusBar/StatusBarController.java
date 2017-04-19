@@ -41,8 +41,6 @@ public class StatusBarController implements Initializable,SshListener {
             imageViewer.setImage(image2);
             sshLabel.setText("Disconnected");
         }
-
-
     }
 
     @Override

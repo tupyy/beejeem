@@ -42,8 +42,6 @@ public class ModulesController implements Initializable,ComponentController{
     @FXML
     private TableColumn triggerColumn;
 
-    private UUID selectedJobId;
-
     private ModulesModel model;
 
     public ModulesController() {
@@ -77,9 +75,10 @@ public class ModulesController implements Initializable,ComponentController{
     }
 
     @Override
-    public void setJobProgressLogger(JobExecutionProgress jobProgressLogger) {
-
+    public void clear() {
+        model.clear();
     }
+
 
     /********************************************************************
      *

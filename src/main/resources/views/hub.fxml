@@ -16,9 +16,10 @@
                   <Button fx:id="runJobButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run job" />
                   <Separator prefWidth="10.0" visible="false" HBox.hgrow="NEVER" />
                   <Button fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
+                  <Separator layoutX="110.0" layoutY="29.0" prefWidth="10.0" visible="false" />
                </children>
             </HBox>
-            <TextField promptText="Filter">
+            <TextField fx:id="filterField" promptText="Filter">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

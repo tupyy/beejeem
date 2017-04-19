@@ -2,7 +2,9 @@ package gui;
 
 import core.CoreEvent;
 import core.CoreListener;
+import core.job.JobException;
 import gui.mainview.hub.HubController;
+import gui.mainview.hub.table.HubTableModel;
 import gui.mainview.sidepanel.SidePanelController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,21 +23,30 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.JStesCore;
 import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
+
+import static main.JStesCore.getCoreEngine;
 
 
-public class MainController implements Initializable, CoreListener {
+public class MainController implements Initializable, CoreListener,ComponentEventHandler {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
     @FXML
     private Button addJobButton;
+
+    @FXML
+    private Button deleteButton;
 
     @FXML
     private SplitPane splitPane;
@@ -58,6 +70,10 @@ public class MainController implements Initializable, CoreListener {
     private HubController hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
 
+    public MainController() {
+        JStesCore.registerController(this);
+    }
+
     public void initialize(URL location, ResourceBundle resources) {
 
         showSidePanelView(splitPaneVBox);
@@ -68,25 +84,36 @@ public class MainController implements Initializable, CoreListener {
         setupMenuAction();
         addJobButton.setOnAction(newJobEventHandler);
 
-        URL s = MainController.class.getClassLoader().getResource("images/newJob.png");
-        ImageView imageView = new ImageView(new Image(s.toString()));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        addJobButton.setGraphic(imageView);
+        decorateButton(addJobButton,"images/newJob.png");
+        decorateButton(deleteButton,"images/remove.png");
 
-    }
 
-    public SidePanelController getSidePanelController() {
-        return sidePanelController;
-    }
-
-    public HubController getHubController() {
-        return hubController;
     }
 
     @Override
     public void coreEvent(CoreEvent e) {
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onComponentEvent(ComponentEvent event) {
+
+        switch (event.getAction()) {
+            case ComponentEvent.JOB_SELECTED:
+                deleteButton.setDisable(false);
+                break;
+            case ComponentEvent.JOB_DELETED:
+                if (getCoreEngine().count() == 0) {
+                    deleteButton.setDisable(true);
+                }
+                break;
+            case ComponentEvent.SELECTION_CLEARED:
+                deleteButton.setDisable(true);
+                break;
+        }
     }
 
     /********************************************************************
@@ -106,7 +133,6 @@ public class MainController implements Initializable, CoreListener {
             VBox command = (VBox) loader.load();
 
             sidePanelController = loader.getController();
-            sidePanelController.setMainController(this);
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
@@ -126,8 +152,6 @@ public class MainController implements Initializable, CoreListener {
             parentNode.getChildren().add(hubPane);
 
             hubController = loader.getController();
-            hubController.setMainController(this);
-
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -189,7 +213,34 @@ public class MainController implements Initializable, CoreListener {
                 }
             }
         };
+
+        deleteButton.setOnAction(event -> {
+
+            List<UUID> ids = new ArrayList<>();
+            for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
+                HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
+                ids.add(UUID.fromString(jobData.getId()));
+            }
+
+            try {
+                getCoreEngine().deleteJobs(ids);
+            } catch (JobException e) {
+                logger.debug("Exception delete job: {}",e.getMessage());
+            }
+
+        });
     }
 
+
+    /**
+     * Add icons to buttons
+     */
+    private void decorateButton(Button button,String imagePath) {
+        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        button.setGraphic(imageView);
+    }
 
 }

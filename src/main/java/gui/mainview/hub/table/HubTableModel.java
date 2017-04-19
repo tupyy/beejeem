@@ -7,6 +7,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.UUID;
+
 /**
  * Created by tctupangiu on 22/03/2017.
  */
@@ -33,6 +35,19 @@ public class HubTableModel {
 
     public ObservableList<JobData> getData() {
         return data;
+    }
+
+    /**
+     * Delete a job from model
+     * @param id
+     */
+    public void deleteJob(UUID id) {
+        for (JobData jobdata : data) {
+            if (jobdata.getId().equals(id.toString())) {
+                data.remove(jobdata);
+                break;
+            }
+        }
     }
 
 
@@ -62,7 +77,7 @@ public class HubTableModel {
                 this.localFolder = new SimpleStringProperty(getParameterValue(parameterSet,"localFolder"));
                 this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));
                 this.aircraft = new SimpleStringProperty(getParameterValue(parameterSet,"aircraft"));
-                this.status = new SimpleStringProperty(getParameterValue(parameterSet,"status"));
+                this.status = new SimpleStringProperty(JobState.toString(job.getStatus()));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
             catch (IllegalArgumentException ex) {

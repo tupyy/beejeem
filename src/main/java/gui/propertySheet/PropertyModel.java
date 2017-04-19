@@ -41,7 +41,7 @@ public class PropertyModel {
         this.parameterSet = parameterSet;
 
         Platform.runLater(() -> {
-            clear();
+            getPropertySheetItems().clear();
             addItems(parameterSet);
         });
 
@@ -74,7 +74,9 @@ public class PropertyModel {
     }
 
     public void clear() {
-        getPropertySheetItems().clear();
+        Platform.runLater(() -> {
+            getPropertySheetItems().clear();
+        });
     }
 
     /**
