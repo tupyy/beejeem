@@ -7,6 +7,8 @@ import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
+import core.util.TmpFileCleanup;
+import javafx.application.Preloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,12 @@ public final class CoreEngine extends Observable implements Core, Observer {
     private CoreEngine() {
 
         CoreLogging.configureLogging();
+
+        TmpFileCleanup cleanup = new TmpFileCleanup();
+        Thread tmpCleanupThread = new Thread(cleanup);
+        tmpCleanupThread.setPriority(Thread.MIN_PRIORITY);
+        tmpCleanupThread.start();
+
         executor = new ModuleExecutor();
         sshRemoteFactory = new SshRemoteFactory();
         this.qstatManager = new QStatManager(this,executor);
@@ -186,6 +194,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
             case JobState.FINISHED:
                 finishedJobs++;
                 logger.info("Finished jobs: {}", finishedJobs);
+                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
                 break;
 
             case JobState.STOP:
