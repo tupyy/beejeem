@@ -71,20 +71,6 @@ public class SimpleJob extends AbstractJob {
             case ModuleController.STOPPED:
                 setChanged();
                 notifyObservers();
-
-                boolean allModuleStopped = true;
-                for(ModuleController mc: getModules()) {
-                    if (mc.getState() != ModuleController.STOPPED && mc.getState() != ModuleController.FINISHED
-                        && mc.getState() != ModuleController.FAILED) {
-                        allModuleStopped = false;
-                        break;
-                    }
-                }
-
-                if (allModuleStopped) {
-                    updateStatus(JobState.STOP);
-                }
-
                 break;
         }
 
