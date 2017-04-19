@@ -95,6 +95,9 @@ public class MainController implements Initializable, CoreListener,ComponentEven
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onComponentEvent(ComponentEvent event) {
 
@@ -107,14 +110,12 @@ public class MainController implements Initializable, CoreListener,ComponentEven
                     deleteButton.setDisable(true);
                 }
                 break;
-            case ComponentEvent.DELETE_DISABLE:
-                deleteButton.setDisable(true);
-                break;
             case ComponentEvent.SELECTION_CLEARED:
                 deleteButton.setDisable(true);
                 break;
         }
     }
+
     /********************************************************************
      *
      *                          P R I V A T E

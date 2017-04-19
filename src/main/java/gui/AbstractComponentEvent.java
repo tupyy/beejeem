@@ -18,7 +18,7 @@ public class AbstractComponentEvent implements ComponentEvent {
     }
 
     @Override
-    public List<UUID> getJobIds() {
+    public UUID getJobId() {
         return null;
     }
 

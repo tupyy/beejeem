@@ -13,15 +13,13 @@ public interface ComponentEvent  {
 
     public static final int JOB_DELETED = 2;
 
-    public static final int DELETE_DISABLE = 3;
-
-    public static final int SELECTION_CLEARED = 4;
+    public static final int SELECTION_CLEARED = 3;
 
     /**
      * Get the list of job ids on which the event occured
      * @return
      */
-   public List<UUID> getJobIds();
+   public UUID getJobId();
 
     /**
      * Get the event action

@@ -3,6 +3,7 @@ package main;
 import com.sun.javafx.application.LauncherImpl;
 import configuration.JStesConfiguration;
 import configuration.JStesPreferences;
+import core.util.TmpFileCleanup;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -14,7 +15,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import preloader.JStesPreloader;
@@ -22,6 +22,11 @@ import preloader.JStesPreloader;
 import javax.net.ssl.SSLException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import static main.JStesCore.getCoreEngine;
 
@@ -30,6 +35,7 @@ public class MainApp extends Application {
     private JStesCore jStesCore;
         BooleanProperty ready  = new SimpleBooleanProperty(false);
 
+    private String version = new String();
 
     public MainApp() {
     }
@@ -47,11 +53,7 @@ public class MainApp extends Application {
             @Override
             protected Void call() throws Exception {
 
-                TmpFileCleanup cleanup = new TmpFileCleanup();
-                Thread tmpCleanupThread = new Thread(cleanup);
-                tmpCleanupThread.setPriority(Thread.MIN_PRIORITY);
-                tmpCleanupThread.start();
-                notifyPreloader(new Preloader.ProgressNotification(0.33));
+                version = getManifestInfo();
 
                 /**
                  * Read config
@@ -138,6 +140,9 @@ public class MainApp extends Application {
                 if (Boolean.TRUE.equals(t1)) {
                     Platform.runLater(new Runnable() {
                         public void run() {
+                            if ( !version.isEmpty() ) {
+                                primaryStage.setTitle(primaryStage.getTitle() + " version " + version);
+                            }
                             primaryStage.show();
 
                         }
@@ -163,5 +168,34 @@ public class MainApp extends Application {
        // Application.launch(MainApp.class,args);
         LauncherImpl.launchApplication(MainApp.class, JStesPreloader.class, args);
 
+    }
+
+    public String getManifestInfo() {
+        Enumeration resEnum;
+        try {
+            resEnum = MainApp.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
+            while (resEnum.hasMoreElements()) {
+                try {
+                    URL url = (URL)resEnum.nextElement();
+                    if (url.getPath().contains("gui")) {
+                        InputStream is = url.openStream();
+                        if (is != null) {
+                            Manifest manifest = new Manifest(is);
+                            Attributes mainAttribs = manifest.getMainAttributes();
+                            String version = mainAttribs.getValue("Implementation-Version");
+                            if (version != null) {
+                                return version;
+                            }
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    // Silently ignore wrong manifests on classpath?
+                }
+            }
+        } catch (IOException e1) {
+            // Silently ignore wrong manifests on classpath?
+        }
+        return "";
     }
 }

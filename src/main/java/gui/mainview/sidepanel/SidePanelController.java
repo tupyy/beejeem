@@ -75,9 +75,7 @@ public class SidePanelController implements Initializable, CoreListener,Componen
 
         //Job selected
         if (event.getAction() == ComponentEvent.JOB_SELECTED) {
-            if (event.getJobIds().size() > 0) {
-                UUID id = event.getJobIds().get(event.getJobIds().size()-1);
-
+                UUID id = event.getJobId();
                 logger.debug("Selected job id {}",id);
                 Job j = getCoreEngine().getJob(id);
                 currentJobID = j.getID();
@@ -86,16 +84,13 @@ public class SidePanelController implements Initializable, CoreListener,Componen
                     componentController.loadJob(j);
                 }
             }
-        }
         else if(event.getAction() == ComponentEvent.JOB_DELETED) {
-            for (UUID id : event.getJobIds()) {
-                if (currentJobID.equals(id)) {
+                if (currentJobID.equals(event.getJobId())) {
                     for (ComponentController componentController: componentControllerList) {
                         componentController.clear();
                     }
                     currentJobID = null;
                 }
-            }
         }
     }
 

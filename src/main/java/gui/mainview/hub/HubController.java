@@ -76,7 +76,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         }
         else if (e.getAction() == CoreEventType.JOB_DELETED) {
             model.getTableModel().deleteJob(e.getId());
-            JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_DELETED, Arrays.asList(e.getId())));
+            JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_DELETED, e.getId()));
 
             if (getCoreEngine().count() == 0) {
                 runAllButton.setDisable(true);
@@ -95,25 +95,19 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         switch (event.getAction()) {
             case ComponentEvent.JOB_SELECTED:
 
-                if (event.getJobIds().size() > 1) {
-                    runJobButton.setDisable(true);
+                if (isJobIdle(event.getJobId())) {
+                    runJobButton.setDisable(false);
                 }
                 else {
-                    if (isJobIdle(event.getJobIds().get(event.getJobIds().size()-1))) {
-                        runJobButton.setDisable(false);
-                    }
-                    else {
-                        runJobButton.setDisable(true);
-                    }
+                    runJobButton.setDisable(true);
                 }
-
                  break;
+
             case ComponentEvent.JOB_DELETED:
                 runJobButton.setDisable(true);
                 runAllButton.setDisable(true);
                  break;
-            case ComponentEvent.DELETE_DISABLE:
-                break;
+
             case ComponentEvent.SELECTION_CLEARED:
                 runJobButton.setDisable(true);
                 break;
@@ -229,27 +223,9 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         getHubTable().getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
             if (newSelection != null) {
-
-                if ( getHubTable().getSelectionModel().getSelectedItems().size() == 1) {
-                    HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
-                    if (jobData.getStatus().equals("Deletion")) {
-                        JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.DELETE_DISABLE,UUID.randomUUID()));
-                        return;
-                    }
-                }
-                else {
-                    List<UUID> ids = new ArrayList<UUID>();
-                    for (Object obj : getHubTable().getSelectionModel().getSelectedItems()) {
-                        HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
-                        ids.add(UUID.fromString(jobData.getId()));
-                    }
-                    JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,ids));
-                }
-
-
-             }
-             else {
-                JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.SELECTION_CLEARED,new ArrayList<UUID>()));
+                HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
+                UUID id = UUID.fromString(jobData.getId());
+                JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,id));
             }
 
         });

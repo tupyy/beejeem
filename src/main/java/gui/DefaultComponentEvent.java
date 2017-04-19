@@ -12,25 +12,19 @@ public class DefaultComponentEvent extends AbstractComponentEvent {
     /**
      * List of jobs
      */
-    private List<UUID> jobIds = null;
+    private UUID jobId = null;
 
-    public DefaultComponentEvent(Object source, int action, List<UUID> jobIds) {
+    public DefaultComponentEvent(Object source, int action,UUID jobId) {
         super(source,action);
-        this.jobIds = jobIds;
+        this.jobId = jobId;
     }
 
     public DefaultComponentEvent(Object source,int action) {
-        this(source,action,new ArrayList<>());
+        this(source,action,UUID.randomUUID());
     }
 
-    public DefaultComponentEvent(Object source,int action,UUID jobID) {
-        this(source,action,new ArrayList<>());
-        jobIds.add(jobID);
-
-    }
-
-    public List<UUID> getJobIds() {
-        return jobIds;
+    public UUID getJobId() {
+        return jobId;
     }
 
 }
