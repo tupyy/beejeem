@@ -1,6 +1,7 @@
 package core.job;
 
 import core.modules.MethodResult;
+import core.modules.qdel.QDelModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.BooleanParameter;
@@ -18,8 +19,6 @@ import java.util.*;
  */
 
 public abstract class AbstractJob extends Observable implements Job,Observer{
-
-    private boolean markedForDeletion;
 
     private int qstatMissFire = 1;
 
@@ -81,7 +80,6 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
 
     }
 
-
     //<editor-fold desc="Job interface">
     @Override
     public String getName() {
@@ -125,9 +123,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
 
     @Override
-    public void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
-
-    }
+    public abstract void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException;
 
     @Override
     public int getStatus() {
@@ -135,14 +131,10 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
 
     @Override
-    public boolean isMarkedForDeletion() {
-        return markedForDeletion;
-    }
+    public abstract void stop();
 
     @Override
-    public void markForDeletion() {
-        this.markedForDeletion = true;
-    }
+    public abstract void delete();
 
     @Override
     public JobRecord collectData() {
@@ -188,12 +180,9 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         return clone;
     }
 
-
     //<editor-fold desc="Executable interface">
     @Override
-    public void execute(JobExecutionProgress progress) throws JobException {
-
-    }
+    public abstract void execute(JobExecutionProgress progress) throws JobException;
     //</editor-fold>
 
     //<editor-fold desc="QStat section">
@@ -253,9 +242,7 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
      * Update job parameters from the results of a methods
      * @param methodResult
      */
-    protected void updateParametersFromResult(MethodResult methodResult) {
-
-    }
+    protected abstract void updateParametersFromResult(MethodResult methodResult);
 
     /**
      * Verify if all the modules has finished
@@ -264,4 +251,5 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     protected boolean isJobFinished() {
         return false;
     }
+
 }

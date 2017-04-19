@@ -1,15 +1,14 @@
 package core;
 
-import core.creator.Creator;
 import core.creator.CreatorFactory;
+import core.garbage.GarbageCollector;
 import core.job.*;
-import core.modules.ModuleStarter;
-import core.parameters.ParameterSet;
-import core.plugin.Plugin;
 import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
+import core.util.TmpFileCleanup;
+import javafx.application.Preloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.FileHandler;
 
 /**
  * This class implements the Core interface. It represents the main class of the app.
@@ -27,6 +25,7 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
 
     private final QStatManager qstatManager;
+    private final GarbageCollector garbageCollector;
 
     private CreatorFactory creatorFactory = new CreatorFactory();
 
@@ -49,22 +48,20 @@ public final class CoreEngine extends Observable implements Core, Observer {
     private CoreEngine() {
 
         CoreLogging.configureLogging();
+
+        TmpFileCleanup cleanup = new TmpFileCleanup();
+        Thread tmpCleanupThread = new Thread(cleanup);
+        tmpCleanupThread.setPriority(Thread.MIN_PRIORITY);
+        tmpCleanupThread.start();
+
         executor = new ModuleExecutor();
         sshRemoteFactory = new SshRemoteFactory();
         this.qstatManager = new QStatManager(this,executor);
 
+        garbageCollector = new GarbageCollector(this);
+
         //init the states
         JobState jobState = new JobState();
-
-        /**
-         * Load modules on a new thread after the GUI has started
-         */
-//        moduleStarter = new ModuleStarter();
-//        Thread readModuleThread = new Thread(moduleStarter);
-//        readModuleThread.start();
-
-
-
     }
 
     /**
@@ -117,7 +114,32 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public void deleteJob(UUID id) throws JobException {
+        Job j = getJob(id);
+        j.delete();
+    }
 
+    @Override
+    public void deleteJobs(List<UUID> ids) throws JobException {
+        for (UUID id: ids) {
+            try {
+                Job j = getJob(id);
+                getGarbageCollector().registerJobForDeletion(j.getID(),j.getParameter("batchID"));
+            }
+            catch (IllegalArgumentException ex) {
+                ;
+            }
+            finally {
+                getJob(id).delete();
+            }
+        }
+    }
+
+    public void stopJob(UUID jobId) {
+        Job job = getJob(jobId);
+
+        if (job !=null) {
+            job.stop();
+        }
     }
 
     @Override
@@ -161,11 +183,29 @@ public final class CoreEngine extends Observable implements Core, Observer {
     @Override
     public void update(Observable o, Object arg) {
         SimpleJob j = (SimpleJob) o;
-        fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
 
-        if (j.getStatus() == JobState.FINISHED) {
-            finishedJobs++;
-            logger.info("Finished jobs: {}", finishedJobs);
+        switch (j.getStatus()) {
+
+            case JobState.DELETED:
+                jobList.remove(j);
+                fireCoreEvent(CoreEventType.JOB_DELETED, j.getID());
+                break;
+
+            case JobState.FINISHED:
+                finishedJobs++;
+                logger.info("Finished jobs: {}", finishedJobs);
+                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
+                break;
+
+            case JobState.STOP:
+                try {
+                    garbageCollector.registerJobForDeletion(j.getID(), j.getParameter("batchID"));
+                }
+                catch (IllegalArgumentException ex) {
+                    ;
+                }
+            default:
+                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
         }
     }
 
@@ -178,6 +218,16 @@ public final class CoreEngine extends Observable implements Core, Observer {
         }
 
         return idList;
+    }
+
+    public GarbageCollector getGarbageCollector() {
+        return garbageCollector;
+    }
+
+    @Override
+    public void shutdown() {
+        garbageCollector.shutdown();
+        executor.shutDownExecutor();
     }
 
     /**
@@ -201,12 +251,6 @@ public final class CoreEngine extends Observable implements Core, Observer {
         }
         listeners.removeElement(l);
     }
-
-    @Override
-    public void shutdown() {
-        executor.shutDownExecutor();
-    }
-
 
     //</editor-fold>
 

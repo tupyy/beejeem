@@ -7,6 +7,7 @@ import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.Observable;
 
@@ -48,22 +49,29 @@ public class SimpleJob extends AbstractJob {
     public synchronized void update(Observable o, Object arg) {
         ModuleController moduleController = (ModuleController) o;
 
-        if ((int) arg == ModuleController.FINISHED) {
-            logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
+        switch ((int) arg) {
+            case  ModuleController.FINISHED:
+                logger.debug("SimpleJob ID:{} Name:{} : Module {} done",getName(),getID(), moduleController.getName());
 
-            //run next module
-            String nextModule = getNextModuleName();
-            if ( !nextModule.isEmpty() && canExecute() ) {
-                getModuleManager(nextModule).execute(this.jobProgress);
-            }
-
-        }
-        else if ( (int) arg == ModuleController.SCHEDULED && canExecute()) {
-            moduleController.execute(this.jobProgress);
-        }
-        else if ((int) arg == ModuleController.FAILED) {
-            setEditable(true);
-            updateStatus(JobState.ERROR);
+                //run next module
+                String nextModule = getNextModuleName();
+                if ( !nextModule.isEmpty() && canExecute() ) {
+                    getModuleManager(nextModule).execute(this.jobProgress);
+                }
+                break;
+            case ModuleController.SCHEDULED:
+                if (canExecute()) {
+                    moduleController.execute(this.jobProgress);
+                }
+                break;
+            case ModuleController.FAILED:
+                setEditable(true);
+                updateStatus(JobState.ERROR);
+                break;
+            case ModuleController.STOPPED:
+                setChanged();
+                notifyObservers();
+                break;
         }
 
         if(isJobFinished()) {
@@ -79,7 +87,7 @@ public class SimpleJob extends AbstractJob {
     @Override
     public void execute(JobExecutionProgress progress) throws JobException {
 
-        if (getStatus() != JobState.IDLE && getStatus() != JobState.PAUSE) {
+        if (getStatus() != JobState.IDLE && getStatus() != JobState.STOP) {
             return;
         }
 
@@ -100,6 +108,57 @@ public class SimpleJob extends AbstractJob {
     //</editor-fold>
 
 
+    @Override
+    public void updateParameter(Parameter<?> newParameter) throws JobException {
+        try {
+            Parameter oldParameter = getParameter(newParameter.getName());
+
+            if (oldParameter.getClass().toString().equals(newParameter.getClass().toString())) {
+                oldParameter.setValue(newParameter.getValue());
+            }
+            else {
+                throw new JobException(JobException.UPDATE_EXCEPTION,"The new parameters is of different class than the old one.");
+            }
+        }
+        catch (IllegalArgumentException ex) {
+            throw new JobException(JobException.UPDATE_EXCEPTION,ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
+
+    }
+
+    @Override
+    public void delete() {
+        updateStatus(JobState.DELETION);
+        //Type to stop all the modules
+        stopModules();
+        updateStatus(JobState.DELETED);
+        logger.info("Job deleted {}",getID());
+    }
+
+    /**
+     * Stop the job
+     * @throws JobException
+     */
+    public void stop() {
+
+        updateStatus(JobState.STOPPING);
+        stopModules();
+
+        //remove batchid from job if any
+        try {
+            getParameterSet().removeParameter("batchID");
+            setChanged();
+            notifyObservers();
+        }
+        catch (IllegalArgumentException ex) {
+            ;
+        }
+
+    }
 
     /****
      *
@@ -107,7 +166,7 @@ public class SimpleJob extends AbstractJob {
      *
      ****/
 
-    /**
+     /**
      * Update the status of the job.
      * <p>
      *     Notify the observer (e.g. {@link core.CoreEngine} and all the module {@link SimpleJob#notifyModules(int)}
@@ -178,7 +237,7 @@ public class SimpleJob extends AbstractJob {
                 //check if the name is batchID and change the status
                 if (parameter.getName().endsWith("batchID")) {
                     updateStatus(JobState.SUBMITTED);
-                    logger.info("Job ID:{} Name:{} has been submitted",getID(),this.getName());
+                    logger.info("Job ID:{} Name:{} has been submitted", getID(), this.getName());
                 }
             }
         }
@@ -193,7 +252,7 @@ public class SimpleJob extends AbstractJob {
         /**
          * If the job is paused or stop on error return false
          */
-        if (getStatus() == JobState.ERROR || getStatus() == JobState.PAUSE) {
+        if (getStatus() == JobState.ERROR || getStatus() == JobState.STOP) {
             return false;
         }
 
@@ -275,7 +334,11 @@ public class SimpleJob extends AbstractJob {
      */
     public void setQstatResult(MethodResult qstatOutput) {
 
-        if (getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING) {
+        if (getStatus() == JobState.STOPPING || getStatus() == JobState.STOP) {
+            return;
+        }
+
+        if ((getStatus() >= JobState.SUBMITTED && getStatus() < JobState.PROCESSING)) {
             logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getID(), qstatOutput.getMethodName());
 
             StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
@@ -286,12 +349,7 @@ public class SimpleJob extends AbstractJob {
             } else {
                 logger.debug("Job ID:{} Name:{} BatchID not found in qstat output");
                 if (getQstatMissFire() == 0) {
-                    if (isMarkedForDeletion()) {
-                        logger.info("Job ID:{} Name:{} is marked for deletion and it will deleted", getID(), getName());
-                        updateStatus(JobState.DELETED);
-                    } else {
-                        updateStatus(JobState.DONE);
-                    }
+                    updateStatus(JobState.DONE);
                 } else {
                     logger.debug("Job ID:{} Name:{} -- QStat fire missed.Set value to: {}", getID(), getName(), getQstatMissFire() - 1);
                     setQstatMissFire(getQstatMissFire() - 1);
@@ -310,14 +368,8 @@ public class SimpleJob extends AbstractJob {
      */
     private ModuleController getModuleManager(String name) {
 
-        //FIX FOR NOW
-        //TODO
-        if (name.startsWith("core.modules.")) {
-            name = stripModuleName(name);
-        }
-
         for(ModuleController moduleController : getModules()) {
-            if (stripModuleName(moduleController.getName()).equals(name)) {
+            if (moduleController.getName().equals(name)) {
                 return moduleController;
             }
         }
@@ -330,12 +382,6 @@ public class SimpleJob extends AbstractJob {
      * @return module name or empty string if there aren't any to be executed
      */
     private String getNextModuleName() {
-
-
-//
-//        if (getStatus() == JobState.IDLE) {
-//            updateStatus(JobState.SUBMITTING);
-//        }
 
         for(ModuleController mm: getModules()) {
             if (mm.getState() == ModuleController.SCHEDULED) {
@@ -358,15 +404,11 @@ public class SimpleJob extends AbstractJob {
      */
     private boolean canExecute()  {
         if (getStatus() == JobState.ERROR &&
-        getStatus() == JobState.PAUSE) {
+        getStatus() == JobState.STOP) {
             return false;
         }
 
         return true;
-    }
-
-    private String stripModuleName(String name) {
-        return name = name.substring(name.lastIndexOf(".")+1,name.length());
     }
 
     /**
@@ -377,6 +419,13 @@ public class SimpleJob extends AbstractJob {
         //notify modules about the state change
         for (ModuleController mm : getModules()) {
             mm.onJobStatusChange(status);
+        }
+    }
+
+    private void stopModules() {
+        //notify modules about the state change
+        for (ModuleController mm : getModules()) {
+            mm.stop();
         }
     }
 

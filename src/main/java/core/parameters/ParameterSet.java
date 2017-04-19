@@ -121,6 +121,19 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
     }
 
     /**
+     * Remove parameter
+     * @param parametername
+     */
+    public void removeParameter(String parametername) {
+        for (Parameter<?> p : parameters) {
+            if (p.getName().equals(parametername)) {
+                parameters.remove(p);
+                break;
+            }
+        }
+    }
+
+    /**
      * Add parameter set
      * @param newSet
      */
