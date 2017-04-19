@@ -244,6 +244,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
             for (HubTableModel.JobData jobData: model.getTableModel().getData()){
                 getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
             }
+            runAllButton.setDisable(true);
         });
 
 //        stopButton.setOnAction(event -> {
