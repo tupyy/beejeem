@@ -41,7 +41,8 @@ public class JobState {
      */
     public static final int ERROR = 9000;
     public static final int NONE = 90001;
-    public static final int PAUSE = 9002;
+    public static final int STOP = 9002;
+    public static final int STOPPING = 9003;
 
     private static HashMap<Integer,String> statusMap = new HashMap();
 
@@ -65,7 +66,8 @@ public class JobState {
         statusMap.put(FINISHED,"Finished");
         statusMap.put(ERROR,"Error");
         statusMap.put(NONE,"None");
-        statusMap.put(PAUSE,"Pause");
+        statusMap.put(STOP,"Stop");
+        statusMap.put(STOPPING,"Stopping");
     }
 
     public static String toString(int stateCode) {

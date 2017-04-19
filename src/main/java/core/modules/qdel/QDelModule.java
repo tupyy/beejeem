@@ -1,9 +1,12 @@
-package core.modules.qstat;
+package core.modules.qdel;
 
 import com.sshtools.ssh.SshClient;
 import core.modules.ModuleException;
+import core.modules.SimpleCommandMethod;
 import core.modules.SshModule;
 import core.modules.preprocessing.PreprocessingModule;
+import core.modules.qstat.QStatMethod;
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.tasks.ModuleTask;
 import org.slf4j.Logger;
@@ -17,14 +20,13 @@ import java.util.UUID;
  * qstat sidepanel.
  * <br>This is a internal module and it will be created externally of ModuleExecutor.
  */
-public class QStatModule implements SshModule{
+public class QDelModule implements SshModule{
 
-    private final String command;
     private Logger logger = LoggerFactory.getLogger(PreprocessingModule.class);
-    private static final String MODULE_NAME = "QStatModule";
+    private static final String MODULE_NAME = "QDelModule";
 
-    public QStatModule(String command) {
-        this.command = command;
+    public QDelModule() {
+
     }
 
     @Override
@@ -34,8 +36,19 @@ public class QStatModule implements SshModule{
 
     @Override
     public ModuleTask runModule(UUID jobID, SshClient sshClient,ParameterSet parameterSet) throws ModuleException {
-        QStatMethod qStatMethod = new QStatMethod(sshClient,command);
-        return new ModuleTask("qstatMethod",qStatMethod);
+
+
+        try {
+            Parameter batchId = parameterSet.getParameter("batchID");
+
+            String command = "qdel ".concat(batchId.getValue().toString());
+            SimpleCommandMethod qStatMethod = new SimpleCommandMethod(sshClient,command);
+            return new ModuleTask("qdelMethod",qStatMethod);
+        }
+        catch (IllegalArgumentException ex) {
+            throw  new ModuleException("Cannot create qdel command: ".concat(ex.getMessage()));
+        }
+
     }
 
     @Override

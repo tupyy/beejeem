@@ -2,9 +2,7 @@ package core.modules.preprocessing;
 
 import core.modules.LocalModule;
 import core.modules.ModuleException;
-import core.modules.preprocessing.methods.PreprocessMethod;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.StringParameter;
 import core.tasks.ModuleTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

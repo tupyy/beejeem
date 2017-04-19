@@ -1,4 +1,4 @@
-package core.modules.processing.methods;
+package core.modules.processing;
 
 import com.sshtools.sftp.*;
 import com.sshtools.ssh.SshClient;

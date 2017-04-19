@@ -1,8 +1,7 @@
-package core.modules.preprocessing.methods;
+package core.modules.preprocessing;
 
 import core.modules.Method;
 import core.modules.MethodResult;
-import core.modules.StandardMethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import org.slf4j.Logger;

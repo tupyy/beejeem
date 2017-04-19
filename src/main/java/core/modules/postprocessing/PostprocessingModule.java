@@ -8,7 +8,6 @@ import com.sshtools.ssh.SshException;
 import com.sshtools.ssh2.Ssh2Client;
 import core.modules.ModuleException;
 import core.modules.SshModule;
-import core.modules.postprocessing.methods.PostprocessingMethod;
 import core.parameters.ParameterSet;
 import core.tasks.ModuleTask;
 import org.slf4j.LoggerFactory;
