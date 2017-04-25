@@ -174,9 +174,11 @@ public class ModuleController extends Observable implements Executable {
         } catch (ModuleException e) {
             errorMessage = "Module exception: ".concat(e.toString());
             progress.error(String.format("Module %s : %s",this.getName(),errorMessage));
+            logger.error(errorMessage);
         } catch (SshException e) {
             errorMessage = "Ssh client exception: ".concat(e.toString());
             progress.error(String.format("Module %s : %s",this.getName(),errorMessage));
+            logger.error(errorMessage);
         }
         finally {
 
