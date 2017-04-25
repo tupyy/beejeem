@@ -10,7 +10,7 @@ public class JobState {
     /**
      * Job local state
      */
-    public static final int IDLE = 1000;
+    public static final int READY = 1000;
     public static final int SUBMITTING =  1001;
     public static final int SUBMITTED = 1002;
 
@@ -48,7 +48,7 @@ public class JobState {
 
     public JobState() {
 
-        statusMap.put(IDLE,"Idle");
+        statusMap.put(READY,"Idle");
         statusMap.put(SUBMITTING,"Submitting");
         statusMap.put(SUBMITTED,"Submitted");
         statusMap.put(WAITING,"Waiting");

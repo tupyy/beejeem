@@ -1,15 +1,9 @@
 package core;
 
-import core.creator.CreatorFactory;
 import core.job.Job;
 import core.job.JobException;
-import core.job.JobExecutionProgress;
-import core.job.ModuleController;
-import core.modules.ModuleStarter;
-import core.parameters.ParameterSet;
-import core.plugin.Plugin;
-import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
+import jdk.nashorn.internal.scripts.JO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +58,7 @@ public interface Core {
      * Run job
      * @param id
      */
-    public void executeJob(UUID id, JobExecutionProgress progress);
+    public void executeJob(UUID id);
 
     /**
      * Return the SshFactory
@@ -95,6 +89,18 @@ public interface Core {
      * @param l
      */
     public void removeCoreEventListener(CoreListener l);
+
+    /**
+     * Add job listener
+     * @param listener
+     */
+    public void addJobListener(JobListener listener);
+
+    /**
+     * Remove job listener
+     * @param listener
+     */
+    public void removeJobListener(JobListener listener);
 
     /**
      * Close the executors

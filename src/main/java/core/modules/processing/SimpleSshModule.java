@@ -45,4 +45,24 @@ public abstract class SimpleSshModule implements SshModule{
         methodNames.add(methodName);
     }
 
+    /**
+     * Create a new SftpClient
+     * @param sshClient
+     * @return
+     * @throws SshException
+     */
+    public synchronized SftpClient getFtpClient(SshClient sshClient) throws SshException {
+
+            Ssh2Client ssh2 = (Ssh2Client) sshClient;
+            try {
+                SftpClient sftpClient = new SftpClient(ssh2);
+                return sftpClient;
+            } catch (SftpStatusException e) {
+                logger.error("Cannot create ftp client: {}", e.getMessage());
+                throw new SshException("Cannot create ftp client", SshException.CHANNEL_FAILURE);
+            } catch (ChannelOpenException e) {
+                logger.error("Cannot open channel: {}", e.getMessage());
+                throw new SshException("Cannot create ftp client", SshException.CHANNEL_FAILURE);
+            }
+        }
 }

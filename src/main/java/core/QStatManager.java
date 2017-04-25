@@ -1,9 +1,7 @@
 package core;
 
 import com.sshtools.ssh.SshException;
-import core.job.AbstractJob;
 import core.job.Job;
-import core.job.SimpleJob;
 import core.modules.MethodResult;
 import core.modules.ModuleException;
 import core.modules.qstat.QStatModule;

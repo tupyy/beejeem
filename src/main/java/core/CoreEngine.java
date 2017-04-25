@@ -8,7 +8,6 @@ import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
 import core.util.TmpFileCleanup;
-import javafx.application.Preloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
  * This class implements the Core interface. It represents the main class of the app.
  * <br> It extends Observable to notify the observer when a job
  */
-public final class CoreEngine extends Observable implements Core, Observer {
+public final class CoreEngine extends AbstractCoreEngine implements Core, Observer {
 
 
     private final QStatManager qstatManager;
@@ -29,7 +28,6 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     private CreatorFactory creatorFactory = new CreatorFactory();
 
-    private transient Vector listeners;
     private SshRemoteFactory sshRemoteFactory;
 
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
@@ -103,13 +101,11 @@ public final class CoreEngine extends Observable implements Core, Observer {
             throw new JobException(JobException.JOB_EXISTS,"Job ".concat(j.getID().toString()).concat(" already exists"));
         }
 
+        j.addObserver(this);
         jobList.add(j);
 
-        AbstractJob aj = (AbstractJob) j;
-        aj.addObserver(this);
-
-        fireCoreEvent(CoreEventType.JOB_CREATED, aj.getID());
-        logger.info("Job created: {}",aj.getName());
+        fireJobEvent(JobEvent.JOB_CREATED, j.getID());
+        logger.info("Job created: {}",j.getName());
     }
 
     @Override
@@ -120,10 +116,12 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public void deleteJobs(List<UUID> ids) throws JobException {
+
+        //TODO create a thread here
         for (UUID id: ids) {
             try {
                 Job j = getJob(id);
-                getGarbageCollector().registerJobForDeletion(j.getID(),j.getParameter("batchID"));
+                getGarbageCollector().registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
             }
             catch (IllegalArgumentException ex) {
                 ;
@@ -153,20 +151,20 @@ public final class CoreEngine extends Observable implements Core, Observer {
     }
 
     @Override
-    public void executeJob(UUID id,JobExecutionProgress progress) {
+    public void executeJob(UUID id) {
 
 //        //check if the ssh client is connected before executing jobs
         if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
             qstatManager.start();
             Job job = getJob(id);
             try {
-                job.execute(progress);
+                job.execute();
             } catch (JobException e) {
                 e.printStackTrace();
             }
         }
         else {
-            fireCoreEvent(CoreEventType.SSH_CONNECTION_ERROR,UUID.randomUUID());
+            fireCoreEvent(CoreEvent.SSH_CONNECTION_ERROR);
         }
     }
 
@@ -182,30 +180,25 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        SimpleJob j = (SimpleJob) o;
+        Job j = (Job) o;
 
-        switch (j.getStatus()) {
-
-            case JobState.DELETED:
-                jobList.remove(j);
-                fireCoreEvent(CoreEventType.JOB_DELETED, j.getID());
-                break;
+        switch (j.getState()) {
 
             case JobState.FINISHED:
                 finishedJobs++;
                 logger.info("Finished jobs: {}", finishedJobs);
-                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
+                fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
                 break;
 
             case JobState.STOP:
                 try {
-                    garbageCollector.registerJobForDeletion(j.getID(), j.getParameter("batchID"));
+                    garbageCollector.registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
                 }
                 catch (IllegalArgumentException ex) {
                     ;
                 }
             default:
-                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
+                fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
         }
     }
 
@@ -220,39 +213,12 @@ public final class CoreEngine extends Observable implements Core, Observer {
         return idList;
     }
 
-    public GarbageCollector getGarbageCollector() {
-        return garbageCollector;
-    }
-
     @Override
     public void shutdown() {
         garbageCollector.shutdown();
         executor.shutDownExecutor();
     }
 
-    /**
-     * Register a listener for JobEvents
-     */
-    @Override
-    synchronized public void addCoreEventListener(CoreListener l) {
-        if (listeners == null) {
-            listeners = new Vector();
-        }
-        listeners.addElement(l);
-    }
-
-    /**
-     * Remove a listener for JobEvents
-     */
-    @Override
-    synchronized public void removeCoreEventListener(CoreListener l) {
-        if (listeners == null) {
-            listeners = new Vector();
-        }
-        listeners.removeElement(l);
-    }
-
-    //</editor-fold>
 
     /**
      * Return true if the jobID exists
@@ -270,33 +236,10 @@ public final class CoreEngine extends Observable implements Core, Observer {
         return false;
     }
 
-
-    /**
-     * Fire JobEvent to all registered listeners
-     */
-    protected void fireCoreEvent(CoreEventType action, UUID id) {
-        // if we have no listeners, do nothing...
-        if (listeners != null && !listeners.isEmpty()) {
-            // create the event object to send
-            CoreEvent event =
-                    new CoreEvent(this, action, id);
-
-            // make a copy of the listener list in case
-            //   anyone adds/removes listeners
-            Vector targets;
-            synchronized (this) {
-                targets = (Vector) listeners.clone();
-            }
-
-            // walk through the listener list and
-            //   call the sunMoved methods in each
-            Enumeration e = targets.elements();
-            while (e.hasMoreElements()) {
-                CoreListener l = (CoreListener) e.nextElement();
-                l.coreEvent(event);
-            }
-        }
+    public GarbageCollector getGarbageCollector() {
+        return garbageCollector;
     }
+
 
 
 

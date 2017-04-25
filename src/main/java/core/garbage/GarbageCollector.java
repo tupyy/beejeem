@@ -67,7 +67,7 @@ public final class GarbageCollector {
                     boolean batchFound = false;
                     for (UUID jobID : jobListID) {
                         try {
-                            Parameter batchIDParameter = coreEngine.getJob(jobID).getParameter("batchID");
+                            Parameter batchIDParameter = coreEngine.getJob(jobID).getParameters().getParameter("batchID");
                             if (batchID.equals(batchIDParameter.getValue().toString())) {
                                 batchFound = true;
                                 break;
