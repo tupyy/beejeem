@@ -25,14 +25,12 @@ public abstract class SimpleSshMethod extends SshSessionMethod implements Method
     private final ParameterSet parameters;
     private final String moduleName;
     private final UUID jobID;
-    private final SftpClient sftpClient;
     private final SshClient sshClient;
 
-    public SimpleSshMethod(String moduleName, String methodName, UUID jobID, ParameterSet parameterSet, SshClient sshClient, SftpClient sftpClient) {
+    public SimpleSshMethod(String moduleName, String methodName, UUID jobID, ParameterSet parameterSet, SshClient sshClient) {
 
         super(sshClient);
 
-        this.sftpClient = sftpClient;
         this.sshClient = sshClient;
         this.jobID = jobID;
         this.moduleName = moduleName;
@@ -159,10 +157,6 @@ public abstract class SimpleSshMethod extends SshSessionMethod implements Method
 
     public UUID getJobID() {
         return jobID;
-    }
-
-    public SftpClient getSftpClient() {
-        return sftpClient;
     }
 
     public SshClient getSshClient() {

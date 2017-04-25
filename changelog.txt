@@ -1,5 +1,6 @@
-[0.3.2_Xav] - 25/04/2017
+[0.3.2] 25/04/2017
 
-## Modified
-Modificare script RunIsami.sh pentru a executa corect isami >=v9.2. Adaugare --application isami_derivatives
-Scriptul este copiat in local
+**FIX**
+
+- open channel exception when creating the SFTP client
+

@@ -6,7 +6,7 @@
 
     <groupId>stes.isami</groupId>
     <artifactId>core</artifactId>
-    <version>0.3.2_xav</version>
+    <version>0.3.2</version>
 
 
 
@@ -72,12 +72,6 @@
             <groupId>stes.isami</groupId>
             <artifactId>slf4j-jdk</artifactId>
             <version>1.7.21</version>
-        </dependency>
-
-        <dependency>
-            <groupId>stes.isami</groupId>
-            <artifactId>junit4</artifactId>
-            <version>4.4</version>
         </dependency>
     </dependencies>
 </project>
