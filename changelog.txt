@@ -1,0 +1,6 @@
+[0.3.2] 25/04/2017
+
+**FIX**
+
+- open channel exception when creating the SFTP client
+
