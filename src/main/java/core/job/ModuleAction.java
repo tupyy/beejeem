@@ -23,7 +23,7 @@ public class ModuleAction implements Action {
     private final Logger logger = LoggerFactory.getLogger(AbstractJob.class);
 
     private final Function<MethodResult,Boolean> callbackFunction;
-    private final Consumer<Boolean> consummer;
+    private final Consumer<Boolean> consumer;
     private final Module moduleInstance;
     private final ParameterSet parameterSet;
 
@@ -31,7 +31,7 @@ public class ModuleAction implements Action {
         this.moduleInstance = moduleInstace;
         this.callbackFunction = callbackFunction;
         this.parameterSet = parameterSet;
-        this.consummer = consumer;
+        this.consumer = consumer;
     }
 
     public String getName() {
@@ -62,21 +62,21 @@ public class ModuleAction implements Action {
 
             CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(moduleTask,executor)
                     .thenApply(methodResult -> callbackFunction.apply(methodResult));
-            completableFuture.thenAccept(t -> consummer.accept(t));
+            completableFuture.thenAccept(t -> consumer.accept(t));
 
             completableFuture.exceptionally( (th) -> {
                 //error
                 logger.error(th.getMessage());
                 return false;
-            }).thenAccept(t -> consummer.accept(t));
+            }).thenAccept(t -> consumer.accept(t));
 
 
         } catch (ModuleException e) {
             logger.error(String.format("Module {} : {}",moduleInstance.getName(),e.getMessage()));
-            consummer.accept(false);
+            consumer.accept(false);
         } catch (SshException e) {
            logger.error(String.format("Module {} : {}",moduleInstance.getName(),e.getMessage()));
-            consummer.accept(false);
+            consumer.accept(false);
         }
         finally {
 
