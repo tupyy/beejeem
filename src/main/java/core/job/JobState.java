@@ -11,8 +11,9 @@ public class JobState {
      * Job local state
      */
     public static final int READY = 1000;
-    public static final int SUBMITTING =  1001;
-    public static final int SUBMITTED = 1002;
+    public static final int PREPROCESSING = 1001;
+    public static final int SUBMITTING =  1002;
+    public static final int SUBMITTED = 1003;
 
     /**
      * Batch own status
@@ -33,7 +34,7 @@ public class JobState {
     /**
      * Local post processing state
      */
-    public static final int PROCESSING = 3000;
+    public static final int POSTPROCESSING = 3000;
     public static final int FINISHED = 3001;
 
     /**
@@ -41,6 +42,7 @@ public class JobState {
      */
     public static final int ERROR = 9000;
     public static final int NONE = 90001;
+
     public static final int STOP = 9002;
     public static final int STOPPING = 9003;
 
@@ -50,6 +52,7 @@ public class JobState {
 
         statusMap.put(READY,"Idle");
         statusMap.put(SUBMITTING,"Submitting");
+        statusMap.put(PREPROCESSING,"Preprocessing");
         statusMap.put(SUBMITTED,"Submitted");
         statusMap.put(WAITING,"Waiting");
         statusMap.put(RUN,"Run");
@@ -62,7 +65,7 @@ public class JobState {
         statusMap.put(HOLD,"Hold");
         statusMap.put(UNKNOWN,"Unknown");
         statusMap.put(DONE,"Done");
-        statusMap.put(PROCESSING,"Processing");
+        statusMap.put(POSTPROCESSING,"Postprocessing");
         statusMap.put(FINISHED,"Finished");
         statusMap.put(ERROR,"Error");
         statusMap.put(NONE,"None");

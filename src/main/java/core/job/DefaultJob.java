@@ -6,6 +6,7 @@ import core.modules.MethodResult;
 import core.modules.Module;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ import java.util.function.Function;
  * Default job class
  */
 public class DefaultJob extends AbstractJob implements Job {
-
+    private final Logger logger = LoggerFactory.getLogger(DefaultJob.class);
     private boolean submitted = false;
 
 
@@ -31,9 +32,21 @@ public class DefaultJob extends AbstractJob implements Job {
          */
         defaultConfiguration.configure(JobState.READY)
                 .onEntry(new NotifyAction())
-                .permit(Trigger.doPreprocessing,JobState.SUBMITTING)
+                .permit(Trigger.doPreprocessing,JobState.PREPROCESSING)
                 .permit(Trigger.doStop,JobState.STOP)
                 .permit(Trigger.doError,JobState.ERROR);
+
+        /**
+         * Configure PREPROCESSING state
+         */
+        if (modules.containsKey(JobState.PREPROCESSING)) {
+            defaultConfiguration.configure(JobState.PREPROCESSING)
+                    .onEntry(new NotifyAction())
+                    .onEntry(new ModuleAction(this,modules.get(JobState.PREPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doSubmit,Trigger.doError)))
+                    .permit(Trigger.doSubmit,JobState.SUBMITTING)
+                    .permit(Trigger.doStop,JobState.STOP)
+                    .permit(Trigger.doError,JobState.ERROR);
+        }
 
         /**
          * Configure SUBMITTING state
@@ -41,7 +54,7 @@ public class DefaultJob extends AbstractJob implements Job {
         if (modules.containsKey(JobState.SUBMITTING)) {
             defaultConfiguration.configure(JobState.SUBMITTING)
                     .onEntry(new NotifyAction())
-                    .onEntry(new ModuleAction(modules.get(JobState.SUBMITTING),getParameters(),new FutureCallback(),new StageCompletion(Trigger.doProcessing,Trigger.doError)))
+                    .onEntry(new ModuleAction(this,modules.get(JobState.SUBMITTING),new FutureCallback(),new StageCompletion(Trigger.doProcessing,Trigger.doError)))
                     .permit(Trigger.doProcessing,JobState.SUBMITTED)
                     .permit(Trigger.doStop,JobState.STOP)
                     .permit(Trigger.doError,JobState.ERROR);
@@ -58,7 +71,7 @@ public class DefaultJob extends AbstractJob implements Job {
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
                 .permit(Trigger.evSuspended,JobState.SUSPENDED)
                 .permit(Trigger.evTransferring,JobState.TRANSFERRING)
-                .permit(Trigger.evDone,JobState.PROCESSING)
+                .permit(Trigger.evDone,JobState.POSTPROCESSING)
                 .permit(Trigger.doStop,JobState.STOP)
                 .permit(Trigger.doError,JobState.ERROR);
 
@@ -68,11 +81,12 @@ public class DefaultJob extends AbstractJob implements Job {
          */
         defaultConfiguration.configure(JobState.RUN)
                 .onEntry(new NotifyAction())
+                .onExit(() -> setSubmitted(false))
                 .permit(Trigger.evWainting,JobState.WAITING)
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
                 .permit(Trigger.evSuspended,JobState.SUSPENDED)
                 .permit(Trigger.evTransferring,JobState.TRANSFERRING)
-                .permit(Trigger.evDone,JobState.PROCESSING)
+                .permit(Trigger.evDone,JobState.POSTPROCESSING)
                 .permit(Trigger.doStop,JobState.STOP)
                 .permit(Trigger.doError,JobState.ERROR);
 
@@ -81,11 +95,12 @@ public class DefaultJob extends AbstractJob implements Job {
          */
         defaultConfiguration.configure(JobState.WAITING)
                 .onEntry(new NotifyAction())
+                .onExit(() -> setSubmitted(false))
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
                 .permit(Trigger.evRunning,JobState.RUN)
                 .permit(Trigger.evSuspended,JobState.SUSPENDED)
                 .permit(Trigger.evTransferring,JobState.TRANSFERRING)
-                .permit(Trigger.evDone,JobState.PROCESSING)
+                .permit(Trigger.evDone,JobState.POSTPROCESSING)
                 .permit(Trigger.doStop,JobState.STOP)
                 .permit(Trigger.doError,JobState.ERROR);
 
@@ -94,11 +109,12 @@ public class DefaultJob extends AbstractJob implements Job {
          */
         defaultConfiguration.configure(JobState.SUSPENDED)
                 .onEntry(new NotifyAction())
+                .onExit(() -> setSubmitted(false))
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
                 .permit(Trigger.evWainting,JobState.WAITING)
                 .permit(Trigger.evRunning,JobState.RUN)
                 .permit(Trigger.evTransferring,JobState.TRANSFERRING)
-                .permit(Trigger.evDone,JobState.PROCESSING)
+                .permit(Trigger.evDone,JobState.POSTPROCESSING)
                 .permit(Trigger.doStop,JobState.STOP)
                 .permit(Trigger.doError,JobState.ERROR);
 
@@ -107,11 +123,12 @@ public class DefaultJob extends AbstractJob implements Job {
          */
         defaultConfiguration.configure(JobState.TRANSFERRING)
                 .onEntry(new NotifyAction())
+                .onExit(() -> setSubmitted(false))
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
                 .permit(Trigger.evWainting,JobState.WAITING)
                 .permit(Trigger.evRunning,JobState.RUN)
                 .permit(Trigger.evSuspended,JobState.SUSPENDED)
-                .permit(Trigger.evDone,JobState.PROCESSING)
+                .permit(Trigger.evDone,JobState.POSTPROCESSING)
                 .permit(Trigger.doStop,JobState.STOP)
                 .permit(Trigger.doError,JobState.ERROR);
         //</editor-fold>
@@ -120,10 +137,10 @@ public class DefaultJob extends AbstractJob implements Job {
         /**
          * Configure Processing state
          */
-        if (modules.containsKey(JobState.PROCESSING)) {
-            defaultConfiguration.configure(JobState.PROCESSING)
+        if (modules.containsKey(JobState.POSTPROCESSING)) {
+            defaultConfiguration.configure(JobState.POSTPROCESSING)
                     .onEntry(new NotifyAction())
-                    .onEntry(new ModuleAction(modules.get(JobState.PROCESSING),getParameters(),new FutureCallback(),new StageCompletion(Trigger.doFinish,Trigger.doError)))
+                    .onEntry(new ModuleAction(this,modules.get(JobState.POSTPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doFinish,Trigger.doError)))
                     .permit(Trigger.doFinish,JobState.FINISHED)
                     .permit(Trigger.doStop,JobState.STOP)
                     .permit(Trigger.doError,JobState.ERROR);
@@ -137,6 +154,20 @@ public class DefaultJob extends AbstractJob implements Job {
                 .permit(Trigger.doRestart,JobState.SUBMITTING)
                 .permit(Trigger.doFinish,JobState.FINISHED);
 
+        /**
+         * Configure ERROR state
+         */
+        defaultConfiguration.configure(JobState.ERROR)
+                .onEntry(new NotifyAction())
+                .permit(Trigger.doRestart,JobState.SUBMITTING);
+
+        /**
+         * Configure FINISHED state
+         */
+        defaultConfiguration.configure(JobState.FINISHED)
+                .onEntry(new NotifyAction())
+                .permit(Trigger.doRestart,JobState.SUBMITTING);
+
         setStateMachineConfiguration(defaultConfiguration);
 
     }
@@ -147,7 +178,7 @@ public class DefaultJob extends AbstractJob implements Job {
     //<editor-fold desc="Job Interface">
     @Override
     public String getName() {
-        return getName();
+        return super.getName();
     }
 
     @Override
@@ -225,6 +256,37 @@ public class DefaultJob extends AbstractJob implements Job {
     //</editor-fold>
 
     /**
+     * Parse the qstat output to get the status of the job in the batch system
+     * <br>If the batchID is not found in the output and it is set in the job, it means that the
+     * job has been finished running in the batch system.
+     * @param outString
+     * @return the qstat status. If not found return empty string
+     */
+    private String parseQStatOutput(String outString) {
+
+        final String lineSep = System.getProperty("line.separator");
+
+        if (outString.isEmpty()) {
+            return "";
+        }
+
+        try {
+            StringParameter bathID = getParameterSet().getParameter("batchID");
+            String[] lines = outString.split(lineSep);
+            for (int i = 0; i < lines.length; i++) {
+                if (lines[i].contains(bathID.getValue())) {
+                    logger.debug("BatchID {} found in qstat for job {}",bathID.getValue(),getId());
+                    String[] fields =  lines[i].trim().split("\\s+");
+                    return fields[4];
+                }
+            }
+            return "";
+        }
+        catch (IllegalArgumentException ex) {
+            return "";
+        }
+    }
+    /**
      * This class has to be put in every {@code onEntry}.
      * At the entrance of a state, the observer will be notified
      */
@@ -236,6 +298,8 @@ public class DefaultJob extends AbstractJob implements Job {
             notifyObservers(getState());
         }
     }
+
+
 
     /**
      * Created by tctupangiu on 20/04/2017.

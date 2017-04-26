@@ -20,17 +20,17 @@ import java.util.function.Function;
  */
 public class ModuleAction implements Action {
 
-    private final Logger logger = LoggerFactory.getLogger(AbstractJob.class);
+    private final Logger logger = LoggerFactory.getLogger(ModuleAction.class);
 
     private final Function<MethodResult,Boolean> callbackFunction;
     private final Consumer<Boolean> consumer;
     private final Module moduleInstance;
-    private final ParameterSet parameterSet;
+    private final Job parent;
 
-    public ModuleAction(Module moduleInstace, ParameterSet parameterSet, Function<MethodResult, Boolean> callbackFunction, Consumer<Boolean> consumer) {
+    public ModuleAction(Job parent,Module moduleInstace, Function<MethodResult, Boolean> callbackFunction, Consumer<Boolean> consumer) {
         this.moduleInstance = moduleInstace;
         this.callbackFunction = callbackFunction;
-        this.parameterSet = parameterSet;
+        this.parent = parent;
         this.consumer = consumer;
     }
 
@@ -39,7 +39,7 @@ public class ModuleAction implements Action {
     }
 
     public ParameterSet getParameterSet() {
-        return parameterSet;
+        return parent.getParameters();
     }
 
 

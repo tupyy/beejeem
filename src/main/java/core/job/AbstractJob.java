@@ -4,6 +4,7 @@ import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
 import core.modules.Method;
 import core.modules.MethodResult;
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
@@ -35,11 +36,15 @@ public abstract class AbstractJob extends Observable {
 
     public AbstractJob(ParameterSet parameterSet) {
         this.parameterSet = parameterSet;
+        this.parameterSet.addParameter(createTemporaryFolderParameter(this.parameterSet.getID()));
+
         jobMachine = new StateMachine<Integer, Integer>(JobState.READY,new StateMachineConfig<>());
     }
 
     public AbstractJob(ParameterSet parameterSet, StateMachineConfig<Integer,Integer> jobStateMachineConfig) {
         jobMachine = new StateMachine<Integer, Integer>(JobState.READY,jobStateMachineConfig);
+
+        parameterSet.addParameter(createTemporaryFolderParameter(parameterSet.getID()));
         this.setParameterSet(parameterSet);
     }
 
@@ -124,7 +129,7 @@ public abstract class AbstractJob extends Observable {
      */
     public void consumeQStatOutput(MethodResult qstatOutput) {
 
-  //       logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getId(), qstatOutput.getMethodName());
+        logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getId(), qstatOutput.getMethodName());
 
         StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
         String statusString = parseQStatOutput(qstatOutputS.getValue());
@@ -134,7 +139,7 @@ public abstract class AbstractJob extends Observable {
         } else {
             logger.debug("Job ID:{} Name:{} BatchID not found in qstat output");
             if (getQstatMissFire() == 0) {
-                fireTrigger(JobState.DONE);
+                fireTrigger(Trigger.evDone);
             } else {
                 logger.debug("Job ID:{} Name:{} -- QStat fire missed.Set value to: {}", getId(), getName(), getQstatMissFire() - 1);
                 setQstatMissFire(getQstatMissFire() - 1);
@@ -152,29 +157,27 @@ public abstract class AbstractJob extends Observable {
      */
     private String parseQStatOutput(String outString) {
 
-        String basePattern = "\\s[0-9.]{7}.*(20|21|22|23|[01]\\d|\\d)((:[0-5]\\d){1,2})";
-
-        final String lineSep = System.getProperty(" ");
+        final String lineSep = System.getProperty("line.separator");
 
         if (outString.isEmpty()) {
             return "";
         }
 
         try {
-            StringParameter batchID = getParameterSet().getParameter("batchID");
-            Pattern pattern = Pattern.compile(batchID.getValue()+basePattern);
-            Matcher m = pattern.matcher(outString);
-            if (m.find()) {
-                String stringFound = outString.substring(m.start(),m.end());
-                String[] fields =  stringFound.trim().split("\\s+");
-                return fields[4];
+            StringParameter bathID = getParameterSet().getParameter("batchID");
+            String[] lines = outString.split(lineSep);
+            for (int i = 0; i < lines.length; i++) {
+                if (lines[i].contains(bathID.getValue())) {
+                    logger.debug("BatchID {} found in qstat for job {}",bathID.getValue(),getId());
+                    String[] fields =  lines[i].trim().split("\\s+");
+                    return fields[4];
+                }
             }
+            return "";
         }
         catch (IllegalArgumentException ex) {
             return "";
         }
-
-        return "";
     }
 
 
@@ -228,6 +231,13 @@ public abstract class AbstractJob extends Observable {
                 jobMachine.fire(errorTrigger);
             }
         }
+    }
+
+    private Parameter createTemporaryFolderParameter(UUID jobID) {
+        //create the temporary folder parameter
+        StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
+        temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(jobID.toString().substring(0,7)));
+        return temporaryParameter;
     }
 
 

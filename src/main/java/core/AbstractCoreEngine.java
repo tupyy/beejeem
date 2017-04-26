@@ -67,13 +67,13 @@ public abstract class AbstractCoreEngine implements Core {
      */
     protected void fireJobEvent(JobEvent action, UUID id) {
         // if we have no listeners, do nothing...
-        if (listeners != null && !listeners.isEmpty()) {
+        if (jobListeners != null && !jobListeners.isEmpty()) {
 
             // make a copy of the listener list in case
             //   anyone adds/removes listeners
             Vector targets;
             synchronized (this) {
-                targets = (Vector) listeners.clone();
+                targets = (Vector) jobListeners.clone();
             }
 
             // walk through the listener list and
