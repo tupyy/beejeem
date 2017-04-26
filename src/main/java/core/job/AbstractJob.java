@@ -2,6 +2,7 @@ package core.job;
 
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
+import core.modules.Method;
 import core.modules.MethodResult;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Observable;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by cosmin on 21/04/2017.
@@ -119,9 +122,9 @@ public abstract class AbstractJob extends Observable {
      * Trigger the batch event if found
      * @param qstatOutput
      */
-    public void setQstatResult(MethodResult qstatOutput) {
+    public void consumeQStatOutput(MethodResult qstatOutput) {
 
-         logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getId(), qstatOutput.getMethodName());
+  //       logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getId(), qstatOutput.getMethodName());
 
         StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
         String statusString = parseQStatOutput(qstatOutputS.getValue());
@@ -149,21 +152,22 @@ public abstract class AbstractJob extends Observable {
      */
     private String parseQStatOutput(String outString) {
 
-        final String lineSep = System.getProperty("line.separator");
+        String basePattern = "\\s[0-9.]{7}.*(20|21|22|23|[01]\\d|\\d)((:[0-5]\\d){1,2})";
+
+        final String lineSep = System.getProperty(" ");
 
         if (outString.isEmpty()) {
             return "";
         }
 
         try {
-            StringParameter bathID = getParameterSet().getParameter("batchID");
-            String[] lines = outString.split(lineSep);
-            for (int i = 0; i < lines.length; i++) {
-                if (lines[i].contains(bathID.getValue())) {
-                    logger.debug("BatchID {} found in qstat for job {}",bathID.getValue(),getId());
-                    String[] fields =  lines[i].trim().split("\\s+");
-                    return fields[4];
-                }
+            StringParameter batchID = getParameterSet().getParameter("batchID");
+            Pattern pattern = Pattern.compile(batchID.getValue()+basePattern);
+            Matcher m = pattern.matcher(outString);
+            if (m.find()) {
+                String stringFound = outString.substring(m.start(),m.end());
+                String[] fields =  stringFound.trim().split("\\s+");
+                return fields[4];
             }
         }
         catch (IllegalArgumentException ex) {
@@ -172,6 +176,7 @@ public abstract class AbstractJob extends Observable {
 
         return "";
     }
+
 
     /**
      * Return the job status from the qstat string status
@@ -182,14 +187,19 @@ public abstract class AbstractJob extends Observable {
         switch (statusString) {
             case "r":
                 fireTrigger(Trigger.evRunning);
+                break;
             case "qw":
                 fireTrigger(Trigger.evWainting);
+                break;
             case "d":
                 fireTrigger(Trigger.evDeletion);
+                break;
             case "h":
                 fireTrigger(Trigger.evHold);
+                break;
             case "E":
                 fireTrigger(Trigger.evError);
+                break;
         }
     }
 

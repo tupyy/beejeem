@@ -41,7 +41,7 @@ public class DefaultJob extends AbstractJob implements Job {
         if (modules.containsKey(JobState.SUBMITTING)) {
             defaultConfiguration.configure(JobState.SUBMITTING)
                     .onEntry(new NotifyAction())
-                    .onEntry(new ModuleAction(modules.get(JobState.SUBMITTING),getParameters(),new FutureCallback(),new StageCompletion(Trigger.doSubmit,Trigger.doError)))
+                    .onEntry(new ModuleAction(modules.get(JobState.SUBMITTING),getParameters(),new FutureCallback(),new StageCompletion(Trigger.doProcessing,Trigger.doError)))
                     .permit(Trigger.doProcessing,JobState.SUBMITTED)
                     .permit(Trigger.doStop,JobState.STOP)
                     .permit(Trigger.doError,JobState.ERROR);
@@ -152,7 +152,7 @@ public class DefaultJob extends AbstractJob implements Job {
 
     @Override
     public UUID getID() {
-        return getId();
+        return super.getId();
     }
 
     @Override
@@ -197,13 +197,13 @@ public class DefaultJob extends AbstractJob implements Job {
 
     @Override
     public int getState() {
-        return getState();
+        return super.getState();
     }
 
     @Override
     public void setQstatResult(MethodResult qstatOutput) {
         if (isSubmitted()) {
-            setQstatResult(qstatOutput);
+            consumeQStatOutput(qstatOutput);
         }
     }
 
