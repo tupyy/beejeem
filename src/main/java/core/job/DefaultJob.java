@@ -216,18 +216,28 @@ public class DefaultJob extends AbstractJob implements Job {
     }
 
     @Override
+    public void restart() {
+
+        if (canRestart()) {
+            fireTrigger(Trigger.doRestart);
+        }
+    }
+
+    /**
+     * Delete the job
+     * @throws JobException
+     */
+    @Override
     public void delete() throws JobException {
 
     }
 
+    /**
+     * Stop the job
+     */
     @Override
     public void stop() {
         fireTrigger(Trigger.doStop);
-    }
-
-    @Override
-    public void restart() {
-        fireTrigger(Trigger.doRestart);
     }
 
     @Override
@@ -270,6 +280,7 @@ public class DefaultJob extends AbstractJob implements Job {
         fireTrigger(Trigger.doPreprocessing);
     }
 
+
     /**
      * True if the job has been submitted
      */
@@ -281,6 +292,29 @@ public class DefaultJob extends AbstractJob implements Job {
         this.submitted = submitted;
     }
     //</editor-fold>
+
+    /*****************************************************
+     *
+     *
+     *                  PRIVATE
+     *
+     *
+     *****************************************************/
+
+    /**
+     * Check if a job can be restarted
+     * @return
+     */
+    private boolean canRestart() {
+        if (getState() == JobState.STOP ||
+                getState() == JobState.ERROR ||
+                getState() == JobState.FINISHED) {
+            return true;
+        }
+
+        return false;
+
+    }
 
     /**
      * This class has to be put in every {@code onEntry}.
