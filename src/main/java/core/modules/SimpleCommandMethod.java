@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * This method runs the qstat command and return the output
+ * This method run any batch system command
  */
 public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
@@ -37,7 +37,7 @@ public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
         try {
             String outString = executeSessionCommand(createCommand(command));
-            StringParameter commandOutput = new StringParameter("qdelOutput","Output from qdel","core",outString);
+            StringParameter commandOutput = new StringParameter("SimpleCommandMethod","Output from SimpleCommandMethod","core",outString);
             StandardMethodResult result = new StandardMethodResult("core",METHOD_NAME, UUID.randomUUID(), StandardMethodResult.OK, "");
             result.addParameter(commandOutput);
             return  result;
