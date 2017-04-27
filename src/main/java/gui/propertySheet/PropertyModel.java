@@ -50,24 +50,27 @@ public class PropertyModel {
     public void updateParameterSet(ParameterSet newParameterSet) {
         Platform.runLater(() -> {
 
-            //check for new values
-            for (Parameter p : newParameterSet) {
-                if (p.getSource().equals("external")) {
-                    SimpleItem simpleItem = getItem(p.getID());
-                    if (simpleItem != null) {
-                        if ( !simpleItem.getValue().equals(p.getValue()) ) {
-                            simpleItem.setValue(p.getValue());
+            try {
+                //check for new values
+                for (Parameter p : newParameterSet) {
+                    if (p.getSource().equals("external")) {
+                        SimpleItem simpleItem = getItem(p.getID());
+                        if (simpleItem != null) {
+                            if (!simpleItem.getValue().equals(p.getValue())) {
+                                simpleItem.setValue(p.getValue());
+                            }
+                        } else {
+                            addItem(p, parameterSet.isEditable());
                         }
-                    } else {
-                        addItem(p, parameterSet.isEditable());
                     }
                 }
-            }
 
-            //update the editable
-            if (parameterSet.isEditable() != newParameterSet.isEditable()) {
-                setEditable(newParameterSet.isEditable());
+                //update the editable
+                if (parameterSet.isEditable() != newParameterSet.isEditable()) {
+                    setEditable(newParameterSet.isEditable());
+                }
             }
+            catch (NullPointerException ex) {}
         });
 
 

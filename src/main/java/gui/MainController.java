@@ -1,8 +1,9 @@
 package gui;
 
-import core.CoreEvent;
-import core.CoreListener;
 import core.job.JobException;
+import eventbus.ComponentAction;
+import eventbus.ComponentEventHandler;
+import eventbus.JobEvent;
 import gui.mainview.hub.HubController;
 import gui.mainview.hub.table.HubTableModel;
 import gui.mainview.sidepanel.SidePanelController;
@@ -14,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,7 +38,7 @@ import java.util.UUID;
 import static main.JStesCore.getCoreEngine;
 
 
-public class MainController implements Initializable, CoreListener,ComponentEventHandler {
+public class MainController implements Initializable, ComponentEventHandler {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
@@ -90,30 +90,31 @@ public class MainController implements Initializable, CoreListener,ComponentEven
 
     }
 
-    @Override
-    public void coreEvent(CoreEvent e) {
-
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onComponentEvent(ComponentEvent event) {
+    public void onJobEvent(JobEvent event) {
 
         switch (event.getAction()) {
-            case ComponentEvent.JOB_SELECTED:
+            case JOB_CREATED:
                 deleteButton.setDisable(false);
                 break;
-            case ComponentEvent.JOB_DELETED:
+            case JOB_DELETED:
                 if (getCoreEngine().count() == 0) {
                     deleteButton.setDisable(true);
                 }
                 break;
-            case ComponentEvent.SELECTION_CLEARED:
-                deleteButton.setDisable(true);
+            case JOB_UPDATED:
+                break;
+            case JOB_STOPPED:
                 break;
         }
+    }
+
+    @Override
+    public void onComponentAction(ComponentAction event) {
+
     }
 
     /********************************************************************
@@ -242,5 +243,6 @@ public class MainController implements Initializable, CoreListener,ComponentEven
         imageView.setFitWidth(20);
         button.setGraphic(imageView);
     }
+
 
 }

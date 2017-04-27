@@ -1,14 +1,10 @@
 package gui.propertySheet;
 
 import core.job.Job;
-import core.job.JobExecutionProgress;
-import core.parameters.ParameterSet;
 import gui.mainview.sidepanel.ComponentController;
 import javafx.scene.control.Control;
-import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.editor.Editors;
-import org.controlsfx.property.editor.PropertyEditor;
 
 /**
  * Created by tctupangiu on 17/03/2017.

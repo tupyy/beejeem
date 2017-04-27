@@ -1,18 +1,12 @@
 package gui.mainview.sidepanel;
 
-import core.CoreEvent;
-import core.CoreEventType;
-import core.CoreListener;
+import core.JobListener;
 import core.job.Job;
-import core.job.JobExecutionProgress;
-import gui.ComponentEvent;
-import gui.ComponentEventHandler;
-import gui.DefaultComponentEvent;
-import gui.MainController;
-import gui.mainview.sidepanel.modules.ModulesController;
+import eventbus.ComponentAction;
+import eventbus.JobEvent;
+import eventbus.ComponentEventHandler;
 import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -20,7 +14,6 @@ import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +25,7 @@ import static main.JStesCore.getCoreEngine;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController implements Initializable, CoreListener,ComponentEventHandler{
+public class SidePanelController implements Initializable, ComponentEventHandler{
     private static final Logger logger = LoggerFactory
             .getLogger(SidePanelController.class);
 
@@ -52,7 +45,6 @@ public class SidePanelController implements Initializable, CoreListener,Componen
 
     public SidePanelController() {
 
-        getCoreEngine().addCoreEventListener(this);
         JStesCore.registerController(this);
 
     }
@@ -66,15 +58,25 @@ public class SidePanelController implements Initializable, CoreListener,Componen
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
         componentControllerList.add(propertyController);
 
-        //add module view
-        addModuleView(vboxModulePanel);
     }
 
     @Override
-    public void onComponentEvent(ComponentEvent event) {
+    public void onJobEvent(JobEvent event) {
 
-        //Job selected
-        if (event.getAction() == ComponentEvent.JOB_SELECTED) {
+        switch (event.getAction()) {
+            case JOB_CREATED:
+                for (ComponentController componentController: componentControllerList) {
+                    componentController.updateJob(getCoreEngine().getJob(event.getJobId()));
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onComponentAction(ComponentAction event) {
+
+        switch (event.getAction()) {
+            case SELECT:
                 UUID id = event.getJobId();
                 logger.debug("Selected job id {}",id);
                 Job j = getCoreEngine().getJob(id);
@@ -83,28 +85,18 @@ public class SidePanelController implements Initializable, CoreListener,Componen
                 for (ComponentController componentController: componentControllerList) {
                     componentController.loadJob(j);
                 }
-            }
-        else if(event.getAction() == ComponentEvent.JOB_DELETED) {
+                break;
+            case DELETE:
                 if (currentJobID.equals(event.getJobId())) {
                     for (ComponentController componentController: componentControllerList) {
                         componentController.clear();
                     }
                     currentJobID = null;
                 }
+                break;
         }
     }
 
-
-    @Override
-    public void coreEvent(CoreEvent e) {
-        if (e.getId().equals(currentJobID)) {
-            if (e.getAction() == CoreEventType.JOB_UPDATED) {
-                for (ComponentController componentController: componentControllerList) {
-                    componentController.updateJob(getCoreEngine().getJob(e.getId()));
-                }
-            }
-        }
-    }
 
     /********************************************************************
      *
@@ -116,26 +108,6 @@ public class SidePanelController implements Initializable, CoreListener,Componen
 
 
     }
-
-    /**
-     * Show sidepanel view
-     * @param parentNode
-     */
-    private void addModuleView(VBox parentNode) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/moduleView.fxml"));
-            VBox command = (VBox) loader.load();
-
-            ModulesController modulesController = loader.getController();
-            componentControllerList.add(modulesController);
-            parentNode.getChildren().add(command);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
 
 
 }

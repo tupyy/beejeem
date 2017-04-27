@@ -77,7 +77,7 @@ public class HubTableModel {
                 this.localFolder = new SimpleStringProperty(getParameterValue(parameterSet,"localFolder"));
                 this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));
                 this.aircraft = new SimpleStringProperty(getParameterValue(parameterSet,"aircraft"));
-                this.status = new SimpleStringProperty(JobState.toString(job.getStatus()));
+                this.status = new SimpleStringProperty(JobState.toString(job.getState()));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
             catch (IllegalArgumentException ex) {
@@ -87,7 +87,7 @@ public class HubTableModel {
 
         public void updateJob(Job j) {
             this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
-            this.status.set(JobState.toString(j.getStatus()));
+            this.status.set(JobState.toString(j.getState()));
             this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
         }
 

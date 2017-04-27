@@ -1,13 +1,8 @@
 package gui.mainview.hub;
 
-import core.CoreEvent;
-import core.CoreEventType;
-import core.CoreListener;
 import core.job.Job;
 import core.job.JobState;
-import gui.ComponentEvent;
-import gui.ComponentEventHandler;
-import gui.DefaultComponentEvent;
+import eventbus.*;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.collections.ObservableList;
@@ -22,15 +17,15 @@ import javafx.scene.image.ImageView;
 import main.JStesCore;
 
 import java.net.URL;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 import static main.JStesCore.getCoreEngine;
 
 /**
  * CreatorController for the hubView
  */
-public class HubController implements Initializable, CoreListener, ComponentEventHandler {
+public class HubController implements Initializable, ComponentEventHandler {
 
     @FXML
     private TableView hubTable;
@@ -40,6 +35,9 @@ public class HubController implements Initializable, CoreListener, ComponentEven
 
     @FXML
     private Button runAllButton;
+
+    @FXML
+    private Button stopButton;
 
     @FXML
     private TextField filterField;
@@ -53,7 +51,6 @@ public class HubController implements Initializable, CoreListener, ComponentEven
         assert runJobButton != null : "fx:id=\"runJobButton\" was not injected: check your FXML file 'hubTable";
 
         setupTable();
-        getCoreEngine().addCoreEventListener(this);
         JStesCore.registerController(this);
 
         setupActions();
@@ -63,53 +60,45 @@ public class HubController implements Initializable, CoreListener, ComponentEven
 
     }
 
-    @Override
-    public void coreEvent(CoreEvent e) {
-        if (e.getAction() == CoreEventType.JOB_CREATED) {
-            UUID id = e.getId();
-            model.getTableModel().addJob(getCoreEngine().getJob(id));
-            runAllButton.setDisable(false);
-        }
-        else if (e.getAction() == CoreEventType.JOB_UPDATED) {
-            Job j = getCoreEngine().getJob(e.getId());
-            model.getTableModel().updateJob(j);
-        }
-        else if (e.getAction() == CoreEventType.JOB_DELETED) {
-            model.getTableModel().deleteJob(e.getId());
-            JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_DELETED, e.getId()));
-
-            if (getCoreEngine().count() == 0) {
-                runAllButton.setDisable(true);
-                runJobButton.setDisable(true);
-            }
-        }
-    }
-
     /**
      * {@inheritDoc}
      * @param event
      */
     @Override
-    public void onComponentEvent(ComponentEvent event) {
+    public void onJobEvent(JobEvent event) {
 
         switch (event.getAction()) {
-            case ComponentEvent.JOB_SELECTED:
+            case JOB_DELETED:
+                runJobButton.setDisable(true);
+                runAllButton.setDisable(true);
 
+                model.getTableModel().deleteJob(event.getJobId());
+
+                if (getCoreEngine().count() == 0) {
+                    runAllButton.setDisable(true);
+                    runJobButton.setDisable(true);
+                }
+                 break;
+            case JOB_UPDATED:
+                Job j = getCoreEngine().getJob(event.getJobId());
+                model.getTableModel().updateJob(j);
+                break;
+            case JOB_CREATED:
+                model.getTableModel().addJob(getCoreEngine().getJob(event.getJobId()));
+                runAllButton.setDisable(false);
+        }
+    }
+
+    @Override
+    public void onComponentAction(ComponentAction event) {
+        switch (event.getAction()) {
+            case SELECT:
                 if (isJobIdle(event.getJobId())) {
                     runJobButton.setDisable(false);
                 }
                 else {
                     runJobButton.setDisable(true);
                 }
-                 break;
-
-            case ComponentEvent.JOB_DELETED:
-                runJobButton.setDisable(true);
-                runAllButton.setDisable(true);
-                 break;
-
-            case ComponentEvent.SELECTION_CLEARED:
-                runJobButton.setDisable(true);
                 break;
         }
     }
@@ -225,7 +214,7 @@ public class HubController implements Initializable, CoreListener, ComponentEven
             if (newSelection != null) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
                 UUID id = UUID.fromString(jobData.getId());
-                JStesCore.getEventBus().post(new DefaultComponentEvent(this,ComponentEvent.JOB_SELECTED,id));
+                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.SELECT,id));
             }
 
         });
@@ -235,27 +224,25 @@ public class HubController implements Initializable, CoreListener, ComponentEven
 
             if (selection.size() > -1) {
                 for (HubTableModel.JobData jobData: selection) {
-                    getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
+                    JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.EXECUTE,UUID.fromString(jobData.getId())));
                 }
             }
         });
 
         runAllButton.setOnAction((event) -> {
-            for (HubTableModel.JobData jobData: model.getTableModel().getData()){
-                getCoreEngine().executeJob(UUID.fromString(jobData.getId()), model.getJobLogger(UUID.fromString(jobData.getId())));
-            }
+            JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.EXECUTE_ALL,UUID.randomUUID()));
             runAllButton.setDisable(true);
         });
 
-//        stopButton.setOnAction(event -> {
-//            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
-//
-//            if (selection.size() > -1) {
-//                for (HubTableModel.JobData jobData: selection) {
-//                    getCoreEngine().stopJob(UUID.fromString(jobData.getId()));
-//                }
-//            }
-//        });
+        stopButton.setOnAction(event -> {
+            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+
+            if (selection.size() > -1) {
+                for (HubTableModel.JobData jobData: selection) {
+                    JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.STOP,UUID.fromString(jobData.getId())));
+                }
+            }
+        });
     }
 
     /**
@@ -275,12 +262,13 @@ public class HubController implements Initializable, CoreListener, ComponentEven
      * @return
      */
     private boolean isJobIdle(UUID id) {
-        if (getCoreEngine().getJob(id).getStatus() == JobState.IDLE) {
+        if (getCoreEngine().getJob(id).getState() == JobState.READY) {
             return true;
         }
 
         return false;
     }
+
 
 
 }

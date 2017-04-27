@@ -1,4 +1,4 @@
-package gui;
+package eventbus;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,13 +7,14 @@ import java.util.UUID;
  * Default event interface for the component events.
  * <pre>A component event can be a job is selected, deleted or updated</pre>
  */
-public interface ComponentEvent  {
+public interface JobEvent {
 
-    public static final int JOB_SELECTED = 1;
-
-    public static final int JOB_DELETED = 2;
-
-    public static final int SELECTION_CLEARED = 3;
+    public enum JobEventType {
+        JOB_CREATED,
+        JOB_DELETED,
+        JOB_UPDATED,
+        JOB_STOPPED
+    }
 
     /**
      * Get the list of job ids on which the event occured
@@ -25,6 +26,6 @@ public interface ComponentEvent  {
      * Get the event action
      * @return
      */
-   public int getAction();
+   public JobEventType getAction();
 
 }
