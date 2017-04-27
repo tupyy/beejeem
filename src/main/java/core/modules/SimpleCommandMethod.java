@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * This method run any batch system command
+ * This method run any batch system command.
  */
 public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
