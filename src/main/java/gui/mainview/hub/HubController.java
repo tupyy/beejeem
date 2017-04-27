@@ -61,8 +61,6 @@ public class HubController implements Initializable, ComponentEventHandler {
         setupActions();
         decorateButton(runJobButton,"images/start-icon.png");
         decorateButton(runAllButton,"images/start-icon.png");
-
-
     }
 
     /**
@@ -88,6 +86,7 @@ public class HubController implements Initializable, ComponentEventHandler {
                 Job j = getCoreEngine().getJob(event.getJobId());
                 model.getTableModel().updateJob(j);
 
+                disableRunAllButton();
                 HubTableModel.JobData selection = (HubTableModel.JobData) getHubTable().getSelectionModel().getSelectedItem();
                 if (selection.getId().equals(j.getID().toString())) {
                     runJobButton.setDisable(false);
@@ -199,6 +198,27 @@ public class HubController implements Initializable, ComponentEventHandler {
             getHubTable().getSelectionModel().clearSelection();
         });
 
+        /**
+         * Add click on row event
+         */
+        hubTable.setRowFactory( tv -> {
+            TableRow<HubTableModel.JobData> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    HubTableModel.JobData rowData = row.getItem();
+
+                    String actionName = getJobAction(UUID.fromString(rowData.getId())).getActionName();
+                    if (actionName.equals("run")) {
+                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.EXECUTE, UUID.fromString(rowData.getId())));
+                    }
+                    else if (actionName.equals("stop")) {
+                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.STOP, UUID.fromString(rowData.getId())));
+                    }
+                }
+            });
+            return row ;
+        });
+
         SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
 
         //Bind the SortedList comparator to the TableView comparator.
@@ -248,19 +268,6 @@ public class HubController implements Initializable, ComponentEventHandler {
     }
 
     /**
-     * Check if a job can be executed (i.e. the state is IDLE)
-     * @param id
-     * @return
-     */
-    private boolean isJobIdle(UUID id) {
-        if (getCoreEngine().getJob(id).getState() == JobState.READY) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Return an action (i.e. run or stop) based on the state of the job
      * @param id
      * @return
@@ -269,9 +276,10 @@ public class HubController implements Initializable, ComponentEventHandler {
 
         Job j = getCoreEngine().getJob(id);
         if (j != null) {
-            if (j.getState() == JobState.READY || j.getState() == JobState.STOP
-                    || j.getState() == JobState.FINISHED
-                    || j.getState() == JobState.ERROR) {
+            int state = j.getState();
+            if (state == JobState.READY || state == JobState.STOP
+                    || state == JobState.FINISHED
+                    || state == JobState.ERROR) {
                 myEventHandler.setActionName("run");
                 return myEventHandler;
             }
@@ -284,6 +292,21 @@ public class HubController implements Initializable, ComponentEventHandler {
 
     }
 
+    private void disableRunAllButton() {
+
+        Platform.runLater(() -> {
+            runAllButton.setDisable(true);
+            for (UUID id: getCoreEngine().getJobIDList()) {
+                int jobState = getCoreEngine().getJob(id).getState();
+                if (jobState == JobState.READY ||
+                        jobState == JobState.STOP ||
+                        jobState == JobState.ERROR) {
+                    runAllButton.setDisable(false);
+                    break;
+                }
+            }
+        });
+    }
     /**
      * Set the action handler on the button
      * @param button
