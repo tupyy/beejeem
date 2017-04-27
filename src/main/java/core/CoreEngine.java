@@ -133,6 +133,15 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     }
 
     @Override
+    public void stopJob(UUID id) {
+        Job j = getJob(id);
+
+        if (j != null) {
+            j.stop();
+        }
+    }
+
+    @Override
     public Job getJob(UUID id) {
         for (Job j : jobList) {
             if (j.getID().equals(id)) {
@@ -162,6 +171,14 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         }
         else {
             fireCoreEvent(CoreEvent.SSH_CONNECTION_ERROR);
+        }
+    }
+
+    @Override
+    public void executeAll() {
+
+        for(Job j: jobList) {
+           executeJob(j.getID());
         }
     }
 

@@ -46,6 +46,12 @@ public interface Core {
     public void deleteJobs(List<UUID> ids) throws JobException;
 
     /**
+     * Stop job
+     * @param id
+     */
+    public void stopJob(UUID id);
+
+    /**
      * Get the job
      * @param id
      * @return Job
@@ -57,6 +63,11 @@ public interface Core {
      * @param id
      */
     public void executeJob(UUID id);
+
+    /**
+     * Execute all the jobs
+     */
+    public void executeAll();
 
     /**
      * Return the SshFactory
