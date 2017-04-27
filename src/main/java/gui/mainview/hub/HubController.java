@@ -5,9 +5,12 @@ import core.job.JobState;
 import eventbus.*;
 import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -41,6 +44,8 @@ public class HubController implements Initializable, ComponentEventHandler {
 
     @FXML
     private TextField filterField;
+
+    private MyEventHandler myEventHandler;
 
     private MainController mainController;
 
@@ -82,10 +87,17 @@ public class HubController implements Initializable, ComponentEventHandler {
             case JOB_UPDATED:
                 Job j = getCoreEngine().getJob(event.getJobId());
                 model.getTableModel().updateJob(j);
+
+                HubTableModel.JobData selection = (HubTableModel.JobData) getHubTable().getSelectionModel().getSelectedItem();
+                if (selection.getId().equals(j.getID().toString())) {
+                    runJobButton.setDisable(false);
+                    setActionOnButton(runJobButton,getJobAction(j.getID()));
+                }
                 break;
             case JOB_CREATED:
                 model.getTableModel().addJob(getCoreEngine().getJob(event.getJobId()));
                 runAllButton.setDisable(false);
+                runJobButton.setDisable(false);
         }
     }
 
@@ -93,12 +105,7 @@ public class HubController implements Initializable, ComponentEventHandler {
     public void onComponentAction(ComponentAction event) {
         switch (event.getAction()) {
             case SELECT:
-                if (isJobIdle(event.getJobId())) {
-                    runJobButton.setDisable(false);
-                }
-                else {
-                    runJobButton.setDisable(true);
-                }
+                setActionOnButton(runJobButton,getJobAction(event.getJobId()));
                 break;
         }
     }
@@ -214,35 +221,19 @@ public class HubController implements Initializable, ComponentEventHandler {
             if (newSelection != null) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
                 UUID id = UUID.fromString(jobData.getId());
-                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.SELECT,id));
+                JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.SELECT,id));
             }
 
-        });
-
-        runJobButton.setOnAction((event) -> {
-            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
-
-            if (selection.size() > -1) {
-                for (HubTableModel.JobData jobData: selection) {
-                    JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.EXECUTE,UUID.fromString(jobData.getId())));
-                }
-            }
         });
 
         runAllButton.setOnAction((event) -> {
-            JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.EXECUTE_ALL,UUID.randomUUID()));
+            JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.EXECUTE_ALL,UUID.randomUUID()));
             runAllButton.setDisable(true);
         });
 
-        stopButton.setOnAction(event -> {
-            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+        myEventHandler = new MyEventHandler("run");
+        runJobButton.setOnAction(myEventHandler);
 
-            if (selection.size() > -1) {
-                for (HubTableModel.JobData jobData: selection) {
-                    JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.STOP,UUID.fromString(jobData.getId())));
-                }
-            }
-        });
     }
 
     /**
@@ -269,6 +260,91 @@ public class HubController implements Initializable, ComponentEventHandler {
         return false;
     }
 
+    /**
+     * Return an action (i.e. run or stop) based on the state of the job
+     * @param id
+     * @return
+     */
+    private MyEventHandler getJobAction(UUID id) {
 
+        Job j = getCoreEngine().getJob(id);
+        if (j != null) {
+            if (j.getState() == JobState.READY || j.getState() == JobState.STOP
+                    || j.getState() == JobState.FINISHED
+                    || j.getState() == JobState.ERROR) {
+                myEventHandler.setActionName("run");
+                return myEventHandler;
+            }
+
+            myEventHandler.setActionName("stop");
+            return myEventHandler;
+        }
+
+        return null;
+
+    }
+
+    /**
+     * Set the action handler on the button
+     * @param button
+     * @param action
+     */
+    private void setActionOnButton(Button button, MyEventHandler action) {
+
+        Platform.runLater(() -> {
+            if (action.getActionName().equalsIgnoreCase("run")) {
+                decorateButton(button,"images/start-icon.png");
+                button.setText("Run job");
+            }
+            else {
+                decorateButton(button,"images/stop_red.png");
+                button.setText("Stop job");
+            }
+        });
+
+    }
+
+    /**
+     * Implantation for the EventHandler to have the name of the action
+     *
+     */
+    private class MyEventHandler implements EventHandler<ActionEvent> {
+
+        private String actionName;
+
+        public MyEventHandler(String actionName) {
+            this.setActionName(actionName);
+        }
+
+        @Override
+        public void handle(ActionEvent event) {
+            if (getActionName().equalsIgnoreCase("stop")) {
+                ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+
+                if (selection.size() > -1) {
+                    for (HubTableModel.JobData jobData: selection) {
+                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.STOP,UUID.fromString(jobData.getId())));
+                    }
+                }
+            }
+            else if (getActionName().equalsIgnoreCase("run")) {
+                ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+
+                if (selection.size() > -1) {
+                    for (HubTableModel.JobData jobData: selection) {
+                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.EXECUTE,UUID.fromString(jobData.getId())));
+                    }
+                }
+            }
+        }
+
+        public String getActionName() {
+            return actionName;
+        }
+
+        public void setActionName(String actionName) {
+            this.actionName = actionName;
+        }
+    }
 
 }
