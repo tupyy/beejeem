@@ -162,7 +162,7 @@ public class HubController implements Initializable, ComponentEventHandler {
 
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(jobData -> {
-                // If filter text is empty, display all persons.
+                // If filter text is empty, display all rows.
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
@@ -214,8 +214,6 @@ public class HubController implements Initializable, ComponentEventHandler {
         // Add sorted (and filtered) data to the table.
         getHubTable().setItems(sortedData);
         getHubTable().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-
 
     }
 
