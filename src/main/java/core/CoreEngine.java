@@ -132,14 +132,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         }
     }
 
-    public void stopJob(UUID jobId) {
-        Job job = getJob(jobId);
-
-        if (job !=null) {
-            job.stop();
-        }
-    }
-
     @Override
     public Job getJob(UUID id) {
         for (Job j : jobList) {
@@ -158,7 +150,12 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
             qstatManager.start();
             Job job = getJob(id);
             try {
-                job.execute();
+                if (job.getState() == JobState.READY) {
+                    job.execute();
+                }
+                else if (job.getState() == JobState.STOP) {
+                    job.restart();
+                }
             } catch (JobException e) {
                 e.printStackTrace();
             }

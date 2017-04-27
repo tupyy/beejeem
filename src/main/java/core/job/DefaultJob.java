@@ -4,6 +4,7 @@ import com.github.oxo42.stateless4j.StateMachineConfig;
 import com.github.oxo42.stateless4j.delegates.Action;
 import core.modules.MethodResult;
 import core.modules.Module;
+import core.modules.clean.CleaningModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class DefaultJob extends AbstractJob implements Job {
         defaultConfiguration.configure(JobState.READY)
                 .onEntry(new NotifyAction())
                 .permit(Trigger.doPreprocessing,JobState.PREPROCESSING)
-                .permit(Trigger.doStop,JobState.STOP)
+                .ignore(Trigger.doStop)
                 .permit(Trigger.doError,JobState.ERROR);
 
         /**
@@ -157,8 +158,18 @@ public class DefaultJob extends AbstractJob implements Job {
         defaultConfiguration.configure(JobState.STOP)
                 .onEntry(new NotifyAction())
                 .onEntry(() -> setSubmitted(false))
-                .permit(Trigger.doRestart,JobState.SUBMITTING)
+                .permit(Trigger.doRestart,JobState.RESTARTING)
                 .permit(Trigger.doFinish,JobState.FINISHED);
+
+        /**
+         * Configure RESTARTING state
+         */
+        defaultConfiguration.configure(JobState.RESTARTING)
+                .onEntry(new NotifyAction())
+                .onEntry(new ModuleAction(this,new CleaningModule(),new FutureCallback(),new StageCompletion(Trigger.doPreprocessing,Trigger.doError)))
+                .onEntry(() -> setSubmitted(false))
+                .ignore(Trigger.doRestart)
+                .permit(Trigger.doPreprocessing,JobState.PREPROCESSING);
 
         /**
          * Configure ERROR state
@@ -174,7 +185,7 @@ public class DefaultJob extends AbstractJob implements Job {
         defaultConfiguration.configure(JobState.FINISHED)
                 .onEntry(new NotifyAction())
                 .onEntry(() -> setSubmitted(false))
-                .permit(Trigger.doRestart,JobState.SUBMITTING);
+                .permit(Trigger.doRestart,JobState.PREPROCESSING);
 
         setStateMachineConfiguration(defaultConfiguration);
 

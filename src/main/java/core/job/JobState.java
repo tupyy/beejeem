@@ -14,6 +14,7 @@ public class JobState {
     public static final int PREPROCESSING = 1001;
     public static final int SUBMITTING =  1002;
     public static final int SUBMITTED = 1003;
+    public static final int RESTARTING = 1004;
 
     /**
      * Batch own status

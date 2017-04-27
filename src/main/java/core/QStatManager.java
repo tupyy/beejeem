@@ -126,10 +126,9 @@ public class QStatManager {
                 ModuleTask task = qStatModule.runModule(UUID.randomUUID(), SshRemoteFactory.getSshClient(),null);
 
                 try {
-                    CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(task, executor)
-                            .thenApply(methodResult -> {
+                    CompletableFuture<Void> completableFuture = CompletableFuture.supplyAsync(task, executor)
+                            .thenAccept(methodResult -> {
                                 receiveOutput(methodResult);
-                                return null;
                             });
 
                     completableFuture.exceptionally((th) -> null);
