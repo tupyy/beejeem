@@ -298,7 +298,9 @@ public class DefaultJob extends AbstractJob implements Job {
 
 
     /**
-     * Created by tctupangiu on 20/04/2017.
+     * This callback is called when a module has finished running.
+     * <p>It checks the exit code of the method and fire the okTrigger or errorTrigger if the
+     * method has failed.</p>
      */
     private class FutureCallback implements Function<MethodResult,Boolean> {
         private final Logger logger = LoggerFactory.getLogger(FutureCallback.class);
