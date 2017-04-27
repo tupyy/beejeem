@@ -51,7 +51,7 @@ public class JobState {
 
     public JobState() {
 
-        statusMap.put(READY,"Idle");
+        statusMap.put(READY,"Ready");
         statusMap.put(SUBMITTING,"Submitting");
         statusMap.put(PREPROCESSING,"Preprocessing");
         statusMap.put(SUBMITTED,"Submitted");
