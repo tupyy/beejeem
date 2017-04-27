@@ -40,14 +40,9 @@ public class HubController implements Initializable, ComponentEventHandler {
     private Button runAllButton;
 
     @FXML
-    private Button stopButton;
-
-    @FXML
     private TextField filterField;
 
     private MyEventHandler myEventHandler;
-
-    private MainController mainController;
 
     private HubModel model = new HubModel();
 
@@ -205,15 +200,7 @@ public class HubController implements Initializable, ComponentEventHandler {
             TableRow<HubTableModel.JobData> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                    HubTableModel.JobData rowData = row.getItem();
-
-                    String actionName = getJobAction(UUID.fromString(rowData.getId())).getActionName();
-                    if (actionName.equals("run")) {
-                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.EXECUTE, UUID.fromString(rowData.getId())));
-                    }
-                    else if (actionName.equals("stop")) {
-                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.STOP, UUID.fromString(rowData.getId())));
-                    }
+                     runJobButton.fire();
                 }
             });
             return row ;
@@ -341,22 +328,20 @@ public class HubController implements Initializable, ComponentEventHandler {
 
         @Override
         public void handle(ActionEvent event) {
-            if (getActionName().equalsIgnoreCase("stop")) {
-                ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
 
-                if (selection.size() > -1) {
-                    for (HubTableModel.JobData jobData: selection) {
-                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.STOP,UUID.fromString(jobData.getId())));
-                    }
-                }
+            ComponentAction.ComponentActions actionType = actionType = ComponentAction.ComponentActions.STOP;
+            if (getActionName().equalsIgnoreCase("stop")) {
+                actionType = ComponentAction.ComponentActions.STOP;
             }
             else if (getActionName().equalsIgnoreCase("run")) {
-                ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+                actionType = ComponentAction.ComponentActions.EXECUTE;
+            }
 
-                if (selection.size() > -1) {
-                    for (HubTableModel.JobData jobData: selection) {
-                        JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.EXECUTE,UUID.fromString(jobData.getId())));
-                    }
+            ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
+
+            if (selection.size() > -1) {
+                for (HubTableModel.JobData jobData: selection) {
+                    JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,actionType,UUID.fromString(jobData.getId())));
                 }
             }
         }
