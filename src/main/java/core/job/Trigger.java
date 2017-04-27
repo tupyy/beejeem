@@ -21,7 +21,7 @@ public class Trigger {
      * Batch system events
      */
     public static final int evRunning = 2000;
-    public static final int evWainting = 2001;
+    public static final int evWaiting = 2001;
     public static final int evDeletion =  2002;
     public static final int evRestarted = 2003;
     public static final int evSuspended = 2004;
@@ -29,6 +29,8 @@ public class Trigger {
     public static final int evError = 2007;
     public static final int evHold = 2008;
     public static final int evDone = 2006;
+
+    public static final int evUnknown = 0;
 
 
 }

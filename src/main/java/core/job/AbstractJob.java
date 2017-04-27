@@ -2,7 +2,6 @@ package core.job;
 
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
-import core.modules.Method;
 import core.modules.MethodResult;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
@@ -13,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Observable;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by cosmin on 21/04/2017.
@@ -129,13 +126,18 @@ public abstract class AbstractJob extends Observable {
      */
     public void consumeQStatOutput(MethodResult qstatOutput) {
 
+        if (getQstatMissFire() < 0) {
+            return;
+        }
+
         logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getId(), qstatOutput.getMethodName());
 
         StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
         String statusString = parseQStatOutput(qstatOutputS.getValue());
 
         if (!statusString.isEmpty()) {
-            triggerBatchEvent(statusString);
+            fireTrigger(getBatchTrigger(statusString));
+
         } else {
             logger.debug("Job ID:{} Name:{} BatchID not found in qstat output");
             if (getQstatMissFire() == 0) {
@@ -145,7 +147,6 @@ public abstract class AbstractJob extends Observable {
                 setQstatMissFire(getQstatMissFire() - 1);
             }
         }
-
     }
 
     /**
@@ -186,24 +187,21 @@ public abstract class AbstractJob extends Observable {
      * @param statusString
      * @return JobState status
      */
-    private void triggerBatchEvent(String statusString) {
+    private int getBatchTrigger(String statusString) {
         switch (statusString) {
             case "r":
-                fireTrigger(Trigger.evRunning);
-                break;
+                 return Trigger.evRunning;
             case "qw":
-                fireTrigger(Trigger.evWainting);
-                break;
+                return  Trigger.evWaiting;
             case "d":
-                fireTrigger(Trigger.evDeletion);
-                break;
+                return Trigger.evDeletion;
             case "h":
-                fireTrigger(Trigger.evHold);
-                break;
+                return Trigger.evHold;
             case "E":
-                fireTrigger(Trigger.evError);
-                break;
+                return Trigger.evError;
         }
+
+        return 0;
     }
 
     /**
