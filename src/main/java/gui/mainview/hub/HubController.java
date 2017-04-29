@@ -3,7 +3,6 @@ package gui.mainview.hub;
 import core.job.Job;
 import core.job.JobState;
 import eventbus.*;
-import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -223,8 +222,7 @@ public class HubController implements Initializable, ComponentEventHandler {
 
             if (newSelection != null) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
-                UUID id = UUID.fromString(jobData.getId());
-                JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.SELECT,id));
+                JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.SELECT,UUID.fromString(jobData.getId())));
             }
 
         });
@@ -234,7 +232,7 @@ public class HubController implements Initializable, ComponentEventHandler {
             runAllButton.setDisable(true);
         });
 
-        myEventHandler = new MyEventHandler("run");
+        myEventHandler = new MyEventHandler(MyEventHandler.RUN_ACTION);
         runJobButton.setOnAction(myEventHandler);
 
     }
@@ -263,11 +261,11 @@ public class HubController implements Initializable, ComponentEventHandler {
             if (state == JobState.READY || state == JobState.STOP
                     || state == JobState.FINISHED
                     || state == JobState.ERROR) {
-                myEventHandler.setActionName("run");
+                myEventHandler.setActionType(MyEventHandler.RUN_ACTION);
                 return myEventHandler;
             }
 
-            myEventHandler.setActionName("stop");
+            myEventHandler.setActionType(MyEventHandler.STOP_ACTION);
             return myEventHandler;
         }
 
@@ -298,7 +296,7 @@ public class HubController implements Initializable, ComponentEventHandler {
     private void setActionOnButton(Button button, MyEventHandler action) {
 
         Platform.runLater(() -> {
-            if (action.getActionName().equalsIgnoreCase("run")) {
+            if (action.getActionType() == MyEventHandler.RUN_ACTION) {
                 decorateButton(button,"images/start-icon.png");
                 button.setText("Run job");
             }
@@ -316,20 +314,23 @@ public class HubController implements Initializable, ComponentEventHandler {
      */
     private class MyEventHandler implements EventHandler<ActionEvent> {
 
-        private String actionName;
+        public static final int STOP_ACTION = 1;
+        public static final int RUN_ACTION = 2;
 
-        public MyEventHandler(String actionName) {
-            this.setActionName(actionName);
+        private int actionType;
+
+        public MyEventHandler(int actionType) {
+            this.setActionType(actionType);
         }
 
         @Override
         public void handle(ActionEvent event) {
 
-            ComponentAction.ComponentActions actionType = actionType = ComponentAction.ComponentActions.STOP;
-            if (getActionName().equalsIgnoreCase("stop")) {
+            ComponentAction.ComponentActions actionType = ComponentAction.ComponentActions.STOP;
+            if (getActionType() == STOP_ACTION) {
                 actionType = ComponentAction.ComponentActions.STOP;
             }
-            else if (getActionName().equalsIgnoreCase("run")) {
+            else if (getActionType() == RUN_ACTION) {
                 actionType = ComponentAction.ComponentActions.EXECUTE;
             }
 
@@ -342,12 +343,12 @@ public class HubController implements Initializable, ComponentEventHandler {
             }
         }
 
-        public String getActionName() {
-            return actionName;
+        public int getActionType() {
+            return actionType;
         }
 
-        public void setActionName(String actionName) {
-            this.actionName = actionName;
+        public void setActionType(int actionType) {
+            this.actionType = actionType;
         }
     }
 
