@@ -228,9 +228,10 @@ public class CreatorController implements Initializable {
             FileChooser fileChooser = new FileChooser();
 
 
-            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
-            if ( !initialFolder.isEmpty() ) {
-                fileChooser.setInitialDirectory(new File(initialFolder));
+            File initialFolder = new File(JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder"));
+
+            if ( initialFolder.exists() && initialFolder.isDirectory()) {
+                fileChooser.setInitialDirectory(initialFolder);
             }
             fileChooser.setTitle("Choose input files");
 
@@ -253,9 +254,10 @@ public class CreatorController implements Initializable {
             DirectoryChooser folderChooser = new DirectoryChooser();
 
 
-            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
-            if ( !initialFolder.isEmpty() ) {
-                folderChooser.setInitialDirectory(new File(initialFolder));
+            File initialFolder = new File(JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder"));
+
+            if ( initialFolder.exists() && initialFolder.isDirectory()) {
+                folderChooser.setInitialDirectory(initialFolder);
             }
             folderChooser.setTitle("Choose folder");
 
