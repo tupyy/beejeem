@@ -3,6 +3,7 @@ package gui;
 import core.job.JobException;
 import eventbus.ComponentAction;
 import eventbus.ComponentEventHandler;
+import eventbus.DefaultComponentAction;
 import eventbus.JobEvent;
 import gui.mainview.hub.HubController;
 import gui.mainview.hub.table.HubTableModel;
@@ -221,12 +222,7 @@ public class MainController implements Initializable, ComponentEventHandler {
             for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
                 ids.add(UUID.fromString(jobData.getId()));
-            }
-
-            try {
-                getCoreEngine().deleteJobs(ids);
-            } catch (JobException e) {
-                logger.debug("Exception delete job: {}",e.getMessage());
+                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.DELETE,UUID.fromString(jobData.getId())));
             }
 
         });

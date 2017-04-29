@@ -67,8 +67,6 @@ public class HubController implements Initializable, ComponentEventHandler {
 
         switch (event.getAction()) {
             case JOB_DELETED:
-                runJobButton.setDisable(true);
-                runAllButton.setDisable(true);
 
                 model.getTableModel().deleteJob(event.getJobId());
 

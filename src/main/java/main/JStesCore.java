@@ -2,6 +2,7 @@ package main;
 
 import com.google.common.eventbus.EventBus;
 import core.*;
+import core.job.JobException;
 import core.ssh.SshListener;
 import eventbus.*;
 import eventbus.JobEvent;
@@ -115,6 +116,12 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
             case STOP:
                 getCoreEngine().stopJob(event.getJobId());
                 break;
+            case DELETE:
+                try {
+                    getCoreEngine().deleteJob(event.getJobId());
+                } catch (JobException e) {
+                    e.printStackTrace();
+                }
         }
 
     }
