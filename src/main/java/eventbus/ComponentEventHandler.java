@@ -17,4 +17,7 @@ public interface ComponentEventHandler {
     @Subscribe
     public void onComponentAction(ComponentAction event);
 
+    @Subscribe
+    public void onCoreEvent(CoreEvent event);
+
 }

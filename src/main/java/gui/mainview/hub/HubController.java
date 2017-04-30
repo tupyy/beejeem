@@ -101,6 +101,11 @@ public class HubController implements Initializable, ComponentEventHandler {
         }
     }
 
+    @Override
+    public void onCoreEvent(CoreEvent event) {
+
+    }
+
     public TableView getHubTable() {
         return hubTable;
     }

@@ -1,10 +1,7 @@
 package gui;
 
 import core.job.JobException;
-import eventbus.ComponentAction;
-import eventbus.ComponentEventHandler;
-import eventbus.DefaultComponentAction;
-import eventbus.JobEvent;
+import eventbus.*;
 import gui.mainview.hub.HubController;
 import gui.mainview.hub.table.HubTableModel;
 import gui.mainview.sidepanel.SidePanelController;
@@ -115,6 +112,11 @@ public class MainController implements Initializable, ComponentEventHandler {
 
     @Override
     public void onComponentAction(ComponentAction event) {
+
+    }
+
+    @Override
+    public void onCoreEvent(CoreEvent event) {
 
     }
 

@@ -5,6 +5,7 @@ import core.*;
 import core.job.JobException;
 import core.ssh.SshListener;
 import eventbus.*;
+import eventbus.CoreEvent;
 import eventbus.JobEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
     //<editor-fold desc="SSH Listener">
     @Override
     public void channelClosed() {
-
+        eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_DISCONNECTED));
     }
 
     @Override
@@ -72,6 +73,7 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
     @Override
     public void connected() {
         logger.info("SSH client connected");
+        eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_AUTHENTICATED));
     }
 
     @Override
@@ -123,6 +125,11 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
                     e.printStackTrace();
                 }
         }
+
+    }
+
+    @Override
+    public void onCoreEvent(CoreEvent event) {
 
     }
     //</editor-fold>

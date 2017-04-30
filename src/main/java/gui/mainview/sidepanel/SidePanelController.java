@@ -3,6 +3,7 @@ package gui.mainview.sidepanel;
 import core.JobListener;
 import core.job.Job;
 import eventbus.ComponentAction;
+import eventbus.CoreEvent;
 import eventbus.JobEvent;
 import eventbus.ComponentEventHandler;
 import gui.propertySheet.PropertyController;
@@ -95,6 +96,11 @@ public class SidePanelController implements Initializable, ComponentEventHandler
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onCoreEvent(CoreEvent event) {
+
     }
 
 
