@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="preferencePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configuration.PreferenceController">
+   <children>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab closable="false" text="General">
+               <content>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="98.0" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="595.0" minWidth="10.0" prefWidth="587.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Host" />
+                        <Label text="User name" GridPane.rowIndex="1" />
+                        <Label text="Password" GridPane.rowIndex="2" />
+                        <TextField fx:id="hostTextField" promptText="Enter the IP address of the remote host" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                        <TextField fx:id="usernameTextField" promptText="User name" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <Separator prefHeight="2.0" prefWidth="652.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <Separator prefWidth="200.0" GridPane.rowIndex="3" />
+                        <Label text="Local folder" GridPane.rowIndex="4" />
+                        <PasswordField fx:id="passwordTextField" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
+                           <children>
+                              <TextField fx:id="localFolderTextField" promptText="Please select the local folder" HBox.hgrow="ALWAYS" />
+                              <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
+                              <Button fx:id="selectLocalFolderButton" mnemonicParsing="false" prefWidth="30.0" text="..." />
+                           </children>
+                        </HBox>
+                        <TextField fx:id="remoteFolderTextField" promptText="Please enter the remote folder" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
+                        <Label text="Remote folder" GridPane.rowIndex="5" />
+                        <Separator prefWidth="200.0" GridPane.rowIndex="6" />
+                        <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
+                        <Label text="Plugin folder" GridPane.rowIndex="7" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                           <children>
+                              <TextField fx:id="pluginFolderTextField" promptText="Please enter the plugin folder" HBox.hgrow="ALWAYS" />
+                              <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
+                              <Button fx:id="selectPluginFolderButton" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="30.0" text="..." />
+                           </children>
+                        </HBox>
+                        <Label text="Template folder" GridPane.rowIndex="8" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8">
+                           <children>
+                              <TextField fx:id="templateFolderTextField" promptText="Please enter the template folder" HBox.hgrow="ALWAYS" />
+                              <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
+                              <Button fx:id="selectTemplateFolderButton" mnemonicParsing="false" prefHeight="20.0" prefWidth="30.0" text="..." />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </GridPane>
+               </content>
+          </Tab>
+          <Tab closable="false" text="Template">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="40.0" prefWidth="685.0">
+         <children>
+            <Button fx:id="okButton" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Ok" />
+            <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
+            <Button fx:id="cancelButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Cancel" />
+            <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
+            <Button fx:id="saveButton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Save" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>
