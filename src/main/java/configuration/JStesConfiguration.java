@@ -70,10 +70,6 @@ public class JStesConfiguration {
         ParameterSet userConfiguration = readConfigurationBlock(confDocument,"user");
         preferences.setUserConfiguration(userConfiguration);
 
-        ParameterSet pluginConfiguration = readConfigurationBlock(confDocument,"plugins");
-        preferences.setPluginConfiguration(pluginConfiguration);
-
-
         //get the jobs element
         Element jobs = xmlWorker.getElementByName(confDocument.getDocumentElement(),JOBS_TAG);
         if (jobs != null) {

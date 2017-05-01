@@ -1,9 +1,6 @@
 package configuration;
 
-import eventbus.ComponentAction;
-import eventbus.ComponentEventHandler;
-import eventbus.CoreEvent;
-import eventbus.JobEvent;
+import eventbus.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,6 +23,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static eventbus.CoreEvent.CoreEventType.PREFERENCES_UPDATED;
+
 /**
  * Preferences view controller
  */
@@ -41,8 +40,6 @@ public final class PreferenceController implements Initializable, ComponentEvent
     @FXML private TextField remoteFolderTextField;
     @FXML private TextField pluginFolderTextField;
     @FXML private Button selectPluginFolderButton;
-    @FXML private TextField templateFolderTextField;
-    @FXML private Button selectTemplateFolderButton;
     @FXML private Button okButton;
     @FXML private Button cancelButton;
     @FXML private Button saveButton;
@@ -78,7 +75,6 @@ public final class PreferenceController implements Initializable, ComponentEvent
         createRegexValidator(hostTextField,"IP incorrect format",IPADDRESS_PATTERN);
         createFolderValidator(localFolderTextField,"Folder do not exists");
         createFolderValidator(pluginFolderTextField,"Folder do not exists");
-        createFolderValidator(templateFolderTextField,"Folder do not exists");
         createEmptyValidator(usernameTextField,"Username must be set");
         createEmptyValidator(passwordTextField,"Password must be set");
         createEmptyValidator(remoteFolderTextField,"Remote folder must be set");
@@ -155,11 +151,19 @@ public final class PreferenceController implements Initializable, ComponentEvent
                 alert.setContentText("Some textfields containts invalid data. Please correct the values");
                 alert.show();
             }
+
+            JStesCore.getEventBus().post(new DefaultCoreEvent(PREFERENCES_UPDATED));
         });
 
         selectLocalFolderButton.setOnAction(new MyEventHandler(localFolderTextField));
         selectPluginFolderButton.setOnAction(new MyEventHandler(pluginFolderTextField));
-        selectTemplateFolderButton.setOnAction(new MyEventHandler(templateFolderTextField));
+
+        cancelButton.setOnAction(event -> {
+            // close the dialog.
+            Node source = (Node)  event.getSource();
+            Stage stage  = (Stage) source.getScene().getWindow();
+            stage.close();
+        });
     }
 
     /**
@@ -172,6 +176,8 @@ public final class PreferenceController implements Initializable, ComponentEvent
         usernameTextField.setText(preferences.getValue("username"));
         passwordTextField.setText(preferences.getValue("password"));
         pluginFolderTextField.setText(preferences.getValue("plugins_folder"));
+        localFolderTextField.setText(preferences.getValue("local_folder"));
+        remoteFolderTextField.setText(preferences.getValue("remote_folder"));
 
     }
 
@@ -189,9 +195,16 @@ public final class PreferenceController implements Initializable, ComponentEvent
             Stage stage  = (Stage) source.getScene().getWindow();
 
             DirectoryChooser folderChooser = new DirectoryChooser();
+            File initalFolder = new File(textField.getText());
+            if (initalFolder.isDirectory()) {
+                folderChooser.setInitialDirectory(initalFolder);
+            }
+
             folderChooser.setTitle("Choose folder");
             File folder = folderChooser.showDialog(stage);
-            textField.setText(folder.getAbsolutePath());
+            if (folder != null) {
+                textField.setText(folder.getAbsolutePath());
+            }
         }
     }
 

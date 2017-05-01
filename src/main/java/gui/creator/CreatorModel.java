@@ -1,5 +1,6 @@
 package gui.creator;
 
+import configuration.JobDefinition;
 import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

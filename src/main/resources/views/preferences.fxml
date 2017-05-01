@@ -27,7 +27,6 @@
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
@@ -57,14 +56,6 @@
                               <TextField fx:id="pluginFolderTextField" promptText="Please enter the plugin folder" HBox.hgrow="ALWAYS" />
                               <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
                               <Button fx:id="selectPluginFolderButton" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="30.0" text="..." />
-                           </children>
-                        </HBox>
-                        <Label text="Template folder" GridPane.rowIndex="8" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8">
-                           <children>
-                              <TextField fx:id="templateFolderTextField" promptText="Please enter the template folder" HBox.hgrow="ALWAYS" />
-                              <Separator maxWidth="-Infinity" prefWidth="10.0" visible="false" />
-                              <Button fx:id="selectTemplateFolderButton" mnemonicParsing="false" prefHeight="20.0" prefWidth="30.0" text="..." />
                            </children>
                         </HBox>
                      </children>

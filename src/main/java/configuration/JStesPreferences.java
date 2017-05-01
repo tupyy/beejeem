@@ -21,7 +21,6 @@ public final class JStesPreferences  {
     private List<JobDefinition> jobs = new ArrayList<>();
 
     private ParameterSet userConfiguration = new ParameterSet();
-    private ParameterSet pluginConfiguration = new ParameterSet();
 
     public JStesPreferences() {
 
@@ -31,7 +30,7 @@ public final class JStesPreferences  {
     /**
      * User configuration
      */
-    public ParameterSet getUserConfiguration() {
+    public ParameterSet getParameterSet() {
         return userConfiguration;
     }
 
@@ -43,9 +42,9 @@ public final class JStesPreferences  {
      * Return the value of the {@code name} parameter
      * @return return the value or empty string if not defined
      */
-    public String getUserConfValue(String key) {
+    public String getValue(String key) {
         try {
-            return (String) getUserConfiguration().getParameter(key).getValue();
+            return (String) getParameterSet().getParameter(key).getValue();
         }
         catch (IllegalArgumentException ex) {
             return "";
@@ -57,9 +56,9 @@ public final class JStesPreferences  {
      * @param name
      * @param value
      */
-    public void setUserConfValue(String name, String value) {
+    public void setValue(String name, String value) {
         try {
-            StringParameter element = getUserConfiguration().getParameter(name);
+            StringParameter element = getParameterSet().getParameter(name);
             element.setValue(value);
         }
         catch (IllegalArgumentException ex) {
@@ -110,11 +109,4 @@ public final class JStesPreferences  {
         return jobs;
     }
 
-    public ParameterSet getPluginConfiguration() {
-        return pluginConfiguration;
-    }
-
-    public void setPluginConfiguration(ParameterSet pluginConfiguration) {
-        this.pluginConfiguration = pluginConfiguration;
-    }
 }

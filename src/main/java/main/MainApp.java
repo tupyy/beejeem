@@ -70,7 +70,7 @@ public class MainApp extends Application {
                      * Load plugins
                      */
                     try {
-                        String pluginPath = (String) preferences.getPluginConfiguration().getParameter("plugins_folder").getValue();
+                        String pluginPath = (String) preferences.getParameterSet().getParameter("plugins_folder").getValue();
                         getCoreEngine().loadPlugins(pluginPath);
                     }
                     catch (IllegalArgumentException ex) {
@@ -84,9 +84,9 @@ public class MainApp extends Application {
                      * Connect to ssh
                      */
 
-                    String username = (String) preferences.getConfigurationData().getParameter("username").getValue();
-                    String host = (String) preferences.getConfigurationData().getParameter("host").getValue();
-                    String password = (String) preferences.getConfigurationData().getParameter("password").getValue();
+                    String username = (String) preferences.getParameterSet().getParameter("username").getValue();
+                    String host = (String) preferences.getParameterSet().getParameter("host").getValue();
+                    String password = (String) preferences.getParameterSet().getParameter("password").getValue();
 
                     notifyPreloader(new Preloader.ProgressNotification(0.8));
 
