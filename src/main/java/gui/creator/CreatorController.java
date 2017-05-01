@@ -15,10 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.print.Printer;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -228,7 +225,7 @@ public class CreatorController implements Initializable {
             FileChooser fileChooser = new FileChooser();
 
 
-            File initialFolder = new File(JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder"));
+            File initialFolder = new File(JStesConfiguration.getPreferences().getValue("lastVisitedFolder"));
 
             if ( initialFolder.exists() && initialFolder.isDirectory()) {
                 fileChooser.setInitialDirectory(initialFolder);
@@ -243,7 +240,7 @@ public class CreatorController implements Initializable {
                 fileListView.setItems(model.getObsFileNameList());
                 clearFileButton.setDisable(false);
 
-                JStesConfiguration.getPreferences().setUserConfValue("lastVisitedFolder",lastVisitedFolder(files.get(0)));
+                JStesConfiguration.getPreferences().setValue("lastVisitedFolder",lastVisitedFolder(files.get(0)));
                 if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
                     okButton.setDisable(false);
                 }
@@ -254,7 +251,7 @@ public class CreatorController implements Initializable {
             DirectoryChooser folderChooser = new DirectoryChooser();
 
 
-            File initialFolder = new File(JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder"));
+            File initialFolder = new File(JStesConfiguration.getPreferences().getValue("lastVisitedFolder"));
 
             if ( initialFolder.exists() && initialFolder.isDirectory()) {
                 folderChooser.setInitialDirectory(initialFolder);
@@ -315,7 +312,7 @@ public class CreatorController implements Initializable {
 
                 clearFileButton.setDisable(false);
 
-                JStesConfiguration.getPreferences().setUserConfValue("lastVisitedFolder",folder.getPath());
+                JStesConfiguration.getPreferences().setValue("lastVisitedFolder",folder.getPath());
                 if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
                     okButton.setDisable(false);
                 }

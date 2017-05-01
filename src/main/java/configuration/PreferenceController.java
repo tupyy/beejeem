@@ -24,7 +24,6 @@ import org.controlsfx.validation.decoration.ValidationDecoration;
 
 import java.io.File;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.ResourceBundle;
 
 /**
@@ -169,10 +168,10 @@ public final class PreferenceController implements Initializable, ComponentEvent
     private void initValues() {
 
         JStesPreferences preferences = JStesConfiguration.getPreferences();
-        hostTextField.setText(preferences.getUserConfValue("host"));
-        usernameTextField.setText(preferences.getUserConfValue("username"));
-        passwordTextField.setText(preferences.getUserConfValue("password"));
-        pluginFolderTextField.setText(preferences.getUserConfValue("plugins_folder"));
+        hostTextField.setText(preferences.getValue("host"));
+        usernameTextField.setText(preferences.getValue("username"));
+        passwordTextField.setText(preferences.getValue("password"));
+        pluginFolderTextField.setText(preferences.getValue("plugins_folder"));
 
     }
 

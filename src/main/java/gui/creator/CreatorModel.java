@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import configuration.JStesConfiguration;
 import configuration.JStesPreferences;
-import configuration.JobDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

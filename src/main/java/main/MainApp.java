@@ -3,7 +3,6 @@ package main;
 import com.sun.javafx.application.LauncherImpl;
 import configuration.JStesConfiguration;
 import configuration.JStesPreferences;
-import core.util.TmpFileCleanup;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -85,9 +84,9 @@ public class MainApp extends Application {
                      * Connect to ssh
                      */
 
-                    String username = (String) preferences.getUserConfiguration().getParameter("username").getValue();
-                    String host = (String) preferences.getUserConfiguration().getParameter("host").getValue();
-                    String password = (String) preferences.getUserConfiguration().getParameter("password").getValue();
+                    String username = (String) preferences.getConfigurationData().getParameter("username").getValue();
+                    String host = (String) preferences.getConfigurationData().getParameter("host").getValue();
+                    String password = (String) preferences.getConfigurationData().getParameter("password").getValue();
 
                     notifyPreloader(new Preloader.ProgressNotification(0.8));
 
