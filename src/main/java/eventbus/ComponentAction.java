@@ -19,7 +19,8 @@ public interface ComponentAction {
         EXECUTE_ALL,
         STOP,
         DELETE,
-        SELECT
+        SELECT,
+        PREFERENCES_SAVED
     }
 
 

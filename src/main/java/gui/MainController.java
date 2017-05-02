@@ -62,6 +62,9 @@ public class MainController implements Initializable, ComponentEventHandler {
     private MenuItem quitMenuItem;
 
     @FXML
+    private MenuItem preferencesMenuItem;
+
+    @FXML
     private MenuItem newJobMenuItem;
 
     private SidePanelController sidePanelController;
@@ -228,6 +231,31 @@ public class MainController implements Initializable, ComponentEventHandler {
             }
 
         });
+
+        preferencesMenuItem.setOnAction(event -> {
+
+            Stage dialog = new Stage();
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                URL url = getClass().getClassLoader().getResource("views/preferences.fxml");
+                VBox root  = fxmlLoader.load(url);
+                Scene scene = new Scene(root);
+
+                dialog.setScene(scene);
+                dialog.setTitle("Preferences");
+                dialog.setResizable(false);
+
+                dialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.setWidth(700);
+                dialog.setHeight(520);
+                dialog.showAndWait();
+            }
+            catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        });
+
     }
 
 
