@@ -1,6 +1,7 @@
 package gui.creator;
 
 import configuration.JobDefinition;
+import configuration.Preferences;
 import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,7 +38,7 @@ public class CreatorModel {
 
     public CreatorModel() {
 
-        JStesPreferences preferences = JStesConfiguration.getPreferences();
+        Preferences preferences = JStesConfiguration.getPreferences();
         for(String jt: preferences.getJobTypes()) {
             getObsJobType().add(jt);
         }
@@ -92,10 +93,10 @@ public class CreatorModel {
      */
     public void loadParameters(String jobType) {
 
-        JStesPreferences preferences = JStesConfiguration.getPreferences();
+        Preferences preferences = JStesConfiguration.getPreferences();
         getPropertyModel().clear();
 
-         for(JobDefinition jobDefinition: preferences.getJobs()) {
+         for(JobDefinition jobDefinition: preferences.getJobDefinitions()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {
                 getPropertyModel().setParameterSet(jobDefinition.getParameters());
                 currentJobDefition = jobDefinition;

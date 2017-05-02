@@ -2,6 +2,7 @@ package configuration;
 
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
+import javafx.beans.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by tctupangiu on 14/03/2017.
  */
-public final class JStesPreferences  {
+public final class JStesPreferences  implements Preferences{
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -20,35 +21,38 @@ public final class JStesPreferences  {
      */
     private List<JobDefinition> jobs = new ArrayList<>();
 
-    private ParameterSet userConfiguration = new ParameterSet();
+    private List<Property> configurationSet = new ArrayList<>();
 
     public JStesPreferences() {
 
     }
 
-    //<editor-fold desc="User definition SECTION">
+    public List<Property> getConfiguration() {
+        return configurationSet;
+    }
+
+    public void setConfigurationSet(List configuration) {
+        this.configurationSet = configuration;
+    }
+
+
+    //<editor-fold desc="Preference ">
     /**
      * User configuration
      */
-    public ParameterSet getParameterSet() {
-        return userConfiguration;
-    }
-
-    public void setUserConfiguration(ParameterSet userConfiguration) {
-        this.userConfiguration = userConfiguration;
-    }
 
     /**
      * Return the value of the {@code name} parameter
      * @return return the value or empty string if not defined
      */
-    public String getValue(String key) {
-        try {
-            return (String) getParameterSet().getParameter(key).getValue();
+    @Override
+    public String getValue(String name) {
+        Property property = getProperty(name);
+        if (property != null) {
+            return (String) property.getValue();
         }
-        catch (IllegalArgumentException ex) {
-            return "";
-        }
+
+        return "";
     }
 
     /**
@@ -56,21 +60,37 @@ public final class JStesPreferences  {
      * @param name
      * @param value
      */
+    @Override
     public void setValue(String name, String value) {
-        try {
-            StringParameter element = getParameterSet().getParameter(name);
-            element.setValue(value);
-        }
-        catch (IllegalArgumentException ex) {
-            ;
+        Property property = getProperty(name);
+        if (property != null) {
+            property.setValue(value);
         }
     }
-    //</editor-fold>
+
+    @Override
+    public Property getProperty(String name) {
+
+        for (Property property: configurationSet) {
+            if (property.getName().equals(name)) {
+                return property;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Property> getProperties() {
+        return configurationSet;
+    }
+
 
     /**
      * Get the job types
      * @return list of job types
      */
+    @Override
     public List<String> getJobTypes() {
 
         List<String> retJobTypes = new ArrayList<>();
@@ -84,16 +104,13 @@ public final class JStesPreferences  {
         return retJobTypes;
     }
 
-    public void addJobDefition(JobDefinition jobDefinition) {
-        jobs.add(jobDefinition);
-    }
-
     /**
      * Get a list of job configurations of type {@code jobType}
      * @param name of the job
      * @return the {@link JobDefinition} defining the job or null if not found
      */
-    public JobDefinition getJob(String name) {
+    @Override
+    public JobDefinition getJobDefinition(String name) {
 
         for (JobDefinition jd: jobs) {
             if (jd.getName().equals(name)) {
@@ -104,9 +121,23 @@ public final class JStesPreferences  {
         return null;
     }
 
+    @Override
+    public void setJobDefinitions(List<JobDefinition> jobDefinitionList) {
+        this.jobs = jobDefinitionList;
+    }
 
-    public List<JobDefinition> getJobs() {
+    @Override
+    public void addJobDefinition(JobDefinition jobDefinition) {
+        jobs.add(jobDefinition);
+    }
+
+    @Override
+    public List<JobDefinition> getJobDefinitions() {
         return jobs;
     }
+
+    //</editor-fold>
+
+
 
 }

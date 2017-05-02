@@ -3,6 +3,7 @@ package main;
 import com.sun.javafx.application.LauncherImpl;
 import configuration.JStesConfiguration;
 import configuration.JStesPreferences;
+import configuration.Preferences;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -65,12 +66,12 @@ public class MainApp extends Application {
                     jStesConfiguration.loadConfiguration(fh);
                     notifyPreloader(new Preloader.ProgressNotification(0.5));
 
-                    JStesPreferences preferences = JStesConfiguration.getPreferences();
+                    Preferences preferences = JStesConfiguration.getPreferences();
                     /**
                      * Load plugins
                      */
                     try {
-                        String pluginPath = (String) preferences.getParameterSet().getParameter("plugins_folder").getValue();
+                        String pluginPath = (String) preferences.getValue("pluginFolder");
                         getCoreEngine().loadPlugins(pluginPath);
                     }
                     catch (IllegalArgumentException ex) {
@@ -84,9 +85,9 @@ public class MainApp extends Application {
                      * Connect to ssh
                      */
 
-                    String username = (String) preferences.getParameterSet().getParameter("username").getValue();
-                    String host = (String) preferences.getParameterSet().getParameter("host").getValue();
-                    String password = (String) preferences.getParameterSet().getParameter("password").getValue();
+                    String username = preferences.getValue("username");
+                    String host =  preferences.getValue("host");
+                    String password =  preferences.getValue("password");
 
                     notifyPreloader(new Preloader.ProgressNotification(0.8));
 

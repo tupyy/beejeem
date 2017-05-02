@@ -1,13 +1,19 @@
 package configuration;
 
 import eventbus.*;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -21,7 +27,7 @@ import org.controlsfx.validation.decoration.ValidationDecoration;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static eventbus.CoreEvent.CoreEventType.PREFERENCES_UPDATED;
 
@@ -31,7 +37,7 @@ import static eventbus.CoreEvent.CoreEventType.PREFERENCES_UPDATED;
 public final class PreferenceController implements Initializable, ComponentEventHandler {
 
     //<editor-fold desc="Injections">
-    @FXML private VBox preferencePane;
+    @FXML private GridPane gridPane;
     @FXML private TextField hostTextField;
     @FXML private TextField usernameTextField;
     @FXML private TextField passwordTextField;
@@ -80,7 +86,7 @@ public final class PreferenceController implements Initializable, ComponentEvent
         createEmptyValidator(remoteFolderTextField,"Remote folder must be set");
 
         setupActions();
-        initValues();
+        bindProperties();
     }
 
 
@@ -145,40 +151,78 @@ public final class PreferenceController implements Initializable, ComponentEvent
     private void setupActions() {
         okButton.setDefaultButton(true);
         okButton.setOnAction(event -> {
-            if (validationSupport.isInvalid()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText("Invalid input data");
-                alert.setContentText("Some textfields containts invalid data. Please correct the values");
-                alert.show();
-            }
+           onOkAction(false);
+           closeWindow();
+        });
 
-            JStesCore.getEventBus().post(new DefaultCoreEvent(PREFERENCES_UPDATED));
+        saveButton.setOnAction(event -> {
+            onOkAction(true);
+            saveButton.setDisable(true);
         });
 
         selectLocalFolderButton.setOnAction(new MyEventHandler(localFolderTextField));
         selectPluginFolderButton.setOnAction(new MyEventHandler(pluginFolderTextField));
 
         cancelButton.setOnAction(event -> {
-            // close the dialog.
-            Node source = (Node)  event.getSource();
-            Stage stage  = (Stage) source.getScene().getWindow();
-            stage.close();
+             closeWindow();
         });
     }
 
+    private void onOkAction(boolean saveFile) {
+
+        if (validationSupport.isInvalid()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Invalid input data");
+            alert.setContentText("Some textfields containts invalid data. Please correct the values");
+            alert.show();
+        }
+        else {
+            JStesCore.getEventBus().post(new DefaultCoreEvent(PREFERENCES_UPDATED));
+
+            if (saveFile) {
+                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.PREFERENCES_SAVED, UUID.randomUUID()));
+            }
+        }
+
+    }
     /**
      * Read the values of the parameters from {@link JStesPreferences}
      */
-    private void initValues() {
+    private void bindProperties() {
 
-        JStesPreferences preferences = JStesConfiguration.getPreferences();
-        hostTextField.setText(preferences.getValue("host"));
-        usernameTextField.setText(preferences.getValue("username"));
-        passwordTextField.setText(preferences.getValue("password"));
-        pluginFolderTextField.setText(preferences.getValue("plugins_folder"));
-        localFolderTextField.setText(preferences.getValue("local_folder"));
-        remoteFolderTextField.setText(preferences.getValue("remote_folder"));
+        Preferences preferences = JStesConfiguration.getPreferences();
 
+        for (Node n: getNodesOfType(gridPane,TextField.class)) {
+            String propertyName = n.getId().substring(0,n.getId().lastIndexOf("TextField"));
+            if ( !propertyName.isEmpty() ) {
+                Property property = preferences.getProperty(propertyName);
+                if (property != null) {
+                    TextField textField = (TextField) n;
+                    textField.setText((String) property.getValue());
+                    textField.textProperty().addListener(new TextEventHandler());
+                    property.bindBidirectional(textField.textProperty());
+                }
+            }
+        }
+    }
+
+    private void closeWindow() {
+        Stage stage  = (Stage) okButton.getScene().getWindow();
+        stage.close();
+
+    }
+
+    private <T> List<T> getNodesOfType(Pane parent, Class<T> type) {
+        List<T> elements = new ArrayList<>();
+        for (Node node : parent.getChildren()) {
+            if (node instanceof Pane) {
+                elements.addAll(getNodesOfType((Pane) node, type));
+            } else if (type.isAssignableFrom(node.getClass())) {
+                //noinspection unchecked
+                elements.add((T) node);
+            }
+        }
+        return Collections.unmodifiableList(elements);
     }
 
     private class MyEventHandler implements EventHandler<ActionEvent> {
@@ -205,6 +249,14 @@ public final class PreferenceController implements Initializable, ComponentEvent
             if (folder != null) {
                 textField.setText(folder.getAbsolutePath());
             }
+        }
+    }
+
+    private class TextEventHandler implements ChangeListener<String> {
+
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            saveButton.setDisable(false);
         }
     }
 

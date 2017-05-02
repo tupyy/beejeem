@@ -12,15 +12,21 @@ public interface Preferences {
 
     public String getValue(String name);
 
+    public void setValue(String name,String value);
+
     public Property getProperty(String name);
+
+    public List<Property> getProperties();
 
     public List<String> getJobTypes();
 
-    /**
-     * Return the parameters of a job.
-     * @param jobType
-     * @return empty ParameterSet if not found
-     */
-    public ParameterSet getJobParameterSet(String jobType);
+    public JobDefinition getJobDefinition(String jobType);
+
+    public void setJobDefinitions(List<JobDefinition> jobDefinitionList);
+
+    public void addJobDefinition(JobDefinition jobDefinition);
+
+    public List<JobDefinition> getJobDefinitions();
+
 
 }
