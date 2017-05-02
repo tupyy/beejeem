@@ -73,12 +73,12 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
     @Override
     public void connected() {
         logger.info("SSH client connected");
-        eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_AUTHENTICATED));
     }
 
     @Override
     public void authenticated() {
         logger.info("SSH client authenticated");
+        eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_AUTHENTICATED));
     }
     //</editor-fold>
 
