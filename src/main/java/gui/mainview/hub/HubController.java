@@ -27,7 +27,7 @@ import static main.JStesCore.getCoreEngine;
 /**
  * CreatorController for the hubView
  */
-public class HubController implements Initializable, ComponentEventHandler {
+public class HubController extends AbstractComponentEventHandler implements Initializable {
 
     @FXML
     private TableView hubTable;
@@ -44,6 +44,10 @@ public class HubController implements Initializable, ComponentEventHandler {
     private MyEventHandler myEventHandler;
 
     private HubModel model = new HubModel();
+
+    public HubController() {
+        super();
+    }
 
     public void initialize(URL location, ResourceBundle resources) {
         assert getHubTable() != null : "fx:id=\"hubTable\" was not injected: check your FXML file 'hubTable";
@@ -99,11 +103,6 @@ public class HubController implements Initializable, ComponentEventHandler {
                 setActionOnButton(runJobButton,getJobAction(event.getJobId()));
                 break;
         }
-    }
-
-    @Override
-    public void onCoreEvent(CoreEvent event) {
-
     }
 
     public TableView getHubTable() {

@@ -1,10 +1,7 @@
 package gui.mainview.statusBar;
 
 import core.ssh.SshListener;
-import eventbus.ComponentAction;
-import eventbus.ComponentEventHandler;
-import eventbus.CoreEvent;
-import eventbus.JobEvent;
+import eventbus.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -21,13 +18,17 @@ import static main.JStesCore.getCoreEngine;
 /**
  * Created by tctupangiu on 27/03/2017.
  */
-public class StatusBarController implements Initializable, ComponentEventHandler {
+public class StatusBarController extends AbstractComponentEventHandler implements Initializable {
 
     @FXML
     private Label sshLabel;
 
     @FXML
     private ImageView imageViewer;
+
+    public StatusBarController() {
+        super();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -40,16 +41,6 @@ public class StatusBarController implements Initializable, ComponentEventHandler
         else {
            onClientDisconnected();
         }
-    }
-
-    @Override
-    public void onJobEvent(JobEvent event) {
-
-    }
-
-    @Override
-    public void onComponentAction(ComponentAction event) {
-
     }
 
     @Override

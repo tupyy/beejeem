@@ -36,7 +36,7 @@ import java.util.UUID;
 import static main.JStesCore.getCoreEngine;
 
 
-public class MainController implements Initializable, ComponentEventHandler {
+public class MainController extends AbstractComponentEventHandler implements Initializable {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
@@ -72,7 +72,7 @@ public class MainController implements Initializable, ComponentEventHandler {
     private EventHandler<ActionEvent> newJobEventHandler;
 
     public MainController() {
-        JStesCore.registerController(this);
+        super();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -111,16 +111,6 @@ public class MainController implements Initializable, ComponentEventHandler {
             case JOB_STOPPED:
                 break;
         }
-    }
-
-    @Override
-    public void onComponentAction(ComponentAction event) {
-
-    }
-
-    @Override
-    public void onCoreEvent(CoreEvent event) {
-
     }
 
     /********************************************************************

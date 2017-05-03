@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
+public class JStesCore extends AbstractComponentEventHandler implements JobListener,SshListener{
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -23,6 +23,8 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
     private static final EventBus eventBus = new EventBus();
 
     public JStesCore() {
+
+        super();
 
         getCoreEngine().getSshFactory().addSshEventListener(this);
         getCoreEngine().addJobListener(this);
@@ -80,6 +82,12 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
         logger.info("SSH client authenticated");
         eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_AUTHENTICATED));
     }
+
+    @Override
+    public void disconnected() {
+        logger.info("SSH client authenticated");
+        eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_DISCONNECTED));
+    }
     //</editor-fold>
 
     //<editor-fold desc="JobListener">
@@ -128,9 +136,5 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
 
     }
 
-    @Override
-    public void onCoreEvent(CoreEvent event) {
-
-    }
     //</editor-fold>
 }

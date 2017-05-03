@@ -2,10 +2,7 @@ package gui.mainview.sidepanel;
 
 import core.JobListener;
 import core.job.Job;
-import eventbus.ComponentAction;
-import eventbus.CoreEvent;
-import eventbus.JobEvent;
-import eventbus.ComponentEventHandler;
+import eventbus.*;
 import gui.propertySheet.PropertyController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,7 +23,7 @@ import static main.JStesCore.getCoreEngine;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController implements Initializable, ComponentEventHandler{
+public class SidePanelController extends AbstractComponentEventHandler implements Initializable{
     private static final Logger logger = LoggerFactory
             .getLogger(SidePanelController.class);
 
@@ -45,7 +42,7 @@ public class SidePanelController implements Initializable, ComponentEventHandler
     private UUID currentJobID;
 
     public SidePanelController() {
-
+        super();
         JStesCore.registerController(this);
 
     }
@@ -96,11 +93,6 @@ public class SidePanelController implements Initializable, ComponentEventHandler
                 }
                 break;
         }
-    }
-
-    @Override
-    public void onCoreEvent(CoreEvent event) {
-
     }
 
 
