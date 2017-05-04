@@ -1,34 +1,50 @@
 package gui;
 
-import gui.creator.CreatorController;
+import core.job.JobException;
+import eventbus.*;
+import gui.mainview.hub.HubController;
+import gui.mainview.hub.table.HubTableModel;
+import gui.mainview.sidepanel.SidePanelController;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main.Main;
+import main.JStesCore;
 import main.MainApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
+
+import static main.JStesCore.getCoreEngine;
 
 
-public class MainController implements Initializable{
+public class MainController extends AbstractComponentEventHandler implements Initializable {
     private static final Logger logger = LoggerFactory
-            .getLogger(Main.class);
+            .getLogger(MainController.class);
 
     @FXML
     private Button addJobButton;
+
+    @FXML
+    private Button deleteButton;
 
     @FXML
     private SplitPane splitPane;
@@ -42,46 +58,78 @@ public class MainController implements Initializable{
     @FXML
     private HBox statusBarPane;
 
+    @FXML
+    private MenuItem quitMenuItem;
+
+    @FXML
+    private MenuItem preferencesMenuItem;
+
+    @FXML
+    private MenuItem newJobMenuItem;
+
+    private SidePanelController sidePanelController;
+    private HubController hubController;
+    private EventHandler<ActionEvent> newJobEventHandler;
+
+    public MainController() {
+        super();
+    }
+
     public void initialize(URL location, ResourceBundle resources) {
 
-        showCommandView(splitPaneVBox);
+        showSidePanelView(splitPaneVBox);
         showHubView(splitPaneHub);
         showStatusBar(statusBarPane);
-        //
-        addJobButton.setOnAction(event -> {
-            Stage dialog = new Stage();
 
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader();
-                URL url = getClass().getClassLoader().getResource("views/creator.fxml");
-                Pane root  = fxmlLoader.load(url);
-                Scene scene = new Scene(root);
-                CreatorController controller = fxmlLoader.getController();
-                dialog.setScene(scene);
-                dialog.setTitle("Add jobs");
-                dialog.setResizable(false);
+        createActions();
+        setupMenuAction();
+        addJobButton.setOnAction(newJobEventHandler);
 
-                dialog.initOwner((Stage) addJobButton.getScene().getWindow());
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.showAndWait();
-            }
-            catch (IOException e) {
-                logger.error(e.getMessage());
-            }
+        decorateButton(addJobButton,"images/newJob.png");
+        decorateButton(deleteButton,"images/remove.png");
 
-        });
+
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onJobEvent(JobEvent event) {
+
+        switch (event.getAction()) {
+            case JOB_CREATED:
+                deleteButton.setDisable(false);
+                break;
+            case JOB_DELETED:
+                if (getCoreEngine().count() == 0) {
+                    deleteButton.setDisable(true);
+                }
+                break;
+            case JOB_UPDATED:
+                break;
+            case JOB_STOPPED:
+                break;
+        }
+    }
+
+    /********************************************************************
+     *
+     *                          P R I V A T E
+     *
+     ********************************************************************/
 
     /**
      * Show sidepanel view
      * @param parentNode
      */
-    private void showCommandView(VBox parentNode) {
+    private void showSidePanelView(VBox parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidePanel.fxml"));
+            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/sidePanel.fxml"));
             VBox command = (VBox) loader.load();
 
+            sidePanelController = loader.getController();
             parentNode.getChildren().add(command);
         }
         catch (IOException ex) {
@@ -99,23 +147,8 @@ public class MainController implements Initializable{
             loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
             VBox hubPane = (VBox) loader.load();
             parentNode.getChildren().add(hubPane);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
 
-    /**
-     * Add Detail View
-     * @param parentNode
-     */
-    private void showInfoView(BorderPane parentNode) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/jobDetail.fxml"));
-            VBox infoPane = (VBox) loader.load();
-
-            parentNode.setRight(infoPane);
+            hubController = loader.getController();
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -138,4 +171,94 @@ public class MainController implements Initializable{
             ex.printStackTrace();
         }
     }
+
+    private void setupMenuAction() {
+        quitMenuItem.setOnAction((event) -> {
+            Stage stage = (Stage) addJobButton.getScene().getWindow();
+            stage.close();
+
+        });
+
+        newJobMenuItem.setOnAction(newJobEventHandler);
+    }
+
+    /**
+     * Create actions
+     */
+    private void createActions() {
+        newJobEventHandler = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Stage dialog = new Stage();
+
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    URL url = getClass().getClassLoader().getResource("views/creator.fxml");
+                    Pane root  = fxmlLoader.load(url);
+                    Scene scene = new Scene(root);
+
+                    dialog.setScene(scene);
+                    dialog.setTitle("New jobs");
+                    dialog.setResizable(false);
+
+                    dialog.initOwner((Stage) addJobButton.getScene().getWindow());
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.showAndWait();
+                }
+                catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        };
+
+        deleteButton.setOnAction(event -> {
+
+            List<UUID> ids = new ArrayList<>();
+            for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
+                HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
+                ids.add(UUID.fromString(jobData.getId()));
+                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.DELETE,UUID.fromString(jobData.getId())));
+            }
+
+        });
+
+        preferencesMenuItem.setOnAction(event -> {
+
+            Stage dialog = new Stage();
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                URL url = getClass().getClassLoader().getResource("views/preferences.fxml");
+                VBox root  = fxmlLoader.load(url);
+                Scene scene = new Scene(root);
+
+                dialog.setScene(scene);
+                dialog.setTitle("Preferences");
+                dialog.setResizable(false);
+
+                dialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.setWidth(700);
+                dialog.setHeight(520);
+                dialog.showAndWait();
+            }
+            catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        });
+
+    }
+
+
+    /**
+     * Add icons to buttons
+     */
+    private void decorateButton(Button button,String imagePath) {
+        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        button.setGraphic(imageView);
+    }
+
+
 }

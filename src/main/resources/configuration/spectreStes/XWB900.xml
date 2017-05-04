@@ -10,7 +10,7 @@
         <parameter name="type" type="string" source="internal">
             <label>Spectre stes XWB900</label>
             <description>Spectre job designed for Stes XWB900 Pylon</description>
-            <value>stesSpectreXWB900</value>
+            <value>stesSpectre</value>
         </parameter>
         <parameter name="aircraft" type="aircraft" source="internal">
             <value>XWB900</value>
@@ -28,6 +28,11 @@
             <description>The reference of the material</description>
             <category>Material</category>
         </parameter>
+        <parameter name="materialOrientation" type="string" source="external">
+            <label>Orientation</label>
+            <description>The Orientation of the material</description>
+            <category>Material</category>
+        </parameter>
         <parameter name="fatigueConfiguration" type="string" source="external">
             <label>Fatigue configuration</label>
             <description>Fatigue configuration</description>
@@ -41,6 +46,7 @@
         <parameter name="isamiVersion" type="list" valuetype="string"  source="external">
             <description>Isami used version</description>
             <label>Isami version</label>
+            <category>Job</category>
             <value>v7.2.1_a350</value>
             <options>
                 <option>v8.2.1</option>
@@ -53,10 +59,33 @@
             <category>Spectre</category>
             <value>false</value>
         </parameter>
+        <parameter name="spectrumType" type="string" source="internal">
+            <description>Spectrum type</description>
+            <label>Type of the spectrum file</label>
+            <category>Spectre</category>
+            <value>ana</value>
+        </parameter>
+        <parameter name="nameClass" type="string" source="internal">
+            <description>Name of the ana files</description>
+            <label>Type of the spectrum file</label>
+            <category>Spectre</category>
+        </parameter>
+        <parameter name="compression" type="boolean" source="external">
+            <description>Compression</description>
+            <label>Compression</label>
+            <category>Spectre</category>
+            <value>true</value>
+        </parameter>
         <parameter name="czmFile" type="boolean" source="external">
             <description>Save the czm file</description>
             <label>Czm file</label>
             <category>Job</category>
+            <value>true</value>
+        </parameter>
+        <parameter name="sigmaFile" type="boolean" source="external">
+            <description>Save the sigma file</description>
+            <label>Sigma file</label>
+            <category>Spectre</category>
             <value>true</value>
         </parameter>
         <parameter name="queue" type="list" valuetype="string" source="external">
@@ -76,7 +105,13 @@
             <category>Job</category>
             <description>Remote folder</description>
         </parameter>
-        <parameter name="ksnull" type="list" valuetype="string" source="external">
+        <parameter name="localFolder" type="string" source="external">
+            <label>Local folder</label>
+            <value>C:\Users\tctupangiu\Documents\100_H\Projects</value>
+            <category>Job</category>
+            <description>Local folder where all the result files are uploaded</description>
+        </parameter>
+        <parameter name="ksnul" type="list" valuetype="string" source="external">
             <label>Ksnull</label>
             <value>1</value>
             <options>
@@ -174,7 +209,7 @@ MS.CreateObject('Fatigue_Law_Parameters','AirbusEO_DFatigueLawGeoIndependent',[
 MS.CreateObject('Analysis_Parameters1','AirbusEO_DFatigueAnalysisParametersGeoIndependent',[
 ['/ResultsLevel','Enum_ToggleResultsLevel:2'],# Default: 2
 ['/NumberCyclesCalculation','CaesamEnum_YesNo:No'],# Default: No
-['/CycleRules','Enum_ToggleCycleRules:1'],# Default: 1 (KSNUL=1)
+['/CycleRules','Enum_ToggleCycleRules:@ksnul@'],# Default: 1 (KSNUL=1)
 ['/GeneratePlotFiles','CaesamEnum_YesNo:Yes'],
 ['/PlotFilesSelection','Enum_PlotSelection:All'],
 ])
@@ -218,7 +253,7 @@ if save_trace == True:
             <name>core.modules.preprocessing.PreprocessingModule</name>
         </module>
         <module>
-            <name>core.modules.processing.ProcessingModule</name>
+            <name>core.modules.processing.SimpleSshModule</name>
         </module>
         <module>
             <name>core.modules.postprocessing.PostprocessingModule</name>

@@ -1,21 +1,58 @@
 package gui.propertySheet;
 
-import javafx.util.Callback;
+import core.job.Job;
+import gui.mainview.sidepanel.ComponentController;
+import javafx.scene.control.Control;
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.editor.Editors;
-import org.controlsfx.property.editor.PropertyEditor;
 
 /**
  * Created by tctupangiu on 17/03/2017.
  */
-public class PropertyController {
+public class PropertyController implements ComponentController{
 
     private PropertySheet propertySheet;
     private PropertyModel model;
 
     public PropertyController(PropertyModel model) {
         this.model = model;
+        initializeController(model);
+    }
+
+    public PropertyController() {
+        this.model = new PropertyModel();
+        initializeController(model);
+    }
+
+    public PropertySheet getPropertySheet() {
+        return propertySheet;
+    }
+
+
+    public void setEditable(boolean editable) {
+        this.propertySheet.setDisable((editable==true) ? false: true);
+    }
+
+    @Override
+    public void loadJob(Job j) {
+        model.setParameterSet(j.getParameters());
+    }
+
+    @Override
+    public void updateJob(Job job) {
+        model.updateParameterSet(job.getParameters());
+    }
+
+    @Override
+    public void clear() {
+        model.clear();
+    }
+
+
+    private void initializeController(PropertyModel model) {
         propertySheet = new PropertySheet(model.getPropertySheetItems());
+        propertySheet.setMaxWidth(Control.USE_COMPUTED_SIZE);
+        propertySheet.setPrefWidth(Control.USE_COMPUTED_SIZE);
 
         getPropertySheet().setPropertyEditorFactory(param -> {
             PropertyModel.SimpleItem simpleItem = (PropertyModel.SimpleItem) param;
@@ -30,14 +67,5 @@ public class PropertyController {
                 return Editors.createTextEditor(simpleItem);
             }
         });
-
-    }
-
-    public void clearPropertySheet() {
-        model.getPropertySheetItems().clear();
-    }
-
-    public PropertySheet getPropertySheet() {
-        return propertySheet;
     }
 }

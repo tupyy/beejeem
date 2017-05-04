@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="617.0" prefWidth="248.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.sidepanel.modules.ModulesController">
+   <children>
+      <TableView fx:id="modulesTable" VBox.vgrow="ALWAYS">
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+         <columns>
+            <TableColumn id="moduleNameColumn" fx:id="moduleNameColumn" maxWidth="400.0" minWidth="-1.0" prefWidth="-1.0" sortable="false" text="Name" />
+            <TableColumn id="triggerColumn" fx:id="triggerColumn" maxWidth="80.0" minWidth="80.0" resizable="false" sortable="false" text="Trigger" />
+            <TableColumn fx:id="statusColumn" editable="false" maxWidth="80.0" minWidth="80.0" resizable="false" sortable="false" text="State" />
+         </columns>
+      </TableView>
+   </children>
+</VBox>

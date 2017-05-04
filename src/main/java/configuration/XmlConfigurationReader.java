@@ -1,9 +1,12 @@
-package core.configuration;
+package configuration;
 
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.CodeParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleStringProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -19,12 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to read the configuration file
+ * Read the configuration from a xml file
  */
-public class JStesConfiguration {
+public class XmlConfigurationReader implements ConfigurationReader {
 
     private final String JOBS_TAG = "jobs";
-    private final String JOB_DEF_TAG ="job_definition";
+    private final String JOB_DEF_TAG ="job";
     private final String PARAMETERS_TAG="parameters";
     private final String CODE_TAG = "code";
     private final String MODULE_TAG = "module";
@@ -33,90 +36,79 @@ public class JStesConfiguration {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private static JStesPreferences preferences = new JStesPreferences();
-
-    public JStesConfiguration() {
+    public XmlConfigurationReader() {
 
     }
 
+    @Override
+    public List getUserConfiguration(File file) throws ParserConfigurationException, SAXException, IOException {
+        Document doc = getDocument(file);
+        if (doc != null) {
+            return readConfigurationBlock(doc,"user");
+        }
+
+        return new ArrayList();
+    }
+
+    @Override
+    public List getJobDefintions(File file) throws ParserConfigurationException, SAXException, IOException {
+
+        List<JobDefinition> jobDefinitions = new ArrayList<>();
+        Document doc = getDocument(file);
+        if (doc != null) {
+            XMLWorker xmlWorker = new XMLWorker();
+            //get the jobs element
+            Element jobs = xmlWorker.getElementByName(doc.getDocumentElement(), JOBS_TAG);
+            if (jobs != null) {
+                List<Element> jobDefinitionElements = xmlWorker.getElementsByName(jobs, JOB_DEF_TAG);
+
+                for (Element element : jobDefinitionElements) {
+                    try {
+                        JobDefinition jobDefinition  = readJobDefinitionFile(element.getTextContent());
+                        if (jobDefinition != null) {
+                            jobDefinitions.add(jobDefinition);
+                        } else {
+                            logger.error("Job definition null for {}", element.getTextContent());
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        logger.error(ex.getMessage());
+                    } catch (ParserConfigurationException e) {
+                        logger.error(e.getMessage());
+                    } catch (SAXException e) {
+                        logger.error(e.getMessage());
+                    }
+
+                }
+            }
+        }
+
+        return jobDefinitions;
+    }
+
     /**
-     * Get preferences
+     * Parse the xml file and return the document
+     * @param file
      * @return
      */
-    public static JStesPreferences getPreferences() {
-        return preferences;
-    }
-
-    /**
-     * Load the configuration file
-     * @param file
-     * @throws IOException
-     */
-    public void loadConfiguration(File file) throws IOException {
+    private Document getDocument(File file) throws IOException, SAXException, ParserConfigurationException {
         XMLWorker xmlWorker = new XMLWorker();
 
         Document confDocument = null;
-        try {
-            confDocument = xmlWorker.readFile(file);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        }
+        confDocument = xmlWorker.readFile(file);
+        return confDocument;
 
-       ParameterSet userConfiguration = new ParameterSet();
-
-        //get user configuration
-        Element user = xmlWorker.getElementByName(confDocument.getDocumentElement(),"user");
-        if (user != null) {
-            for (int i = 0; i < user.getChildNodes().getLength(); i++) {
-                Node node = user.getChildNodes().item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element elem = (Element) node;
-                    StringParameter stringParameter = new StringParameter(elem.getTagName(), elem.getTagName(), "User configuration");
-                    stringParameter.setValue(elem.getTextContent());
-                    userConfiguration.addParameter(stringParameter);
-                }
-            }
-        }
-        preferences.setUserConfiguration(userConfiguration);
-
-
-
-        //get the jobs element
-        Element jobs = xmlWorker.getElementByName(confDocument.getDocumentElement(),JOBS_TAG);
-        if (jobs != null) {
-            List<Element> jobDefinitionElements = xmlWorker.getElementsByName(jobs,JOB_DEF_TAG);
-
-            for (Element element: jobDefinitionElements) {
-                JobDefinition jobDefinition = new JobDefinition();
-
-                try {
-                    readJobDefinitionFile(element.getTextContent(), jobDefinition);
-                    preferences.addJobDefition(jobDefinition);
-                } catch (IllegalArgumentException ex) {
-                    logger.error(ex.getMessage());
-                } catch (ParserConfigurationException e) {
-                    logger.error(e.getMessage());
-                } catch (SAXException e) {
-                    logger.error(e.getMessage());
-                }
-
-            }
-
-        }
 
     }
-
     /**
      * Parse the xml file which define the job and write the parameter set and module names
      * to the {@link JobDefinition}
      * @param filename
-     * @param jobDefinition
+     * @return the definition of job
      */
-    private void readJobDefinitionFile(String filename, JobDefinition jobDefinition) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
+    private JobDefinition readJobDefinitionFile(String filename) throws IOException, ParserConfigurationException, SAXException,IllegalArgumentException {
 
-        File confFile = new File(JStesConfiguration.class.getClassLoader().getResource(filename).getFile());
+        JobDefinition jobDefinition = new JobDefinition();
+        File confFile = new File(filename);
 
         XMLWorker xmlWorker = new XMLWorker();
         Document document = xmlWorker.readFile(confFile);
@@ -142,10 +134,23 @@ public class JStesConfiguration {
         }
 
         ParameterSet newSet = createParameters(parameters);
+        try {
+            StringParameter name = newSet.getParameter("name");
+
+            if ( !checkValue(newSet.getParameter("destinationFolder"))) {
+                return null;
+            }
+        }
+        catch (IllegalArgumentException ex) {
+            return null;
+        }
+
         newSet.addParameter(createCodeParameter(code));
         jobDefinition.getParameters().addParameters(newSet);
-        jobDefinition.setModuleManagers(createModuleParameter(modules));
+        jobDefinition.setModuleElements(createModuleParameter(modules));
+        jobDefinition.setFile(filename);
 
+        return jobDefinition;
 
     }
 
@@ -196,27 +201,6 @@ public class JStesConfiguration {
     }
 
     /**
-     * Return a child element with name
-     * @param parentElement
-     * @param name
-     * @return null if don't found
-     */
-    private Element getElement(Element parentElement, java.lang.String name) {
-        NodeList nodeList = parentElement.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element elem = (Element) node;
-                if (elem.getNodeName().equals(name)) {
-                    return elem;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Create the module parameters
      * @param modulesElement
      */
@@ -236,4 +220,36 @@ public class JStesConfiguration {
 
         return moduleSet;
     }
+
+
+    private boolean checkValue(Parameter p) {
+        if (p.getValue().toString().isEmpty()) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    private List<Property> readConfigurationBlock(Document confDocument, String blockname) {
+
+        List<Property> properties = new ArrayList<>();
+        XMLWorker xmlWorker = new XMLWorker();
+
+        //get user configuration
+        Element user = xmlWorker.getElementByName(confDocument.getDocumentElement(),blockname);
+        if (user != null) {
+            for (int i = 0; i < user.getChildNodes().getLength(); i++) {
+                Node node = user.getChildNodes().item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elem = (Element) node;
+                    SimpleStringProperty simpleStringProperty = new SimpleStringProperty(elem.getTagName(),elem.getTagName(),elem.getTextContent());
+                    properties.add(simpleStringProperty);
+                }
+            }
+        }
+
+        return properties;
+    }
+
 }

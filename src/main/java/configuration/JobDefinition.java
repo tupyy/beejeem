@@ -1,9 +1,10 @@
-package core.configuration;
+package configuration;
 
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
 import org.w3c.dom.Element;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +13,18 @@ import java.util.List;
  */
 public class JobDefinition {
 
+    private String file;
     private ParameterSet parameters = new ParameterSet();
-    private List<Element> moduleManagers = new ArrayList<>();
+    private List<Element> moduleElements = new ArrayList<>();
 
     public JobDefinition() {
 
     }
 
-    public JobDefinition(ParameterSet parameters,List<Element> modules) {
+    public JobDefinition(String file, ParameterSet parameters, List<Element> modules) {
         this.setParameters(parameters);
-        this.setModuleManagers(modules);
+        this.setFile(file);
+        this.setModuleElements(modules);
     }
 
 
@@ -51,15 +54,23 @@ public class JobDefinition {
         return parameters;
     }
 
-    public List<Element> getModuleManagers() {
-        return moduleManagers;
+    public List<Element> getModuleElements() {
+        return moduleElements;
     }
 
     public void setParameters(ParameterSet parameters) {
         this.parameters = parameters;
     }
 
-    public void setModuleManagers(List<Element> moduleManagers) {
-        this.moduleManagers = moduleManagers;
+    public void setModuleElements(List<Element> moduleElements) {
+        this.moduleElements = moduleElements;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 }
