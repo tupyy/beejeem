@@ -111,7 +111,19 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     @Override
     public void deleteJob(UUID id) throws JobException {
         Job j = getJob(id);
-        j.delete();
+        if (isJobRunning(j)) {
+            try {
+                getGarbageCollector().registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
+            }
+            catch (IllegalArgumentException ex) {
+                ;
+            }
+            finally {
+                j.delete();
+            }
+        }
+
+
     }
 
     @Override
@@ -252,6 +264,18 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     public GarbageCollector getGarbageCollector() {
         return garbageCollector;
+    }
+
+    private boolean isJobRunning(Job j) {
+        int state = j.getState();
+
+        if (state == JobState.READY ||
+                state == JobState.STOP ||
+                state == JobState.ERROR) {
+            return false;
+        }
+
+        return true;
     }
 
 
