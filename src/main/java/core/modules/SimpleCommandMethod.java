@@ -2,10 +2,6 @@ package core.modules;
 
 import com.sshtools.ssh.SshClient;
 import com.sshtools.ssh.SshException;
-import core.modules.Method;
-import core.modules.MethodResult;
-import core.modules.SshSessionMethod;
-import core.modules.StandardMethodResult;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +14,8 @@ import java.util.UUID;
  */
 public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private static final String METHOD_NAME = "SimpleCommandMethod";
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private final String command;
 
     public SimpleCommandMethod(SshClient sshClient, String command) {
