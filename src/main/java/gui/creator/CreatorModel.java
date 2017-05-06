@@ -6,7 +6,6 @@ import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import configuration.JStesConfiguration;
-import configuration.JStesPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +97,7 @@ public class CreatorModel {
 
          for(JobDefinition jobDefinition: preferences.getJobDefinitions()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {
-                getPropertyModel().setParameterSet(jobDefinition.getParameters());
+                getPropertyModel().setData(jobDefinition.getParameters(),null);
                 currentJobDefition = jobDefinition;
             }
         }

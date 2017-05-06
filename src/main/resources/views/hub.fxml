@@ -13,7 +13,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="runJobButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run job" />
+                  <Button fx:id="runJobButton" disable="true" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Run job" />
                   <Separator prefWidth="10.0" visible="false" HBox.hgrow="NEVER" />
                   <Button fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
                   <Separator layoutX="110.0" layoutY="29.0" prefWidth="10.0" visible="false" />

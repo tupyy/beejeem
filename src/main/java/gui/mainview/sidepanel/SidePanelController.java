@@ -2,16 +2,21 @@ package gui.mainview.sidepanel;
 
 import core.JobListener;
 import core.job.Job;
+import core.job.JobException;
 import eventbus.*;
 import gui.propertySheet.PropertyController;
+import gui.propertySheet.PropertyEvent;
+import gui.propertySheet.PropertyListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +28,7 @@ import static main.JStesCore.getCoreEngine;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController extends AbstractComponentEventHandler implements Initializable{
+public class SidePanelController extends AbstractComponentEventHandler implements Initializable,PropertyListener{
     private static final Logger logger = LoggerFactory
             .getLogger(SidePanelController.class);
 
@@ -36,6 +41,10 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     @FXML
     private VBox vboxModulePanel;
 
+    @FXML private Button applyButton;
+    @FXML private Button cancelButton;
+
+
     private PropertyController propertyController;
 
     private List<ComponentController> componentControllerList = new ArrayList<>();
@@ -43,7 +52,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
     public SidePanelController() {
         super();
-        JStesCore.registerController(this);
+
 
     }
 
@@ -54,7 +63,29 @@ public class SidePanelController extends AbstractComponentEventHandler implement
         propertyController = new PropertyController();
         parametersPane.setContent(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
+        propertyController.registerListener(this);
         componentControllerList.add(propertyController);
+
+        /**
+         * Apply changes to the job
+         */
+        applyButton.setOnAction(event -> {
+            try {
+                JStesCore.getCoreEngine().getJob(currentJobID).updateParametes(propertyController.getData());
+                applyButton.setDisable(true);
+                cancelButton.setDisable(true);
+            } catch (JobException e) {
+                ;
+            }
+        });
+
+        /**
+         * Cancel editing
+         * Update the job with the initial values
+         */
+        cancelButton.setOnAction(event -> {
+            propertyController.updateJob(JStesCore.getCoreEngine().getJob(currentJobID));
+        });
 
     }
 
@@ -62,6 +93,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     public void onJobEvent(JobEvent event) {
 
         switch (event.getAction()) {
+            case JOB_UPDATED:
             case JOB_CREATED:
                 for (ComponentController componentController: componentControllerList) {
                     componentController.updateJob(getCoreEngine().getJob(event.getJobId()));
@@ -83,6 +115,9 @@ public class SidePanelController extends AbstractComponentEventHandler implement
                 for (ComponentController componentController: componentControllerList) {
                     componentController.loadJob(j);
                 }
+
+                applyButton.setDisable(true);
+                cancelButton.setDisable(true);
                 break;
             case DELETE:
                 if (currentJobID.equals(event.getJobId())) {
@@ -95,6 +130,11 @@ public class SidePanelController extends AbstractComponentEventHandler implement
         }
     }
 
+    @Override
+    public void parameterUpdated(PropertyEvent propertyEvent) {
+        applyButton.setDisable(false);
+        cancelButton.setDisable(false);
+    }
 
     /********************************************************************
      *
@@ -106,6 +146,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
 
     }
+
 
 
 }
