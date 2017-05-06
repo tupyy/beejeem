@@ -224,15 +224,6 @@ public class DefaultJob extends AbstractJob implements Job {
     }
 
     /**
-     * Delete the job
-     * @throws JobException
-     */
-    @Override
-    public void delete() throws JobException {
-
-    }
-
-    /**
      * Stop the job
      */
     @Override

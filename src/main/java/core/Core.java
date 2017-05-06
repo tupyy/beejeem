@@ -39,13 +39,6 @@ public interface Core {
     public void deleteJob(UUID id) throws JobException;
 
     /**
-     * Delete a list of jobs
-     * @param ids
-     * @throws JobException
-     */
-    public void deleteJobs(List<UUID> ids) throws JobException;
-
-    /**
      * Stop job
      * @param id
      */

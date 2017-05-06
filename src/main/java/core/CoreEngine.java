@@ -33,7 +33,13 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
 
     private final ModuleExecutor executor;
-    List<Job> jobList = new ArrayList<>();
+
+    /**
+     * Holds the jobs. The {@code Boolean} is for marking the job as deleted.
+     * When a job is deleted, it is marked as deleted and it is triggered the STOP trigger.
+     * After the job has stopped, the job is safely deleted
+     */
+    Map<Job,Boolean> jobList = new HashMap<>();
 
     //temp
     private int finishedJobs = 0;
@@ -102,7 +108,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         }
 
         j.addObserver(this);
-        jobList.add(j);
+        jobList.put(j,false);
 
         fireJobEvent(JobEvent.JOB_CREATED, j.getID());
         logger.info("Job created: {}",j.getName());
@@ -113,34 +119,16 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         Job j = getJob(id);
         if (isJobRunning(j)) {
             try {
+                stopJob(j.getID());
                 getGarbageCollector().registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
+                markJobForDeletion(j);
             }
             catch (IllegalArgumentException ex) {
                 ;
-            }
-            finally {
-                j.delete();
             }
         }
-
-
-    }
-
-    @Override
-    public void deleteJobs(List<UUID> ids) throws JobException {
-
-        //TODO create a thread here
-        for (UUID id: ids) {
-            try {
-                Job j = getJob(id);
-                getGarbageCollector().registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
-            }
-            catch (IllegalArgumentException ex) {
-                ;
-            }
-            finally {
-                getJob(id).delete();
-            }
+        else {
+            jobList.remove(j);
         }
     }
 
@@ -155,9 +143,11 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     @Override
     public Job getJob(UUID id) {
-        for (Job j : jobList) {
-            if (j.getID().equals(id)) {
-                return j;
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue() ) {
+                if (entry.getKey().getID().equals(id)) {
+                    return entry.getKey();
+                }
             }
         }
         return null;
@@ -189,8 +179,10 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     @Override
     public void executeAll() {
 
-        for(Job j: jobList) {
-           executeJob(j.getID());
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue() ) {
+                executeJob(entry.getKey().getID());
+            }
         }
     }
 
@@ -201,7 +193,14 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     @Override
     public int count() {
-        return jobList.size();
+        int countJob = 0;
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue() ) {
+                countJob++;
+            }
+        }
+
+        return countJob;
     }
 
     @Override
@@ -219,6 +218,10 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
             case JobState.STOP:
                 try {
                     garbageCollector.registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
+                    if (isMarkedForDeletion(j)) {
+                        logger.info("Job {} stopped. It is marked for deletion");
+                        jobList.remove(j);
+                    }
                 }
                 catch (IllegalArgumentException ex) {
                     ;
@@ -232,8 +235,10 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     public ArrayList<UUID> getJobIDList() {
         ArrayList<UUID> idList = new ArrayList<>();
 
-        for (Job job: jobList) {
-            idList.add(job.getID());
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue()) {
+                idList.add(entry.getKey().getID());
+            }
         }
 
         return idList;
@@ -253,10 +258,10 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
      * @return
      */
     public boolean jobExists(UUID jobID) {
-        for (Job job : jobList) {
-            if (job.getID().equals(jobID)) {
-                return true;
-            }
+        Job j = getJob(jobID);
+
+        if (j != null) {
+            return true;
         }
 
         return false;
@@ -276,6 +281,29 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         }
 
         return true;
+    }
+
+    /**
+     * Return true if the job has been marked for deletion
+     * @param job
+     * @return
+     */
+    private boolean isMarkedForDeletion(Job job) {
+
+        if (jobList.containsKey(job)) {
+            return jobList.get(job);
+        }
+
+        return false;
+    }
+
+    private void markJobForDeletion(Job job) {
+
+        if (jobList.containsKey(job)) {
+            logger.info("Marking job {} for deletion",job.getID());
+            jobList.put(job,true);
+        }
+
     }
 
 

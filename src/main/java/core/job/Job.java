@@ -42,16 +42,6 @@ public interface Job extends Executable {
     public ParameterSet getParameters();
 
     /**
-     * Delete the job.
-     * If the job is running, it tries to delete itself from the batch system. If it succeed, it change the
-     * state to DELETED.
-     * <br> In case of batch error, it throws a {@code JobExceltion}
-     * <pre>If the job is not running, it changes the state immediately to DELETED</pre>
-     * @return
-     */
-    public void delete() throws JobException;
-
-    /**
      * Stop the job
      */
     public void stop();

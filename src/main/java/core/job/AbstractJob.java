@@ -23,6 +23,7 @@ public abstract class AbstractJob extends Observable {
     private UUID id = UUID.randomUUID();
 
     private int qstatMissFire = 1;
+
     /**
      * Parameter set
      */
