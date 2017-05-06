@@ -106,6 +106,10 @@ public class QStatManager {
                 missFired--;
             }
         }
+        else {
+            logger.error("QStat error. Stopping qstat modules");
+            stop();
+        }
 
         if (missFired == 0) {
             stop();

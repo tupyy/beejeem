@@ -39,9 +39,15 @@ public class QStatMethod extends SshSessionMethod implements Method {
         try {
             String outString = executeSessionCommand(createQStatCommand(command));
             StringParameter qstatOutput = new StringParameter("qstatOutput","Output from qstat","core",outString);
-            StandardMethodResult result = new StandardMethodResult("core",METHOD_NAME, UUID.randomUUID(), StandardMethodResult.OK, "");
-            result.addParameter(qstatOutput);
-            return  result;
+
+            if (outString.contains("No such file or directory")) {
+                return new StandardMethodResult("core",METHOD_NAME,UUID.randomUUID(),StandardMethodResult.ERROR,outString);
+            }
+            else {
+                StandardMethodResult result = new StandardMethodResult("core", METHOD_NAME, UUID.randomUUID(), StandardMethodResult.OK, "");
+                result.addParameter(qstatOutput);
+                return result;
+            }
         } catch (SshException e) {
             logger.error(e.getMessage());
             return new StandardMethodResult("core",METHOD_NAME, UUID.randomUUID(), StandardMethodResult.ERROR,e.getMessage());
