@@ -76,6 +76,7 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
             newSet.addParameter(newParam);
         }
         newSet.setEditable(editable);
+        newSet.setID(this.getID());
         return newSet;
     }
 
@@ -285,5 +286,9 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    public void setID(UUID ID) {
+        this.ID = ID;
     }
 }
