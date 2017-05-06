@@ -20,6 +20,8 @@ public abstract class AbstractJob extends Observable {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractJob.class);
 
+    private UUID id = UUID.randomUUID();
+
     private int qstatMissFire = 1;
     /**
      * Parameter set
@@ -90,7 +92,7 @@ public abstract class AbstractJob extends Observable {
      * @return
      */
     public UUID getId() {
-        return parameterSet.getID();
+        return id;
     }
 
     public boolean isEditable() {

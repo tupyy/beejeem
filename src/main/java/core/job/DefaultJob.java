@@ -252,7 +252,14 @@ public class DefaultJob extends AbstractJob implements Job {
 
     @Override
     public void updateParametes(ParameterSet parameters) throws JobException {
-
+        if (isEditable()) {
+            setParameterSet(parameters);
+            setChanged();
+            notifyObservers();
+        }
+        else {
+            throw new JobException(JobException.UPDATE_EXCEPTION,"Job is not editable");
+        }
     }
 
     @Override
@@ -288,18 +295,22 @@ public class DefaultJob extends AbstractJob implements Job {
         return submitted;
     }
 
+    /**
+     * Set the submitted flag
+     * @param submitted
+     */
     public void setSubmitted(boolean submitted) {
         this.submitted = submitted;
     }
     //</editor-fold>
 
-    /*****************************************************
+    /**************************************************************************************************************
      *
      *
-     *                  PRIVATE
+     *                                                  PRIVATE
      *
      *
-     *****************************************************/
+     ***************************************************************************************************************/
 
     /**
      * Check if a job can be restarted
