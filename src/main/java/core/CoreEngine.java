@@ -115,21 +115,27 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     }
 
     @Override
-    public void deleteJob(UUID id) throws JobException {
-        Job j = getJob(id);
-        if (isJobRunning(j)) {
-            try {
-                stopJob(j.getID());
-                getGarbageCollector().registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
-                markJobForDeletion(j);
+    public void deleteJobs(List<UUID> ids) throws JobException {
+
+        Thread t = new Thread(() -> {
+            for(UUID id: ids) {
+                Job j = getJob(id);
+                if (isJobRunning(j)) {
+                    try {
+                        stopJob(j.getID());
+                        getGarbageCollector().registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
+                        markJobForDeletion(j);
+                    } catch (IllegalArgumentException ex) {
+                        ;
+                    }
+                } else {
+                    logger.info("Delete job {}", j.getID());
+                    deleteJobInternally(j);
+                }
             }
-            catch (IllegalArgumentException ex) {
-                ;
-            }
-        }
-        else {
-            jobList.remove(j);
-        }
+        });
+        t.start();
+
     }
 
     @Override
@@ -220,7 +226,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
                     garbageCollector.registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
                     if (isMarkedForDeletion(j)) {
                         logger.info("Job {} stopped. It is marked for deletion");
-                        jobList.remove(j);
+                        deleteJobInternally(j);
                     }
                 }
                 catch (IllegalArgumentException ex) {
@@ -306,7 +312,10 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     }
 
-
+    private void deleteJobInternally(Job j) {
+        fireJobEvent(JobEvent.JOB_DELETED, j.getID());
+        jobList.remove(j);
+    }
 
 
 }
