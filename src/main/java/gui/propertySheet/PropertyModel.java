@@ -7,47 +7,69 @@ import core.parameters.parametertypes.BooleanParameter;
 import core.parameters.parametertypes.IntegerParameter;
 import core.parameters.parametertypes.ListParameter;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.controlsfx.control.PropertySheet;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Created by tctupangiu on 17/03/2017.
+ * This class wraps the {@link org.controlsfx.control.PropertySheet.Item} with the values from the
+ * {@link ParameterSet}.
  */
 public class PropertyModel {
 
+    private PropertyController controller;
     private ParameterSet parameterSet;
     private ObservableList<PropertySheet.Item> propertySheetItems = FXCollections.observableArrayList();
 
-    public PropertyModel(ParameterSet parameterSet) {
-        this.setParameterSet(parameterSet);
-        addItems(parameterSet);
-    }
-
     public PropertyModel() {
+
     }
 
 
-    public ParameterSet getParameterSet() {
+    public void addListener(ChangeListener changeListener) {
+        for(PropertySheet.Item item: getPropertySheetItems()) {
+            SimpleItem simpleItem = (SimpleItem) item;
+            simpleItem.getObservableValue().get().addListener(changeListener);
+        }
+    }
+    /**
+     * Get data
+     * @return {@link ParameterSet} contained by the model
+     */
+    public ParameterSet getData() {
         return parameterSet;
     }
 
-    public void setParameterSet(ParameterSet parameterSet) {
+    /**
+     * Set data
+     * @param parameterSet
+     */
+    public void setData(ParameterSet parameterSet,ChangeListener changeListener) {
         this.parameterSet = parameterSet;
 
         Platform.runLater(() -> {
             getPropertySheetItems().clear();
             addItems(parameterSet);
+            if (changeListener != null) {
+                addListener(changeListener);
+            }
         });
+
 
     }
 
-    public void updateParameterSet(ParameterSet newParameterSet) {
+    /**
+     * Update the data with new values. If new parameters are present in the set, they will be added to the model
+     * @param newParameterSet
+     */
+    public void updateData(ParameterSet newParameterSet) {
         Platform.runLater(() -> {
 
             try {
@@ -76,6 +98,9 @@ public class PropertyModel {
 
     }
 
+    /**
+     * Clear the data
+     */
     public void clear() {
         Platform.runLater(() -> {
             getPropertySheetItems().clear();
@@ -91,7 +116,7 @@ public class PropertyModel {
 
         for (Parameter p : parameterSet) {
             if (p.getSource().equals("external")) {
-                getPropertySheetItems().add( new SimpleItem(p,parameterSet.isEditable()));
+               addItem(p,parameterSet.isEditable());
             }
         }
 
@@ -99,7 +124,8 @@ public class PropertyModel {
     }
 
     private void addItem(Parameter p,boolean editable) {
-        getPropertySheetItems().add( new SimpleItem(p,editable));
+        SimpleItem simpleItem = new SimpleItem(p,editable);
+        getPropertySheetItems().add(simpleItem);
     }
     /**
      * Get the item based on the id
@@ -129,10 +155,11 @@ public class PropertyModel {
             simpleItem.setEditable(editable);
         }
     }
-    //<editor-fold desc="SimpleItem class">
+
     public ObservableList<PropertySheet.Item> getPropertySheetItems() {
         return propertySheetItems;
     }
+    //<editor-fold desc="SimpleItem class">
 
     /**
      * Class which holds the parameters for the parameterTable
@@ -141,11 +168,16 @@ public class PropertyModel {
 
         Parameter parameter;
         private boolean editable = true;
+        private boolean isEditing = false;
+        private SimpleObjectProperty observableValue;
 
         public SimpleItem(Parameter p,boolean editable) {
             this.parameter = p;
             this.editable = editable;
-        }
+
+            createObservableValue(parameter);
+         }
+
 
         @Override
         public Class<?> getType() {
@@ -184,12 +216,17 @@ public class PropertyModel {
 
         @Override
         public Object getValue() {
-            return parameter.getValue();
+            return observableValue.getValue();
         }
 
         @Override
         public void setValue(Object o) {
+
+            if (!isEditing) {
+                isEditing = true;
+            }
             parameter.setValue(o);
+            observableValue.set(o);
         }
 
         public List<String> getOptions() {
@@ -216,8 +253,17 @@ public class PropertyModel {
 
         @Override
         public Optional<ObservableValue<? extends Object>> getObservableValue() {
-            return Optional.empty();
+            return Optional.ofNullable(observableValue);
         }
+
+        public Parameter getParameter() {
+            return parameter;
+        }
+
+        private void createObservableValue(Parameter parameter) {
+            observableValue = new SimpleObjectProperty(parameter.getName(), parameter.getName(), parameter.getValue());
+        }
+
     }
     //</editor-fold>
 
