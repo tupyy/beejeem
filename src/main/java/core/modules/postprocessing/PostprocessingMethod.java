@@ -80,7 +80,9 @@ public abstract class PostprocessingMethod implements Method {
             Parameter batchID = getParameters().getParameter("batchID");
             Parameter destinationFolder = getParameters().getParameter("destinationFolder");
 
+
             String batchfilename = jobName.getValue().toString().concat("_").concat(queueName.getValue().toString()).concat("_TF_tse.o").concat(batchID.getValue().toString());
+            logger.info("Batch name {}",batchfilename);
 
             return batchfilename;
         }

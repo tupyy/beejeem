@@ -5,6 +5,7 @@ import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 
 import java.util.List;
+import java.util.Observer;
 import java.util.UUID;
 
 /**
@@ -34,14 +35,6 @@ public interface Job extends Executable {
     public boolean isEditable();
 
     /**
-     * Get the parameter
-     *
-     * @param parameterName
-     * @return the clone of the parameter parameterName
-     */
-    public Parameter<?> getParameter(String parameterName);
-
-    /**
      * Get the parameter set of the job
      *
      * @return clone of the parameter set
@@ -49,26 +42,14 @@ public interface Job extends Executable {
     public ParameterSet getParameters();
 
     /**
-     * Delete the job.
-     * If the job is running, it tries to delete itself from the batch system. If it succeed, it change the
-     * state to DELETED.
-     * <br> In case of batch error, it throws a {@code JobExceltion}
-     * <pre>If the job is not running, it changes the state immediately to DELETED</pre>
-     * @return
-     */
-    public void delete() throws JobException;
-
-    /**
      * Stop the job
      */
     public void stop();
 
     /**
-     * Return a {@link JobRecord} object containing informations about the job
-     * @return {@link JobRecord} object
+     * Restart the job
      */
-    public JobRecord collectData();
-
+    public void restart();
     /**
      * Update a pameter
      *
@@ -99,7 +80,7 @@ public interface Job extends Executable {
      *
      * @return current status of the job
      */
-    public int getStatus();
+    public int getState();
 
     /**
      * Set the output from the qstat command
@@ -108,14 +89,9 @@ public interface Job extends Executable {
     public void setQstatResult(MethodResult qstatOutput);
 
     /**
-     * Set modules
-     * @param modules
+     * Add observer
+     * @param observer
      */
-    public void setModules(List<ModuleController> modules);
+    public void addObserver(Observer observer);
 
-    /**
-     * Return a copy of the modules list
-     * @return clone of module list
-     */
-    public List<ModuleController> getModules();
 }
