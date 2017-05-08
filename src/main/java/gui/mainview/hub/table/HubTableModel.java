@@ -6,8 +6,16 @@ import core.parameters.ParameterSet;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by tctupangiu on 22/03/2017.
@@ -16,8 +24,14 @@ public class HubTableModel {
 
     private ObservableList<JobData> data = FXCollections.observableArrayList();
 
+    private ModelWorker modelWorker;
+    private Thread modelWorkderThread;
+
     public HubTableModel() {
 
+        modelWorker = new ModelWorker(data);
+        modelWorkderThread= new Thread(modelWorker);
+        modelWorkderThread.start();
     }
 
     public void addJob(Job j) {
@@ -25,31 +39,23 @@ public class HubTableModel {
     }
 
     public void updateJob(Job j) {
-
-        for(JobData jobData: getData()) {
-            if (jobData.getId().equals(j.getID().toString())) {
-                jobData.updateJob(j);
-            }
-        }
+        modelWorker.onUpdateJob(j);
     }
 
     public ObservableList<JobData> getData() {
         return data;
     }
 
+    public void shutdown() {
+        modelWorkderThread.interrupt();
+    }
     /**
      * Delete a job from model
      * @param id
      */
     public void deleteJob(UUID id) {
-        for (JobData jobdata : data) {
-            if (jobdata.getId().equals(id.toString())) {
-                data.remove(jobdata);
-                break;
-            }
-        }
+        modelWorker.onDeleteJob(id);
     }
-
 
     //<editor-fold desc="Job Data">
     /**
@@ -144,5 +150,6 @@ public class HubTableModel {
         }
     }
     //</editor-fold>
+
 
 }

@@ -1,5 +1,6 @@
 package eventbus;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,6 +14,8 @@ public interface ComponentAction {
     public ComponentEventHandler getSource();
 
     public UUID getJobId();
+
+    public List<UUID> getIds();
 
     public enum ComponentActions {
         EXECUTE,

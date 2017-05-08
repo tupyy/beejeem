@@ -57,6 +57,7 @@ public class JStesCore extends AbstractComponentEventHandler implements JobListe
     }
 
     public void shutdown() {
+        eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SHUTDOWN));
         getCoreEngine().shutdown();
         getCoreEngine().getSshFactory().disconnect();
     }
@@ -103,7 +104,7 @@ public class JStesCore extends AbstractComponentEventHandler implements JobListe
 
     @Override
     public void jobDeleted(UUID ids) {
-
+        eventBus.post(new DefaultJobEvent(JobEvent.JobEventType.JOB_DELETED,ids));
     }
     //</editor-fold>
 
@@ -128,7 +129,7 @@ public class JStesCore extends AbstractComponentEventHandler implements JobListe
                 break;
             case DELETE:
                 try {
-                    getCoreEngine().deleteJob(event.getJobId());
+                    getCoreEngine().deleteJobs(event.getIds());
                 } catch (JobException e) {
                     e.printStackTrace();
                 }

@@ -73,10 +73,12 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
                 model.getTableModel().deleteJob(event.getJobId());
 
-                if (getCoreEngine().count() == 0) {
-                    runAllButton.setDisable(true);
-                    runJobButton.setDisable(true);
-                }
+                Platform.runLater(() -> {
+                    if (getCoreEngine().count() == 0) {
+                        runAllButton.setDisable(true);
+                        runJobButton.setDisable(true);
+                    }
+                });
                  break;
             case JOB_UPDATED:
                 Job j = getCoreEngine().getJob(event.getJobId());
@@ -86,7 +88,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
                 HubTableModel.JobData selection = (HubTableModel.JobData) getHubTable().getSelectionModel().getSelectedItem();
                 if (selection.getId().equals(j.getID().toString())) {
                     runJobButton.setDisable(false);
-                    setActionOnButton(runJobButton,getJobAction(j.getID()));
+                    setActionOnButton(runJobButton,getJobAction(JobState.toString(j.getState())));
                 }
                 break;
             case JOB_CREATED:
@@ -97,11 +99,9 @@ public class HubController extends AbstractComponentEventHandler implements Init
     }
 
     @Override
-    public void onComponentAction(ComponentAction event) {
-        switch (event.getAction()) {
-            case SELECT:
-                setActionOnButton(runJobButton,getJobAction(event.getJobId()));
-                break;
+    public void onCoreEvent(CoreEvent event) {
+        if (event.getEventName() == CoreEvent.CoreEventType.SHUTDOWN) {
+            model.getTableModel().shutdown();
         }
     }
 
@@ -194,19 +194,6 @@ public class HubController extends AbstractComponentEventHandler implements Init
             getHubTable().getSelectionModel().clearSelection();
         });
 
-        /**
-         * Add click on row event
-         */
-        hubTable.setRowFactory( tv -> {
-            TableRow<HubTableModel.JobData> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                     runJobButton.fire();
-                }
-            });
-            return row ;
-        });
-
         SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
 
         //Bind the SortedList comparator to the TableView comparator.
@@ -226,9 +213,11 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
             if (newSelection != null) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
-                JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.SELECT,UUID.fromString(jobData.getId())));
+                if (jobData != null) {
+                    setActionOnButton(runJobButton,getJobAction(jobData.getStatus()));
+                    JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.SELECT, UUID.fromString(jobData.getId())));
+                }
             }
-
         });
 
         runAllButton.setOnAction((event) -> {
@@ -254,26 +243,24 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
     /**
      * Return an action (i.e. run or stop) based on the state of the job
-     * @param id
+     * @param state
      * @return
      */
-    private MyEventHandler getJobAction(UUID id) {
+    private MyEventHandler getJobAction(String state) {
 
-        Job j = getCoreEngine().getJob(id);
-        if (j != null) {
-            int state = j.getState();
-            if (state == JobState.READY || state == JobState.STOP
-                    || state == JobState.FINISHED
-                    || state == JobState.ERROR) {
-                myEventHandler.setActionType(MyEventHandler.RUN_ACTION);
+        if (state.isEmpty()) {
+            myEventHandler.setActionType(MyEventHandler.EMPTY_ACTION);
+        }
+        else if (state.equals("Ready") || state.equals("Stop")
+                || state.equals("Finished")
+                || state.equals("Error")) {
+               myEventHandler.setActionType(MyEventHandler.RUN_ACTION);
                 return myEventHandler;
-            }
-
-            myEventHandler.setActionType(MyEventHandler.STOP_ACTION);
-            return myEventHandler;
         }
 
-        return null;
+        myEventHandler.setActionType(MyEventHandler.STOP_ACTION);
+
+        return myEventHandler;
 
     }
 
@@ -300,13 +287,14 @@ public class HubController extends AbstractComponentEventHandler implements Init
     private void setActionOnButton(Button button, MyEventHandler action) {
 
         Platform.runLater(() -> {
-            if (action.getActionType() == MyEventHandler.RUN_ACTION) {
-                decorateButton(button,"images/start-icon.png");
-                button.setText("Run job");
-            }
-            else {
-                decorateButton(button,"images/stop_red.png");
-                button.setText("Stop job");
+            if (action != null) {
+                if (action.getActionType() == MyEventHandler.RUN_ACTION) {
+                    decorateButton(button, "images/start-icon.png");
+                    button.setText("Run job");
+                } else if (action.getActionType() == MyEventHandler.STOP_ACTION) {
+                    decorateButton(button, "images/stop_red.png");
+                    button.setText("Stop job");
+                }
             }
         });
 
@@ -320,6 +308,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
         public static final int STOP_ACTION = 1;
         public static final int RUN_ACTION = 2;
+        public static final int EMPTY_ACTION = 3;
 
         private int actionType;
 
@@ -331,6 +320,11 @@ public class HubController extends AbstractComponentEventHandler implements Init
         public void handle(ActionEvent event) {
 
             ComponentAction.ComponentActions actionType = ComponentAction.ComponentActions.STOP;
+
+            if (getActionType() == EMPTY_ACTION) {
+                return;
+            }
+
             if (getActionType() == STOP_ACTION) {
                 actionType = ComponentAction.ComponentActions.STOP;
             }

@@ -23,6 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.JStesCore;
 import main.MainApp;
+import org.controlsfx.control.MaskerPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +69,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
     private MenuItem newJobMenuItem;
 
     private SidePanelController sidePanelController;
+
     private HubController hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
 
@@ -102,9 +104,9 @@ public class MainController extends AbstractComponentEventHandler implements Ini
                 deleteButton.setDisable(false);
                 break;
             case JOB_DELETED:
-                if (getCoreEngine().count() == 0) {
-                    deleteButton.setDisable(true);
-                }
+//                if (getCoreEngine().count() == 0) {
+//                    deleteButton.setDisable(true);
+//                }
                 break;
             case JOB_UPDATED:
                 break;
@@ -217,8 +219,9 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
                 HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
                 ids.add(UUID.fromString(jobData.getId()));
-                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.DELETE,UUID.fromString(jobData.getId())));
             }
+
+            JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.DELETE,ids));
 
         });
 

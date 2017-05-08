@@ -107,25 +107,24 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
         switch (event.getAction()) {
             case SELECT:
-                UUID id = event.getJobId();
-                logger.debug("Selected job id {}",id);
-                Job j = getCoreEngine().getJob(id);
-                currentJobID = j.getID();
 
-                for (ComponentController componentController: componentControllerList) {
-                    componentController.loadJob(j);
-                }
+                    UUID id = event.getJobId();
+                    logger.debug("Selected job id {}", id);
+                    Job j = getCoreEngine().getJob(id);
+                    if (j != null ) {
+                        currentJobID = j.getID();
 
-                applyButton.setDisable(true);
-                cancelButton.setDisable(true);
-                break;
-            case DELETE:
-                if (currentJobID.equals(event.getJobId())) {
-                    for (ComponentController componentController: componentControllerList) {
-                        componentController.clear();
+                        for (ComponentController componentController : componentControllerList) {
+                            componentController.loadJob(j);
+                        }
+
+                        applyButton.setDisable(true);
+                        cancelButton.setDisable(true);
                     }
-                    currentJobID = null;
-                }
+                    else {
+                        clear();
+                    }
+
                 break;
         }
     }
@@ -142,8 +141,10 @@ public class SidePanelController extends AbstractComponentEventHandler implement
      *
      ********************************************************************/
 
-    private void updateJob(Job job) {
-
+    private void clear() {
+        for (ComponentController componentController: componentControllerList) {
+                        componentController.clear();
+                    }
 
     }
 
