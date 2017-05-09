@@ -27,7 +27,7 @@ public interface Core {
      * Add a new job
      * @param job
      */
-    public void addJob(Job job) throws JobException;
+    public boolean addJob(Job job) throws JobException;
 
     /**
      * Delete the job. A job which is running cannot be deleted immediately.
@@ -36,7 +36,7 @@ public interface Core {
      * @param id
      * @throws JobException
      */
-    public void deleteJobs(List<UUID> ids) throws JobException;
+    public boolean deleteJob(UUID id);
 
     /**
      * Stop job

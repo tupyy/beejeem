@@ -36,7 +36,7 @@ public abstract class AbstractJob extends Observable {
 
     public AbstractJob(ParameterSet parameterSet) {
         this.parameterSet = parameterSet;
-        this.parameterSet.addParameter(createTemporaryFolderParameter(this.parameterSet.getID()));
+        this.parameterSet.addParameter(createTemporaryFolderParameter(getId()));
 
         jobMachine = new StateMachine<Integer, Integer>(JobState.READY,new StateMachineConfig<>());
     }
@@ -44,7 +44,7 @@ public abstract class AbstractJob extends Observable {
     public AbstractJob(ParameterSet parameterSet, StateMachineConfig<Integer,Integer> jobStateMachineConfig) {
         jobMachine = new StateMachine<Integer, Integer>(JobState.READY,jobStateMachineConfig);
 
-        parameterSet.addParameter(createTemporaryFolderParameter(parameterSet.getID()));
+        parameterSet.addParameter(createTemporaryFolderParameter(getId()));
         this.setParameterSet(parameterSet);
     }
 

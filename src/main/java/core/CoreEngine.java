@@ -102,7 +102,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     }
 
     @Override
-    public void addJob(Job j) throws JobException{
+    public boolean addJob(Job j) throws JobException{
         if (jobExists(j.getID())) {
             throw new JobException(JobException.JOB_EXISTS,"Job ".concat(j.getID().toString()).concat(" already exists"));
         }
@@ -110,32 +110,27 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         j.addObserver(this);
         jobList.put(j,false);
 
-        fireJobEvent(JobEvent.JOB_CREATED, j.getID());
         logger.info("Job created: {}",j.getName());
+        return true;
     }
 
     @Override
-    public void deleteJobs(List<UUID> ids) throws JobException {
+    public boolean deleteJob(UUID id) {
 
-        Thread t = new Thread(() -> {
-            for(UUID id: ids) {
-                Job j = getJob(id);
-                if (isJobRunning(j)) {
-                    try {
-                        stopJob(j.getID());
-                        getGarbageCollector().registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
-                        markJobForDeletion(j);
-                    } catch (IllegalArgumentException ex) {
-                        ;
-                    }
-                } else {
-                    logger.info("Delete job {}", j.getID());
-                    deleteJobInternally(j);
-                }
+        Job j = getJob(id);
+        if (isJobRunning(j)) {
+            try {
+                markJobForDeletion(j);
+                j.stop();
+            } catch (IllegalArgumentException ex) {
+               return false;
             }
-        });
-        t.start();
+        } else {
+            logger.info("Delete job {}", j.getID());
+            deleteJobInternally(j);
+        }
 
+        return true;
     }
 
     @Override
@@ -252,6 +247,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     @Override
     public void shutdown() {
+        qstatManager.stop();
         garbageCollector.shutdown();
         executor.shutDownExecutor();
     }
@@ -312,8 +308,24 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     }
 
+    /**
+     * Get the job even is is marked for deletion
+     * @param id
+     * @return
+     */
+    private Job getJobInternally(UUID id) {
+        ArrayList<UUID> idList = new ArrayList<>();
+
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if (entry.getKey().equals(id)) {
+               return entry.getKey();
+            }
+        }
+
+        return null;
+    }
+
     private void deleteJobInternally(Job j) {
-        fireJobEvent(JobEvent.JOB_DELETED, j.getID());
         jobList.remove(j);
     }
 

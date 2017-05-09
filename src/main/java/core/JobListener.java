@@ -10,21 +10,9 @@ import java.util.UUID;
 public interface JobListener {
 
     /**
-     * Called when a job has been created
-     * @param id
-     */
-    void jobCreated(UUID id);
-
-    /**
      * Called when a job has been updated
      * @param id
      */
     void jobUpdated(UUID id);
-
-    /**
-     * Call when a jobs have been deleted
-     * @param ids
-     */
-    void jobDeleted(UUID ids);
 
 }

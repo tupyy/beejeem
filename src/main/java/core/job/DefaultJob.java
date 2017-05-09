@@ -9,6 +9,7 @@ import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;
 import java.util.UUID;
@@ -232,21 +233,20 @@ public class DefaultJob extends AbstractJob implements Job {
     }
 
     @Override
-    public void updateParameter(Parameter<?> newParameter) throws JobException {
-
+    public boolean updateParameter(Parameter<?> newParameter) throws JobException {
+        throw new NotImplementedException();
     }
 
     @Override
-    public void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
-
+    public boolean updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
+        throw new NotImplementedException();
     }
 
     @Override
-    public void updateParametes(ParameterSet parameters) throws JobException {
+    public boolean updateParametes(ParameterSet parameters) throws JobException {
         if (isEditable()) {
             setParameterSet(parameters);
-            setChanged();
-            notifyObservers();
+            return true;
         }
         else {
             throw new JobException(JobException.UPDATE_EXCEPTION,"Job is not editable");
@@ -327,7 +327,7 @@ public class DefaultJob extends AbstractJob implements Job {
         @Override
         public void doIt() {
             setChanged();
-            notifyObservers(getState());
+            notifyObservers();
         }
     }
 

@@ -56,7 +56,7 @@ public interface Job extends Executable {
      * @param newParameter
      * @throws JobException if the job is editable
      */
-    public void updateParameter(Parameter<?> newParameter) throws JobException;
+    public boolean updateParameter(Parameter<?> newParameter) throws JobException;
 
     /**
      * Update a parameter
@@ -64,7 +64,7 @@ public interface Job extends Executable {
      * @param parameterValue new value
      * @throws IllegalArgumentException if the parameter is not found or it cannot be updated
      */
-    public void updateParameter(String parameterName,Object parameterValue) throws IllegalArgumentException;
+    public boolean updateParameter(String parameterName,Object parameterValue) throws IllegalArgumentException;
 
     /**
      * Update the parameter set
@@ -72,7 +72,7 @@ public interface Job extends Executable {
      * @param parameters
      * @throws JobException if the job is editable
      */
-    public void updateParametes(ParameterSet parameters) throws JobException;
+    public boolean updateParametes(ParameterSet parameters) throws JobException;
 
 
     /**

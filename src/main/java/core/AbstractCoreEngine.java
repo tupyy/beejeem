@@ -82,12 +82,6 @@ public abstract class AbstractCoreEngine implements Core {
             while (e.hasMoreElements()) {
                 JobListener l = (JobListener) e.nextElement();
                 switch (action) {
-                    case JOB_CREATED:
-                        l.jobCreated(id);
-                        break;
-                    case JOB_DELETED:
-                        l.jobDeleted(id);
-                        break;
                     case JOB_UPDATED:
                         l.jobUpdated(id);
                 }
