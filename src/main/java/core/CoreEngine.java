@@ -165,7 +165,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
                 if (job.getState() == JobState.READY) {
                     job.execute();
                 }
-                else if (job.getState() == JobState.STOP || job.getState() == JobState.ERROR) {
+                else if (job.getState() == JobState.STOP || job.getState() == JobState.ERROR || job.getState() == JobState.FINISHED) {
                     job.restart();
                 }
             } catch (JobException e) {
