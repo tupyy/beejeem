@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -21,7 +23,7 @@ import java.util.function.Function;
 public class DefaultJob extends AbstractJob implements Job {
     private final Logger logger = LoggerFactory.getLogger(DefaultJob.class);
     private boolean submitted = false;
-
+    private List<ModuleAction> moduleActionList = new ArrayList<>();
 
     public DefaultJob(ParameterSet parameterSet, Map<Integer,Module> modules) {
         super(parameterSet);
@@ -40,10 +42,12 @@ public class DefaultJob extends AbstractJob implements Job {
         /**
          * Configure PREPROCESSING state
          */
-        if (modules.containsKey(JobState.PREPROCESSING)) {
-            defaultConfiguration.configure(JobState.PREPROCESSING)
+         if (modules.containsKey(JobState.PREPROCESSING)) {
+             ModuleAction preprocessingModuleAction = new ModuleAction(this,modules.get(JobState.PREPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doSubmit,Trigger.doError));
+             moduleActionList.add(preprocessingModuleAction);
+             defaultConfiguration.configure(JobState.PREPROCESSING)
                     .onEntry(new NotifyAction())
-                    .onEntry(new ModuleAction(this,modules.get(JobState.PREPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doSubmit,Trigger.doError)))
+                    .onEntry(preprocessingModuleAction)
                     .permit(Trigger.doSubmit,JobState.SUBMITTING)
                     .permit(Trigger.doStop,JobState.STOP)
                     .permit(Trigger.doError,JobState.ERROR);
@@ -53,9 +57,11 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure SUBMITTING state
          */
         if (modules.containsKey(JobState.SUBMITTING)) {
+            ModuleAction processingModuleAction = new ModuleAction(this,modules.get(JobState.SUBMITTING),new FutureCallback(),new StageCompletion(Trigger.doProcessing,Trigger.doError));
+            moduleActionList.add(processingModuleAction);
             defaultConfiguration.configure(JobState.SUBMITTING)
                     .onEntry(new NotifyAction())
-                    .onEntry(new ModuleAction(this,modules.get(JobState.SUBMITTING),new FutureCallback(),new StageCompletion(Trigger.doProcessing,Trigger.doError)))
+                    .onEntry(processingModuleAction)
                     .permit(Trigger.doProcessing,JobState.SUBMITTED)
                     .permit(Trigger.doStop,JobState.STOP)
                     .permit(Trigger.doError,JobState.ERROR);
@@ -143,11 +149,13 @@ public class DefaultJob extends AbstractJob implements Job {
         /**
          * Configure Processing state
          */
-        if (modules.containsKey(JobState.POSTPROCESSING)) {
-            defaultConfiguration.configure(JobState.POSTPROCESSING)
+         if (modules.containsKey(JobState.POSTPROCESSING)) {
+             ModuleAction postProcessingModuleAction = new ModuleAction(this,modules.get(JobState.POSTPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doFinish,Trigger.doError));
+             moduleActionList.add(postProcessingModuleAction);
+             defaultConfiguration.configure(JobState.POSTPROCESSING)
                     .onEntry(new NotifyAction())
                     .onEntry(() -> setSubmitted(false))
-                    .onEntry(new ModuleAction(this,modules.get(JobState.POSTPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doFinish,Trigger.doError)))
+                    .onEntry(postProcessingModuleAction)
                     .permit(Trigger.doFinish,JobState.FINISHED)
                     .permit(Trigger.doStop,JobState.STOP)
                     .permit(Trigger.doError,JobState.ERROR);
@@ -158,7 +166,13 @@ public class DefaultJob extends AbstractJob implements Job {
          */
         defaultConfiguration.configure(JobState.STOP)
                 .onEntry(new NotifyAction())
-                .onEntry(() -> setSubmitted(false))
+                .onEntry(() -> {
+
+                    for(ModuleAction moduleAction: moduleActionList) {
+                        moduleAction.cancel();
+                    }
+                    setSubmitted(false);
+                })
                 .permit(Trigger.doRestart,JobState.RESTARTING)
                 .permit(Trigger.doFinish,JobState.FINISHED);
 

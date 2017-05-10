@@ -26,6 +26,7 @@ public class ModuleAction implements Action {
     private final Consumer<Boolean> consumer;
     private final Module moduleInstance;
     private final Job parent;
+    private CancelableFuture<MethodResult> methodFuture;
 
     public ModuleAction(Job parent,Module moduleInstace, Function<MethodResult, Boolean> callbackFunction, Consumer<Boolean> consumer) {
         this.moduleInstance = moduleInstace;
@@ -60,13 +61,13 @@ public class ModuleAction implements Action {
                  executor = ModuleExecutor.getSshPoolExecutor();
             }
 
-            CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(moduleTask,executor)
-                    .thenApply(methodResult -> callbackFunction.apply(methodResult));
-            completableFuture.thenAccept(t -> consumer.accept(t));
+            methodFuture = new CancelableFuture(moduleTask,executor);
+            CompletableFuture<Boolean> booleanCompletableFuture =  methodFuture.thenApply(methodResult -> callbackFunction.apply(methodResult));
+            booleanCompletableFuture.thenAccept(t -> consumer.accept(t));
 
-            completableFuture.exceptionally( (th) -> {
+            booleanCompletableFuture.exceptionally( (th) -> {
                 //error
-                logger.error(th.getMessage());
+                logger.error("Future exceptionally: {} ",th.getMessage());
                 return false;
             }).thenAccept(t -> consumer.accept(t));
 
@@ -80,6 +81,16 @@ public class ModuleAction implements Action {
         }
         finally {
 
+        }
+    }
+
+    public void cancel() {
+        if (methodFuture != null) {
+            if (!methodFuture.isDone()) {
+                logger.info("Future running {}",moduleInstance.getName());
+                methodFuture.cancel(true);
+                logger.info("Future canceled: {}  Job: {}",methodFuture.isCancelled(),parent.getID());
+            }
         }
     }
 

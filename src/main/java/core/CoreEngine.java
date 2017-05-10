@@ -208,28 +208,28 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     public void update(Observable o, Object arg) {
         Job j = (Job) o;
 
-        switch (j.getState()) {
+             switch (j.getState()) {
 
-            case JobState.FINISHED:
-                finishedJobs++;
-                logger.info("Finished jobs: {}", finishedJobs);
-                fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
-                break;
+                case JobState.FINISHED:
+                    finishedJobs++;
+                    logger.info("Finished jobs: {}", finishedJobs);
+                    break;
 
-            case JobState.STOP:
-                try {
-                    garbageCollector.registerJobForDeletion(j.getID(),(String) j.getParameters().getParameter("batchID").getValue());
-                    if (isMarkedForDeletion(j)) {
-                        logger.info("Job {} stopped. It is marked for deletion");
-                        deleteJobInternally(j);
+                case JobState.STOP:
+                    try {
+                        garbageCollector.registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
+                        if (isMarkedForDeletion(j)) {
+                            logger.info("Job {} stopped. It is marked for deletion");
+                            deleteJobInternally(j);
+                            return;
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        ;
                     }
-                }
-                catch (IllegalArgumentException ex) {
-                    ;
-                }
-            default:
-                fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
-        }
+            }
+
+        fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
+
     }
 
     @Override
