@@ -217,7 +217,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
                 case JobState.STOP:
                     try {
-                        garbageCollector.registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
+//                        garbageCollector.registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
                         if (isMarkedForDeletion(j)) {
                             logger.info("Job {} stopped. It is marked for deletion");
                             deleteJobInternally(j);

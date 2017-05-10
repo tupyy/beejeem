@@ -2,11 +2,17 @@ package core.job;
 
 import com.github.oxo42.stateless4j.StateMachineConfig;
 import com.github.oxo42.stateless4j.delegates.Action;
+import com.sshtools.ssh.SshException;
 import core.modules.MethodResult;
 import core.modules.Module;
+import core.modules.ModuleException;
 import core.modules.clean.CleaningModule;
+import core.modules.qdel.QDelModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.ssh.SshRemoteFactory;
+import core.tasks.ModuleExecutor;
+import core.tasks.ModuleTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -15,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
@@ -168,8 +175,19 @@ public class DefaultJob extends AbstractJob implements Job {
                 .onEntry(new NotifyAction())
                 .onEntry(() -> {
 
-                    for(ModuleAction moduleAction: moduleActionList) {
-                        moduleAction.cancel();
+                    moduleActionList.forEach(ModuleAction::cancel);
+
+                    ModuleTask qDelTask = createQDelTask();
+                    if (qDelTask != null) {
+                        CompletableFuture completableFuture = CompletableFuture.supplyAsync(qDelTask, ModuleExecutor.getSshPoolExecutor()).thenApply(methodResult -> {
+                            if (methodResult.getExitCode() == 0) {
+                                logger.debug("Job {} deleted successfully from batch system", getID());
+                            } else {
+                                logger.debug("Error removing job {} from batch system: {}", getID(), methodResult.getErrorMessages().get(0));
+                            }
+
+                            return null;
+                        });
                     }
                     setSubmitted(false);
                 })
@@ -345,8 +363,21 @@ public class DefaultJob extends AbstractJob implements Job {
         }
     }
 
+    /**
+     * Create the qdel Task
+     * @return
+     */
+    private ModuleTask createQDelTask() {
 
+        QDelModule module = new QDelModule();
+        try {
+            ModuleTask qdelTask = module.runModule(getId(), SshRemoteFactory.getSshClient(),getParameters());
+            return qdelTask;
+        } catch (ModuleException | SshException e) {
+            return null;
+        }
 
+    }
     /**
      * This callback is called when a module has finished running.
      * <p>It checks the exit code of the method and fire the okTrigger or errorTrigger if the
