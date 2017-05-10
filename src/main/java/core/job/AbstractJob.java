@@ -69,7 +69,8 @@ public abstract class AbstractJob extends Observable {
      * @param parameterSet
      */
     public void setParameterSet(ParameterSet parameterSet) {
-        this.parameterSet = parameterSet;
+
+        this.parameterSet = parameterSet.clone();
     }
 
     /**

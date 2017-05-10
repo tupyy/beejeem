@@ -219,7 +219,7 @@ public class DefaultJob extends AbstractJob implements Job {
         defaultConfiguration.configure(JobState.FINISHED)
                 .onEntry(new NotifyAction())
                 .onEntry(() -> setSubmitted(false))
-                .permit(Trigger.doRestart,JobState.PREPROCESSING);
+                .permit(Trigger.doRestart,JobState.RESTARTING);
 
         setStateMachineConfiguration(defaultConfiguration);
 
