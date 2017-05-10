@@ -127,7 +127,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
             }
         } else {
             logger.info("Delete job {}", j.getID());
-            deleteJobInternally(j);
+            jobList.remove(j);
         }
 
         return true;
@@ -220,7 +220,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 //                        garbageCollector.registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
                         if (isMarkedForDeletion(j)) {
                             logger.info("Job {} stopped. It is marked for deletion");
-                            deleteJobInternally(j);
+                            jobList.remove(j);
                             return;
                         }
                     } catch (IllegalArgumentException ex) {
@@ -278,7 +278,8 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
         if (state == JobState.READY ||
                 state == JobState.STOP ||
-                state == JobState.ERROR) {
+                state == JobState.ERROR
+                || state == JobState.FINISHED) {
             return false;
         }
 
@@ -325,9 +326,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         return null;
     }
 
-    private void deleteJobInternally(Job j) {
-        jobList.remove(j);
-    }
+
 
 
 }
