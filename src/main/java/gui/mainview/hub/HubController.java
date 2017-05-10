@@ -281,7 +281,8 @@ public class HubController extends AbstractComponentEventHandler implements Init
                 int jobState = getCoreEngine().getJob(id).getState();
                 if (jobState == JobState.READY ||
                         jobState == JobState.STOP ||
-                        jobState == JobState.ERROR) {
+                        jobState == JobState.ERROR
+                        || jobState == JobState.FINISHED) {
                     runAllButton.setDisable(false);
                     break;
                 }

@@ -90,7 +90,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         decorateButton(addJobButton,"images/newJob.png");
         decorateButton(deleteButton,"images/remove.png");
 
-
     }
 
     /**
@@ -103,15 +102,15 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             case JOB_CREATED:
                 deleteButton.setDisable(false);
                 break;
-            case JOB_DELETED:
-//                if (getCoreEngine().count() == 0) {
-//                    deleteButton.setDisable(true);
-//                }
-                break;
-            case JOB_UPDATED:
-                break;
-            case JOB_STOPPED:
-                break;
+        }
+    }
+
+    public void onComponentAction(ComponentAction event) {
+        if (event.getAction() == ComponentAction.ComponentActions.DESELECT) {
+            deleteButton.setDisable(true);
+        }
+        else if (event.getAction() == ComponentAction.ComponentActions.SELECT) {
+            deleteButton.setDisable(false);
         }
     }
 
