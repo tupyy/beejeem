@@ -179,9 +179,10 @@ public class DefaultJob extends AbstractJob implements Job {
 
                     ModuleTask qDelTask = createQDelTask();
                     if (qDelTask != null) {
-                        CompletableFuture completableFuture = CompletableFuture.supplyAsync(qDelTask, ModuleExecutor.getSshPoolExecutor()).thenApply(methodResult -> {
+                        CompletableFuture.supplyAsync(qDelTask, ModuleExecutor.getSshPoolExecutor()).thenApply(methodResult -> {
                             if (methodResult.getExitCode() == 0) {
                                 logger.debug("Job {} deleted successfully from batch system", getID());
+                                this.getParameters().removeParameter("batchID");
                             } else {
                                 logger.debug("Error removing job {} from batch system: {}", getID(), methodResult.getErrorMessages().get(0));
                             }
