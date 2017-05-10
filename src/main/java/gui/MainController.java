@@ -215,13 +215,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         deleteButton.setOnAction(event -> {
 
-            List<UUID> ids = new ArrayList<>();
-            for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
-                HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
-                ids.add(UUID.fromString(jobData.getId()));
-            }
-
-            JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.DELETE,ids));
+            JStesCore.getEventBus().post(new DefaultComponentAction(ComponentAction.ComponentActions.DELETE));
 
         });
 

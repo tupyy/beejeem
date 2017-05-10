@@ -50,6 +50,7 @@ public class ModelWorker implements Runnable {
                 MyBeanAction myBeanAction = queue.take();
                 switch (myBeanAction.getAction()) {
                     case DELETE_ACTION:
+                        logger.info("Delete job: {}",myBeanAction.getId());
                         for (HubTableModel.JobData jobdata : data) {
                             if (jobdata.getId().equals(myBeanAction.getId().toString())) {
                                 data.remove(jobdata);

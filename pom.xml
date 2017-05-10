@@ -66,18 +66,19 @@
         <dependency>
             <groupId>stes.isami</groupId>
             <artifactId>preloader</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.google.guava</groupId>
+            <groupId>stes.isami</groupId>
             <artifactId>guava</artifactId>
             <version>20.0</version>
         </dependency>
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <groupId>stes.isami</groupId>
+            <artifactId>junit4</artifactId>
+            <version>4.4</version>
         </dependency>
 
     </dependencies>

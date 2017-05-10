@@ -1,5 +1,6 @@
 package main;
 
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import core.*;
 import core.job.JobException;
@@ -11,23 +12,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore extends AbstractComponentEventHandler implements JobListener,SshListener{
+public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private static final EventBus eventBus = new EventBus();
+    private static EventBus eventBus;
 
     public JStesCore() {
 
-        super();
-
         getCoreEngine().getSshFactory().addSshEventListener(this);
         getCoreEngine().addJobListener(this);
+
+        eventBus = new EventBus();
         eventBus.register(this);
 
     }
@@ -92,21 +95,13 @@ public class JStesCore extends AbstractComponentEventHandler implements JobListe
     //</editor-fold>
 
     //<editor-fold desc="JobListener">
-    @Override
-    public void jobCreated(UUID id) {
-        eventBus.post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED,id));
-    }
 
     @Override
     public void jobUpdated(UUID id) {
         eventBus.post(new DefaultJobEvent(JobEvent.JobEventType.JOB_UPDATED,id));
     }
 
-    @Override
-    public void jobDeleted(UUID ids) {
-        eventBus.post(new DefaultJobEvent(JobEvent.JobEventType.JOB_DELETED,ids));
-    }
-    //</editor-fold>
+   //</editor-fold>
 
     //<editor-fold desc="ComponentEventHandler">
     @Override
@@ -127,13 +122,12 @@ public class JStesCore extends AbstractComponentEventHandler implements JobListe
             case STOP:
                 getCoreEngine().stopJob(event.getJobId());
                 break;
-            case DELETE:
-                try {
-                    getCoreEngine().deleteJobs(event.getIds());
-                } catch (JobException e) {
-                    e.printStackTrace();
-                }
         }
+
+    }
+
+    @Override
+    public void onCoreEvent(CoreEvent event) {
 
     }
 

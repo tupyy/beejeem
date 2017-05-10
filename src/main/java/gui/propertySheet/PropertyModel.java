@@ -102,9 +102,7 @@ public class PropertyModel {
      * Clear the data
      */
     public void clear() {
-        Platform.runLater(() -> {
-            getPropertySheetItems().clear();
-        });
+        getPropertySheetItems().clear();
     }
 
     /**

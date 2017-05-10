@@ -23,7 +23,8 @@ public interface ComponentAction {
         STOP,
         DELETE,
         SELECT,
-        PREFERENCES_SAVED
+        DESELECT,
+        PREFERENCES_SAVED,
     }
 
 

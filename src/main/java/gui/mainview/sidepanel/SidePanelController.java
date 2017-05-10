@@ -107,7 +107,6 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
         switch (event.getAction()) {
             case SELECT:
-
                     UUID id = event.getJobId();
                     logger.debug("Selected job id {}", id);
                     Job j = getCoreEngine().getJob(id);
@@ -126,6 +125,8 @@ public class SidePanelController extends AbstractComponentEventHandler implement
                     }
 
                 break;
+            case DESELECT:
+                clear();
         }
     }
 
@@ -143,8 +144,8 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
     private void clear() {
         for (ComponentController componentController: componentControllerList) {
-                        componentController.clear();
-                    }
+            componentController.clear();
+        }
 
     }
 

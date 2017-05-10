@@ -3,11 +3,15 @@ package gui.mainview.hub;
 import core.job.Job;
 import core.job.JobState;
 import eventbus.*;
+import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,10 +21,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import main.JStesCore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 import static main.JStesCore.getCoreEngine;
 
@@ -28,6 +33,9 @@ import static main.JStesCore.getCoreEngine;
  * CreatorController for the hubView
  */
 public class HubController extends AbstractComponentEventHandler implements Initializable {
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(HubController.class);
 
     @FXML
     private TableView hubTable;
@@ -43,7 +51,9 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
     private MyEventHandler myEventHandler;
 
-    private HubModel model = new HubModel();
+    private boolean deleteInProgress = false;
+
+    private HubTableModel model = new HubTableModel();
 
     public HubController() {
         super();
@@ -69,30 +79,21 @@ public class HubController extends AbstractComponentEventHandler implements Init
     public void onJobEvent(JobEvent event) {
 
         switch (event.getAction()) {
-            case JOB_DELETED:
-
-                model.getTableModel().deleteJob(event.getJobId());
-
-                Platform.runLater(() -> {
-                    if (getCoreEngine().count() == 0) {
-                        runAllButton.setDisable(true);
-                        runJobButton.setDisable(true);
-                    }
-                });
-                 break;
             case JOB_UPDATED:
                 Job j = getCoreEngine().getJob(event.getJobId());
-                model.getTableModel().updateJob(j);
+                model.updateJob(j);
 
                 disableRunAllButton();
                 HubTableModel.JobData selection = (HubTableModel.JobData) getHubTable().getSelectionModel().getSelectedItem();
-                if (selection.getId().equals(j.getID().toString())) {
-                    runJobButton.setDisable(false);
-                    setActionOnButton(runJobButton,getJobAction(JobState.toString(j.getState())));
+                if (selection != null) {
+                    if (selection.getId().equals(j.getID().toString())) {
+                        runJobButton.setDisable(false);
+                        setActionOnButton(runJobButton, getJobAction(JobState.toString(j.getState())).getActionType());
+                    }
                 }
                 break;
             case JOB_CREATED:
-                model.getTableModel().addJob(getCoreEngine().getJob(event.getJobId()));
+                model.addJob(getCoreEngine().getJob(event.getJobId()));
                 runAllButton.setDisable(false);
                 runJobButton.setDisable(false);
         }
@@ -101,13 +102,22 @@ public class HubController extends AbstractComponentEventHandler implements Init
     @Override
     public void onCoreEvent(CoreEvent event) {
         if (event.getEventName() == CoreEvent.CoreEventType.SHUTDOWN) {
-            model.getTableModel().shutdown();
+            model.shutdown();
+        }
+    }
+
+    @Override
+    public void onComponentAction(ComponentAction  action) {
+        switch (action.getAction()) {
+            case DELETE:
+                onDeleteAction(getHubTable().getSelectionModel().getSelectedItems());
         }
     }
 
     public TableView getHubTable() {
         return hubTable;
     }
+
 
     /********************************************************************
      *
@@ -159,7 +169,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
         getHubTable().setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         //Wrap the ObservableList in a FilteredList (initially display all data).
-        FilteredList<HubTableModel.JobData> filteredData = new FilteredList<>(model.getTableModel().getData(), p -> true);
+        FilteredList<HubTableModel.JobData> filteredData = new FilteredList<>(model.getData(), p -> true);
 
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(jobData -> {
@@ -211,17 +221,16 @@ public class HubController extends AbstractComponentEventHandler implements Init
     private void setupActions() {
         getHubTable().getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
-            if (newSelection != null) {
-                HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
-                if (jobData != null) {
-                    setActionOnButton(runJobButton,getJobAction(jobData.getStatus()));
-                    JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.SELECT, UUID.fromString(jobData.getId())));
-                }
+            if (!isDeleteInProgress()) {
+                if (newSelection != null) {
+                    HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
+                        onJobSelection(jobData);
+                    }
             }
         });
 
         runAllButton.setOnAction((event) -> {
-            JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,ComponentAction.ComponentActions.EXECUTE_ALL,UUID.randomUUID()));
+            JStesCore.getCoreEngine().executeAll();
             runAllButton.setDisable(true);
         });
 
@@ -284,21 +293,69 @@ public class HubController extends AbstractComponentEventHandler implements Init
      * @param button
      * @param action
      */
-    private void setActionOnButton(Button button, MyEventHandler action) {
+    private void setActionOnButton(Button button, int action) {
 
         Platform.runLater(() -> {
-            if (action != null) {
-                if (action.getActionType() == MyEventHandler.RUN_ACTION) {
+                 if (action == MyEventHandler.RUN_ACTION) {
                     decorateButton(button, "images/start-icon.png");
                     button.setText("Run job");
-                } else if (action.getActionType() == MyEventHandler.STOP_ACTION) {
+                } else if (action == MyEventHandler.STOP_ACTION) {
                     decorateButton(button, "images/stop_red.png");
                     button.setText("Stop job");
                 }
-            }
+
         });
 
     }
+
+    private boolean isDeleteInProgress() {
+        return deleteInProgress;
+    }
+
+    private void setDeleteInProgress(boolean deleteInProgress) {
+        this.deleteInProgress = deleteInProgress;
+    }
+
+    /**
+     * Perform the delete action
+     * @param selectedJobs
+     */
+    private void onDeleteAction(ObservableList<HubTableModel.JobData> selectedJobs) {
+
+        DeleteService deleteService = new DeleteService();
+        deleteService.setJobToDelete(new ArrayList<>(selectedJobs));
+        deleteService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                if ( (Boolean) event.getSource().getValue()) {
+                    JStesCore.getEventBus().post(new DefaultComponentAction(ComponentAction.ComponentActions.DESELECT));
+                 }
+
+                hubTable.requestFocus();
+                setDeleteInProgress(false);
+            }
+        });
+
+        setDeleteInProgress(true);
+        deleteService.start();
+    }
+
+    /**
+     * Perform action when a job has been selected in the hubTable
+     * @param data
+     */
+    private void onJobSelection(HubTableModel.JobData data) {
+
+        if (data != null) {
+            setActionOnButton(runJobButton, getJobAction(data.getStatus()).getActionType());
+            JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.SELECT, UUID.fromString(data.getId())));
+        }
+        else {
+            JStesCore.getEventBus().post(new DefaultComponentAction(ComponentAction.ComponentActions.DESELECT));
+        }
+    }
+
+
 
     /**
      * Implantation for the EventHandler to have the name of the action
@@ -319,24 +376,22 @@ public class HubController extends AbstractComponentEventHandler implements Init
         @Override
         public void handle(ActionEvent event) {
 
-            ComponentAction.ComponentActions actionType = ComponentAction.ComponentActions.STOP;
-
             if (getActionType() == EMPTY_ACTION) {
                 return;
-            }
-
-            if (getActionType() == STOP_ACTION) {
-                actionType = ComponentAction.ComponentActions.STOP;
-            }
-            else if (getActionType() == RUN_ACTION) {
-                actionType = ComponentAction.ComponentActions.EXECUTE;
             }
 
             ObservableList<HubTableModel.JobData> selection = getHubTable().getSelectionModel().getSelectedItems();
 
             if (selection.size() > -1) {
                 for (HubTableModel.JobData jobData: selection) {
-                    JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this,actionType,UUID.fromString(jobData.getId())));
+                    switch (getActionType()) {
+                        case STOP_ACTION:
+                            JStesCore.getCoreEngine().stopJob(UUID.fromString(jobData.getId()));
+                            break;
+                        case RUN_ACTION:
+                            JStesCore.getCoreEngine().executeJob(UUID.fromString(jobData.getId()));
+                            break;
+                    }
                 }
             }
         }
@@ -347,6 +402,43 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
         public void setActionType(int actionType) {
             this.actionType = actionType;
+        }
+    }
+
+    /**
+     * Delete a list of jobs from source.
+     * Return true if there is no job left in the coreEngine
+     */
+    private class DeleteService extends Service<Boolean> {
+
+        private List<HubTableModel.JobData> list;
+
+        public void setJobToDelete(List<HubTableModel.JobData> list) {
+            this.list = list;
+        }
+        @Override
+        protected Task<Boolean> createTask() {
+            return new Task<Boolean>() {
+                @Override
+                protected Boolean call() throws Exception {
+
+                    for (HubTableModel.JobData jobData : list) {
+                        if (JStesCore.getCoreEngine().deleteJob(UUID.fromString(jobData.getId()))) {
+                            model.deleteJob(jobData);
+                        }
+                    }
+
+                    if (getCoreEngine().count() == 0) {
+                        runAllButton.setDisable(true);
+                        runJobButton.setDisable(true);
+
+                       setActionOnButton(runJobButton,MyEventHandler.RUN_ACTION);
+                        return true;
+                    }
+
+                    return false;
+                }
+            };
         }
     }
 

@@ -7,6 +7,8 @@ import core.job.Job;
 import core.job.JobException;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import eventbus.DefaultJobEvent;
+import eventbus.JobEvent;
 import gui.propertySheet.PropertyController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -25,6 +27,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import main.JStesCore;
 import org.controlsfx.control.PropertySheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,7 +169,9 @@ public class CreatorController implements Initializable {
             List<Job> jobs = creator.createJobs(files,parameterSet,model.getCurrentJobDefintion().getModuleElements(),logger);
             for (Job j: jobs) {
                 try {
-                    getCoreEngine().addJob(j);
+                    if (getCoreEngine().addJob(j)) {
+                        JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED,j.getID()));
+                    }
                 } catch (JobException e) {
                     logger.error(e.getMessage());
                 }

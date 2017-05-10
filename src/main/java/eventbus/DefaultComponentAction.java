@@ -1,5 +1,6 @@
 package eventbus;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,10 @@ public class DefaultComponentAction implements ComponentAction {
     private final ComponentEventHandler source;
     private final UUID jobID;
     private final List<UUID> jobIDs;
+
+    public DefaultComponentAction(ComponentActions action) {
+        this(null,action,UUID.randomUUID());
+    }
 
     public DefaultComponentAction(ComponentEventHandler source, ComponentActions action,UUID jobID) {
         this.action = action;
