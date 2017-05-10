@@ -94,6 +94,12 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
         switch (event.getAction()) {
             case JOB_UPDATED:
+                if (currentJobID == event.getJobId()) {
+                    for (ComponentController componentController: componentControllerList) {
+                        componentController.updateJob(getCoreEngine().getJob(event.getJobId()));
+                    }
+                }
+                break;
             case JOB_CREATED:
                 for (ComponentController componentController: componentControllerList) {
                     componentController.updateJob(getCoreEngine().getJob(event.getJobId()));
