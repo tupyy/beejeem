@@ -2,6 +2,7 @@ package gui.creator;
 
 import configuration.JobDefinition;
 import configuration.Preferences;
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
 import gui.propertySheet.PropertyModel;
@@ -101,8 +102,7 @@ public class CreatorModel {
          for(JobDefinition jobDefinition: preferences.getJobDefinitions()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {
 
-                getPropertyModel().setData(jobDefinition.getParameters(),null);
-                getPropertyModel().addParameterSet(addParameterFromPreferences());
+                getPropertyModel().setData(addParameterFromPreferences(jobDefinition.getParameters()),null);
                 currentJobDefition = jobDefinition;
             }
         }
@@ -168,19 +168,28 @@ public class CreatorModel {
         }
     }
 
-    private ParameterSet addParameterFromPreferences() {
-        ParameterSet parameters = new ParameterSet();
+    private ParameterSet addParameterFromPreferences(ParameterSet parameters) {
         Preferences preferences = JStesConfiguration.getPreferences();
 
-        StringParameter localFolder = new StringParameter("localFolder","Local folder where all the result files are uploaded",
-                "Job",preferences.getValue("localFolder"),"Local folder","external");
+        try {
+            Parameter parameter = parameters.getParameter("localFolder");
+            parameter.setValue(preferences.getValue("localFolder"));
+        }
+        catch (IllegalArgumentException ex) {
+            StringParameter localFolder = new StringParameter("localFolder", "Local folder where all the result files are uploaded",
+                    "Job", preferences.getValue("localFolder"), "Local folder", "external");
+            parameters.addParameter(localFolder);
+        }
 
-        StringParameter destinationFolder = new StringParameter("destinationFolder","Remote folder",
-                "Job",preferences.getValue("remoteFolder"),"Remote folder","external");
-
-        parameters.addParameter(localFolder);
-        parameters.addParameter(destinationFolder);
-
+        try {
+            Parameter parameter = parameters.getParameter("destinationFolder");
+            parameter.setValue(preferences.getValue("remoteFolder"));
+        }
+        catch (IllegalArgumentException ex) {
+            StringParameter destinationFolder = new StringParameter("destinationFolder", "Remote folder",
+                    "Job", preferences.getValue("remoteFolder"), "Remote folder", "external");
+            parameters.addParameter(destinationFolder);
+        }
         return parameters;
     }
 }
