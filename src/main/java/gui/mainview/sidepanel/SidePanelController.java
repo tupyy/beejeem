@@ -84,7 +84,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
          * Update the job with the initial values
          */
         cancelButton.setOnAction(event -> {
-            propertyController.updateJob(JStesCore.getCoreEngine().getJob(currentJobID));
+             propertyController.updateJob(JStesCore.getCoreEngine().getJob(currentJobID));
         });
 
     }

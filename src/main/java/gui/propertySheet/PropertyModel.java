@@ -66,6 +66,21 @@ public class PropertyModel {
     }
 
     /**
+     * Add new parameter to set
+     * @param newParameter
+     */
+    public void addParameter(Parameter newParameter) {
+        this.parameterSet.addParameter(newParameter);
+    }
+
+    /**
+     * Add a new set of parameters
+     * @param parameters
+     */
+    public void addParameterSet(ParameterSet parameters) {
+        this.parameterSet.addParameters(parameters);
+    }
+    /**
      * Update the data with new values. If new parameters are present in the set, they will be added to the model
      * @param newParameterSet
      */

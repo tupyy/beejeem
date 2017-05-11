@@ -5,10 +5,7 @@ import core.parameters.ParameterSet;
 import core.parameters.parametertypes.CodeParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;
-import eventbus.ComponentAction;
-import eventbus.ComponentEventHandler;
-import eventbus.CoreEvent;
-import eventbus.JobEvent;
+import eventbus.*;
 import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +25,7 @@ import java.util.List;
 /**
  * Class to read the configuration file
  */
-public class JStesConfiguration implements ComponentEventHandler{
+public class JStesConfiguration extends AbstractComponentEventHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -37,7 +34,7 @@ public class JStesConfiguration implements ComponentEventHandler{
     private File configurationFile;
 
     public JStesConfiguration() {
-        JStesCore.registerController(this);
+
     }
 
     /**
@@ -72,11 +69,6 @@ public class JStesConfiguration implements ComponentEventHandler{
     }
 
     @Override
-    public void onJobEvent(JobEvent event) {
-
-    }
-
-    @Override
     public void onComponentAction(ComponentAction event) {
         switch (event.getAction()) {
             case PREFERENCES_SAVED:
@@ -95,8 +87,7 @@ public class JStesConfiguration implements ComponentEventHandler{
         }
     }
 
-    @Override
-    public void onCoreEvent(CoreEvent event) {
+    private void addFolderParameters() {
 
     }
 }

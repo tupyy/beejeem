@@ -136,10 +136,6 @@ public class XmlConfigurationReader implements ConfigurationReader {
         ParameterSet newSet = createParameters(parameters);
         try {
             StringParameter name = newSet.getParameter("name");
-
-            if ( !checkValue(newSet.getParameter("destinationFolder"))) {
-                return null;
-            }
         }
         catch (IllegalArgumentException ex) {
             return null;

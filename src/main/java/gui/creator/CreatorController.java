@@ -255,7 +255,6 @@ public class CreatorController implements Initializable {
         addFolderButton.setOnAction((event) -> {
             DirectoryChooser folderChooser = new DirectoryChooser();
 
-
             File initialFolder = new File(JStesConfiguration.getPreferences().getValue("lastVisitedFolder"));
 
             if ( initialFolder.exists() && initialFolder.isDirectory()) {
