@@ -95,7 +95,6 @@ public class HubController extends AbstractComponentEventHandler implements Init
             case JOB_CREATED:
                 model.addJob(getCoreEngine().getJob(event.getJobId()));
                 runAllButton.setDisable(false);
-                runJobButton.setDisable(false);
         }
     }
 
@@ -348,6 +347,9 @@ public class HubController extends AbstractComponentEventHandler implements Init
     private void onJobSelection(HubTableModel.JobData data) {
 
         if (data != null) {
+            if (runJobButton.isDisabled()) {
+                runJobButton.setDisable(false);
+            }
             setActionOnButton(runJobButton, getJobAction(data.getStatus()).getActionType());
             JStesCore.getEventBus().post(new DefaultComponentAction(HubController.this, ComponentAction.ComponentActions.SELECT, UUID.fromString(data.getId())));
         }
