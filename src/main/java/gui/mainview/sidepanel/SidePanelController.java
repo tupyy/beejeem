@@ -71,9 +71,11 @@ public class SidePanelController extends AbstractComponentEventHandler implement
          */
         applyButton.setOnAction(event -> {
             try {
-                JStesCore.getCoreEngine().getJob(currentJobID).updateParametes(propertyController.getData());
-                applyButton.setDisable(true);
-                cancelButton.setDisable(true);
+                if (currentJobID != null) {
+                    JStesCore.getCoreEngine().getJob(currentJobID).updateParametes(propertyController.getData());
+                    applyButton.setDisable(true);
+                    cancelButton.setDisable(true);
+                }
             } catch (JobException e) {
                 ;
             }
@@ -84,7 +86,9 @@ public class SidePanelController extends AbstractComponentEventHandler implement
          * Update the job with the initial values
          */
         cancelButton.setOnAction(event -> {
-             propertyController.updateJob(JStesCore.getCoreEngine().getJob(currentJobID));
+            if (currentJobID != null) {
+                propertyController.updateJob(JStesCore.getCoreEngine().getJob(currentJobID));
+            }
         });
 
     }
@@ -133,6 +137,8 @@ public class SidePanelController extends AbstractComponentEventHandler implement
                 break;
             case DESELECT:
                 clear();
+                applyButton.setDisable(true);
+                cancelButton.setDisable(true);
         }
     }
 

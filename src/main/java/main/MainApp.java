@@ -17,6 +17,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import preloader.JStesPreloader;
 
 import javax.net.ssl.SSLException;
@@ -34,6 +36,8 @@ public class MainApp extends Application {
 
     private JStesCore jStesCore;
         BooleanProperty ready  = new SimpleBooleanProperty(false);
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     private String version = new String();
 
