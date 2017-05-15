@@ -159,7 +159,7 @@ public abstract class PreprocessMethod implements Method {
      * @param parameterName
      * @return String value or empty string
      */
-    private String getParameterValue(ParameterSet parameterSet,String parameterName) {
+    protected String getParameterValue(ParameterSet parameterSet,String parameterName) {
 
         Parameter<?> parameter = parameterSet.getParameter(parameterName);
         if (parameter.getValue().toString().isEmpty()) {
