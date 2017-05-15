@@ -29,7 +29,15 @@ import java.util.function.Function;
  */
 public class DefaultJob extends AbstractJob implements Job {
     private final Logger logger = LoggerFactory.getLogger(DefaultJob.class);
+
+    /**
+     * Submitted flag. If is true, the output from batch is consumed
+     */
     private boolean submitted = false;
+
+    /**
+     * Keeps the references to modules
+     */
     private List<ModuleAction> moduleActionList = new ArrayList<>();
 
     public DefaultJob(ParameterSet parameterSet, Map<Integer,Module> modules) {
@@ -76,6 +84,7 @@ public class DefaultJob extends AbstractJob implements Job {
 
         /**
          * Configure SUBMITTED STATE
+         * Set the submitted flag to true
          */
         defaultConfiguration.configure(JobState.SUBMITTED)
                 .onEntry(new NotifyAction())
@@ -170,13 +179,21 @@ public class DefaultJob extends AbstractJob implements Job {
 
         /**
          * Configure STOP state
+         * On entry, all the action are stopped. If the batchID is present, execute the qdel module in order
+         * to delete the job from batch
          */
         defaultConfiguration.configure(JobState.STOP)
                 .onEntry(new NotifyAction())
                 .onEntry(() -> {
 
+                    /**
+                     * Try to stop all the CancelableFuture
+                     */
                     moduleActionList.forEach(ModuleAction::cancel);
 
+                    /**
+                     * Remove the job from batch. Create qDelTask and execute it
+                     */
                     ModuleTask qDelTask = createQDelTask();
                     if (qDelTask != null) {
                         CompletableFuture.supplyAsync(qDelTask, ModuleExecutor.getSshPoolExecutor()).thenApply(methodResult -> {
