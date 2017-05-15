@@ -96,7 +96,17 @@ public class HubTableModel {
                 ParameterSet parameterSet = job.getParameters();
                 this.name = new SimpleStringProperty(getParameterValue(parameterSet,"name"));
                 this.destinationFolder = new SimpleStringProperty(getParameterValue(parameterSet,"destinationFolder"));
-                this.type = new SimpleStringProperty(getParameterValue(parameterSet,"type"));
+
+                /**
+                 * Fix
+                 */
+
+                try {
+                    this.type = new SimpleStringProperty(parameterSet.getParameter("type").getDescription());
+                }
+                catch (IllegalArgumentException ex) {
+                    this.type = new SimpleStringProperty("Unknown");
+                }
 
                 this.localFolder = new SimpleStringProperty(getParameterValue(parameterSet,"localFolder"));
                 this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));

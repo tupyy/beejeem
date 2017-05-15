@@ -198,7 +198,7 @@ public class CreatorController implements Initializable {
                 //get the type of the job
                 Parameter type = model.getPropertyModel().getData().getParameter("type");
                 String jobType = (String) type.getValue();
-                Creator creator = CreatorFactory.getCreator(jobType.toLowerCase());
+                Creator creator = CreatorFactory.getCreator(jobType);
                 if ( creator!= null ) {
                     createJob(creator, model.getFiles(), model.getPropertyModel().getData());
                 } else {
