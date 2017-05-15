@@ -44,19 +44,19 @@ public class CreatorFactory {
 
     /**
      * Get the creator for the type job {@code jobType}
-     * @param jobType
+     * @param className
      * @return initialized creator or null if not found
      */
-    public static Creator getCreator(String jobType) {
-        return initializedCreators.get(jobType);
+    public static Creator getCreator(String className) {
+        return initializedCreators.get(className);
     }
 
     private void createCreatorList(PluginLoader pluginLoader) {
         for(Plugin plugin: pluginLoader.getPlugins()) {
             Creator creator = plugin.getCreator();
-            logger.info("Creator loaded: {}",creator.getJobType());
+            logger.info("Creator loaded: {}",creator.getClass().getName());
             if (creator != null) {
-                initializedCreators.put(creator.getJobType().toLowerCase(), creator);
+                initializedCreators.put(creator.getClass().getName(), creator);
             }
         }
     }
