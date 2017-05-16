@@ -3,7 +3,6 @@ package gui.mainview.hub;
 import core.job.Job;
 import core.job.JobState;
 import eventbus.*;
-import gui.MainController;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -16,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -64,7 +64,6 @@ public class HubController extends AbstractComponentEventHandler implements Init
         assert runJobButton != null : "fx:id=\"runJobButton\" was not injected: check your FXML file 'hubTable";
 
         setupTable();
-        JStesCore.registerController(this);
 
         setupActions();
         decorateButton(runJobButton,"images/start-icon.png");
@@ -125,6 +124,8 @@ public class HubController extends AbstractComponentEventHandler implements Init
      ********************************************************************/
 
     private void setupTable() {
+
+        getHubTable().getStylesheets().add(HubController.class.getClassLoader().getResource("css/hubTable.css").toExternalForm());
         TableColumn nameCol = new TableColumn("Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("name"));
 
@@ -202,6 +203,44 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
             getHubTable().getSelectionModel().clearSelection();
         });
+
+
+        statusCol.setCellFactory(column -> {
+            return new TableCell<HubTableModel.JobData,String>() {
+
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    setText(empty ? "" : getItem().toString());
+                    setGraphic(null);
+
+                    TableRow<HubTableModel.JobData> currentRow = getTableRow();
+                    if ( !isEmpty() ) {
+                        if (item.equalsIgnoreCase("run")) {
+                            currentRow.setId("row-run");
+                        }
+                        else if (item.equalsIgnoreCase("error")) {
+                            currentRow.setId("row-error");
+                        }
+                        else if (item.equalsIgnoreCase("waiting")) {
+                            currentRow.setId("row-waiting");
+                        }
+                        else if (item.equalsIgnoreCase("finished")) {
+                            currentRow.setId("row-finished");
+                        }
+                        else {
+                            currentRow.setId("");
+                        }
+                    }
+                    else {
+                         currentRow.setId("");
+                    }
+
+                }
+            };
+        });
+
 
         SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
 

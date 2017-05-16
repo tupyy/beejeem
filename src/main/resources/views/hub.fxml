@@ -31,7 +31,7 @@
       </HBox>
       <VBox VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="hubTable" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <TableView fx:id="hubTable" stylesheets="@../css/hubTable.css" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

@@ -148,8 +148,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
             VBox hubPane = (VBox) loader.load();
             parentNode.getChildren().add(hubPane);
-
-            hubController = loader.getController();
         }
         catch (IOException ex) {
             ex.printStackTrace();

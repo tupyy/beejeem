@@ -135,7 +135,8 @@ public class MainApp extends Application {
         Parent root = FXMLLoader.load(MainApp.class.getClassLoader().getResource("mainView.fxml"));
 
         primaryStage.setTitle("JStes");
-        primaryStage.setScene(new Scene(root, 1024, 800));
+        Scene rootScene = new Scene(root, 1024, 800);
+        primaryStage.setScene(rootScene);
 
 //        // After the app is ready, show the stage
         ready.addListener(new ChangeListener<Boolean>(){
