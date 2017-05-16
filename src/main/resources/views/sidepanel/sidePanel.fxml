@@ -7,24 +7,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="vboxContentPane" maxWidth="533.0" prefWidth="533.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.sidepanel.SidePanelController">
-   <children>
-      <Accordion prefHeight="200.0" prefWidth="513.0" VBox.vgrow="ALWAYS">
-        <panes>
-          <TitledPane animated="false" prefHeight="1071.0" prefWidth="513.0" text="Parameters">
-               <content>
-                  <ScrollPane fx:id="parametersPane" />
-               </content>
-          </TitledPane>
-          <TitledPane animated="false" text="Modules">
-               <content>
-                  <VBox fx:id="vboxModulePanel" />
-               </content>
-          </TitledPane>
-        </panes>
-      </Accordion>
-   </children>
+<VBox fx:id="vboxContentPane" maxWidth="533.0" prefHeight="326.0" prefWidth="533.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.sidepanel.SidePanelController">
    <padding>
       <Insets left="10.0" right="10.0" top="10.0" />
    </padding>
+   <children>
+      <ScrollPane fx:id="parametersPane" VBox.vgrow="ALWAYS" />
+      <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="applyButton" defaultButton="true" disable="true" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="100.0" text="Apply" />
+            <Separator prefWidth="10.0" visible="false" />
+            <Button fx:id="cancelButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
 </VBox>

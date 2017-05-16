@@ -1,7 +1,6 @@
 package gui.mainview.sidepanel;
 
 import core.job.Job;
-import core.job.JobExecutionProgress;
 
 /**
  * Created by tctupangiu on 23/03/2017.

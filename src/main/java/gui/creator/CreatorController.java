@@ -7,6 +7,8 @@ import core.job.Job;
 import core.job.JobException;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import eventbus.DefaultJobEvent;
+import eventbus.JobEvent;
 import gui.propertySheet.PropertyController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,10 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.print.Printer;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -28,6 +27,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import main.JStesCore;
 import org.controlsfx.control.PropertySheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +169,9 @@ public class CreatorController implements Initializable {
             List<Job> jobs = creator.createJobs(files,parameterSet,model.getCurrentJobDefintion().getModuleElements(),logger);
             for (Job j: jobs) {
                 try {
-                    getCoreEngine().addJob(j);
+                    if (getCoreEngine().addJob(j)) {
+                        JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED,j.getID()));
+                    }
                 } catch (JobException e) {
                     logger.error(e.getMessage());
                 }
@@ -194,11 +196,11 @@ public class CreatorController implements Initializable {
 
             try {
                 //get the type of the job
-                Parameter type = model.getPropertyModel().getParameterSet().getParameter("type");
+                Parameter type = model.getPropertyModel().getData().getParameter("type");
                 String jobType = (String) type.getValue();
-                Creator creator = CreatorFactory.getCreator(jobType.toLowerCase());
+                Creator creator = CreatorFactory.getCreator(jobType);
                 if ( creator!= null ) {
-                    createJob(creator, model.getFiles(), model.getPropertyModel().getParameterSet());
+                    createJob(creator, model.getFiles(), model.getPropertyModel().getData());
                 } else {
                     //parameter type don't exists
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -228,9 +230,10 @@ public class CreatorController implements Initializable {
             FileChooser fileChooser = new FileChooser();
 
 
-            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
-            if ( !initialFolder.isEmpty() ) {
-                fileChooser.setInitialDirectory(new File(initialFolder));
+            File initialFolder = new File(JStesConfiguration.getPreferences().getValue("lastVisitedFolder"));
+
+            if ( initialFolder.exists() && initialFolder.isDirectory()) {
+                fileChooser.setInitialDirectory(initialFolder);
             }
             fileChooser.setTitle("Choose input files");
 
@@ -242,7 +245,7 @@ public class CreatorController implements Initializable {
                 fileListView.setItems(model.getObsFileNameList());
                 clearFileButton.setDisable(false);
 
-                JStesConfiguration.getPreferences().setUserConfValue("lastVisitedFolder",lastVisitedFolder(files.get(0)));
+                JStesConfiguration.getPreferences().setValue("lastVisitedFolder",lastVisitedFolder(files.get(0)));
                 if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
                     okButton.setDisable(false);
                 }
@@ -252,10 +255,10 @@ public class CreatorController implements Initializable {
         addFolderButton.setOnAction((event) -> {
             DirectoryChooser folderChooser = new DirectoryChooser();
 
+            File initialFolder = new File(JStesConfiguration.getPreferences().getValue("lastVisitedFolder"));
 
-            String initialFolder = JStesConfiguration.getPreferences().getUserConfValue("lastVisitedFolder");
-            if ( !initialFolder.isEmpty() ) {
-                folderChooser.setInitialDirectory(new File(initialFolder));
+            if ( initialFolder.exists() && initialFolder.isDirectory()) {
+                folderChooser.setInitialDirectory(initialFolder);
             }
             folderChooser.setTitle("Choose folder");
 
@@ -313,7 +316,7 @@ public class CreatorController implements Initializable {
 
                 clearFileButton.setDisable(false);
 
-                JStesConfiguration.getPreferences().setUserConfValue("lastVisitedFolder",folder.getPath());
+                JStesConfiguration.getPreferences().setValue("lastVisitedFolder",folder.getPath());
                 if (jobTypeComboBox.getSelectionModel().getSelectedIndex() > -1) {
                     okButton.setDisable(false);
                 }

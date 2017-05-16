@@ -1,0 +1,49 @@
+#row-run {
+    -fx-background-color: aquamarine;
+    -fx-text-inner-color: red;
+    -fx-highlight-fill: derive(-fx-control-inner-background,-20%);
+}
+
+#row-run:selected {
+    -fx-background-color: #005797;
+    -fx-text-fill:black;
+}
+
+#row-waiting {
+     -fx-background-color: lightcyan;
+}
+
+#row-waiting:selected {
+    -fx-background-color: #005797;
+    -fx-text-fill:black;
+}
+
+#row-error {
+ -fx-background-color: darkred;
+ -fx-text-fill: white;
+}
+
+#row-error:selected {
+    -fx-background-color: #005797;
+    -fx-text-fill:black;
+}
+
+#row-finished {
+ -fx-background-color: lime;
+}
+
+#row-finished:selected {
+    -fx-background-color: #005797;
+    -fx-text-fill:black;
+}
+
+#row-otherstate:selected {
+    -fx-background-color: #005797;
+    -fx-text-fill:black;
+}
+
+
+
+.table-column {
+    -fx-alignment:CENTER;
+}

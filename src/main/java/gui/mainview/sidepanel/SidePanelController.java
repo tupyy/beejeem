@@ -1,26 +1,22 @@
 package gui.mainview.sidepanel;
 
-import core.CoreEvent;
-import core.CoreEventType;
-import core.CoreListener;
+import core.JobListener;
 import core.job.Job;
-import core.job.JobExecutionProgress;
-import gui.ComponentEvent;
-import gui.ComponentEventHandler;
-import gui.DefaultComponentEvent;
-import gui.MainController;
-import gui.mainview.sidepanel.modules.ModulesController;
+import core.job.JobException;
+import eventbus.*;
 import gui.propertySheet.PropertyController;
+import gui.propertySheet.PropertyEvent;
+import gui.propertySheet.PropertyListener;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +28,7 @@ import static main.JStesCore.getCoreEngine;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController implements Initializable, CoreListener,ComponentEventHandler{
+public class SidePanelController extends AbstractComponentEventHandler implements Initializable,PropertyListener{
     private static final Logger logger = LoggerFactory
             .getLogger(SidePanelController.class);
 
@@ -45,15 +41,18 @@ public class SidePanelController implements Initializable, CoreListener,Componen
     @FXML
     private VBox vboxModulePanel;
 
+    @FXML private Button applyButton;
+    @FXML private Button cancelButton;
+
+
     private PropertyController propertyController;
 
     private List<ComponentController> componentControllerList = new ArrayList<>();
     private UUID currentJobID;
 
     public SidePanelController() {
+        super();
 
-        getCoreEngine().addCoreEventListener(this);
-        JStesCore.registerController(this);
 
     }
 
@@ -64,46 +63,89 @@ public class SidePanelController implements Initializable, CoreListener,Componen
         propertyController = new PropertyController();
         parametersPane.setContent(propertyController.getPropertySheet());
         propertyController.getPropertySheet().prefWidthProperty().bind(parametersPane.widthProperty());
+        propertyController.registerListener(this);
         componentControllerList.add(propertyController);
 
-        //add module view
-        addModuleView(vboxModulePanel);
+        /**
+         * Apply changes to the job
+         */
+        applyButton.setOnAction(event -> {
+            try {
+                if (currentJobID != null) {
+                    JStesCore.getCoreEngine().getJob(currentJobID).updateParametes(propertyController.getData());
+                    applyButton.setDisable(true);
+                    cancelButton.setDisable(true);
+                }
+            } catch (JobException e) {
+                ;
+            }
+        });
+
+        /**
+         * Cancel editing
+         * Update the job with the initial values
+         */
+        cancelButton.setOnAction(event -> {
+            if (currentJobID != null) {
+                propertyController.updateJob(JStesCore.getCoreEngine().getJob(currentJobID));
+            }
+        });
+
     }
 
     @Override
-    public void onComponentEvent(ComponentEvent event) {
+    public void onJobEvent(JobEvent event) {
 
-        //Job selected
-        if (event.getAction() == ComponentEvent.JOB_SELECTED) {
-                UUID id = event.getJobId();
-                logger.debug("Selected job id {}",id);
-                Job j = getCoreEngine().getJob(id);
-                currentJobID = j.getID();
-
-                for (ComponentController componentController: componentControllerList) {
-                    componentController.loadJob(j);
-                }
-            }
-        else if(event.getAction() == ComponentEvent.JOB_DELETED) {
-                if (currentJobID.equals(event.getJobId())) {
+        switch (event.getAction()) {
+            case JOB_UPDATED:
+                if (currentJobID == event.getJobId()) {
                     for (ComponentController componentController: componentControllerList) {
-                        componentController.clear();
+                        componentController.updateJob(getCoreEngine().getJob(event.getJobId()));
                     }
-                    currentJobID = null;
                 }
+                break;
+            case JOB_CREATED:
+                for (ComponentController componentController: componentControllerList) {
+                    componentController.updateJob(getCoreEngine().getJob(event.getJobId()));
+                }
+                break;
         }
     }
 
+    @Override
+    public void onComponentAction(ComponentAction event) {
+
+        switch (event.getAction()) {
+            case SELECT:
+                    UUID id = event.getJobId();
+                    logger.debug("Selected job id {}", id);
+                    Job j = getCoreEngine().getJob(id);
+                    if (j != null ) {
+                        currentJobID = j.getID();
+
+                        for (ComponentController componentController : componentControllerList) {
+                            componentController.loadJob(j);
+                        }
+
+                        applyButton.setDisable(true);
+                        cancelButton.setDisable(true);
+                    }
+                    else {
+                        clear();
+                    }
+
+                break;
+            case DESELECT:
+                clear();
+                applyButton.setDisable(true);
+                cancelButton.setDisable(true);
+        }
+    }
 
     @Override
-    public void coreEvent(CoreEvent e) {
-        if (e.getId().equals(currentJobID)) {
-            if (e.getAction() == CoreEventType.JOB_UPDATED) {
-                for (ComponentController componentController: componentControllerList) {
-                    componentController.updateJob(getCoreEngine().getJob(e.getId()));
-                }
-            }
-        }
+    public void parameterUpdated(PropertyEvent propertyEvent) {
+        applyButton.setDisable(false);
+        cancelButton.setDisable(false);
     }
 
     /********************************************************************
@@ -112,28 +154,11 @@ public class SidePanelController implements Initializable, CoreListener,Componen
      *
      ********************************************************************/
 
-    private void updateJob(Job job) {
-
-
-    }
-
-    /**
-     * Show sidepanel view
-     * @param parentNode
-     */
-    private void addModuleView(VBox parentNode) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/moduleView.fxml"));
-            VBox command = (VBox) loader.load();
-
-            ModulesController modulesController = loader.getController();
-            componentControllerList.add(modulesController);
-            parentNode.getChildren().add(command);
+    private void clear() {
+        for (ComponentController componentController: componentControllerList) {
+            componentController.clear();
         }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
+
     }
 
 

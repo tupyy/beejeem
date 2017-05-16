@@ -3,21 +3,38 @@ package gui.mainview.hub.table;
 import core.job.Job;
 import core.job.JobState;
 import core.parameters.ParameterSet;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by tctupangiu on 22/03/2017.
  */
 public class HubTableModel {
 
+    public static final int DELETE_STARTED = 0;
+    public static final int DELETE_ENDED = 1;
+
     private ObservableList<JobData> data = FXCollections.observableArrayList();
+
+    private ModelWorker modelWorker;
+    private Thread modelWorkderThread;
 
     public HubTableModel() {
 
+        modelWorker = new ModelWorker(data);
+        modelWorkderThread= new Thread(modelWorker);
+        modelWorkderThread.start();
     }
 
     public void addJob(Job j) {
@@ -25,29 +42,36 @@ public class HubTableModel {
     }
 
     public void updateJob(Job j) {
-
-        for(JobData jobData: getData()) {
-            if (jobData.getId().equals(j.getID().toString())) {
-                jobData.updateJob(j);
-            }
-        }
+        modelWorker.onUpdateJob(j);
     }
 
     public ObservableList<JobData> getData() {
         return data;
     }
 
+    public void shutdown() {
+        modelWorkderThread.interrupt();
+    }
     /**
      * Delete a job from model
      * @param id
      */
-    public void deleteJob(UUID id) {
-        for (JobData jobdata : data) {
-            if (jobdata.getId().equals(id.toString())) {
-                data.remove(jobdata);
-                break;
+    public void deleteJob(JobData jobData) {
+        data.remove(jobData);
+    }
+
+    public void deleteJobs(List<JobData> jobDataList) {
+
+        DeleteService deleteService = new DeleteService();
+        deleteService.setData(data);
+        deleteService.setIDList(jobDataList);
+        deleteService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+
             }
-        }
+        });
+        deleteService.start();
     }
 
 
@@ -72,12 +96,22 @@ public class HubTableModel {
                 ParameterSet parameterSet = job.getParameters();
                 this.name = new SimpleStringProperty(getParameterValue(parameterSet,"name"));
                 this.destinationFolder = new SimpleStringProperty(getParameterValue(parameterSet,"destinationFolder"));
-                this.type = new SimpleStringProperty(getParameterValue(parameterSet,"type"));
+
+                /**
+                 * Fix
+                 */
+
+                try {
+                    this.type = new SimpleStringProperty(parameterSet.getParameter("type").getDescription());
+                }
+                catch (IllegalArgumentException ex) {
+                    this.type = new SimpleStringProperty("Unknown");
+                }
 
                 this.localFolder = new SimpleStringProperty(getParameterValue(parameterSet,"localFolder"));
                 this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));
                 this.aircraft = new SimpleStringProperty(getParameterValue(parameterSet,"aircraft"));
-                this.status = new SimpleStringProperty(JobState.toString(job.getStatus()));
+                this.status = new SimpleStringProperty(JobState.toString(job.getState()));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
             catch (IllegalArgumentException ex) {
@@ -87,7 +121,7 @@ public class HubTableModel {
 
         public void updateJob(Job j) {
             this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
-            this.status.set(JobState.toString(j.getStatus()));
+            this.status.set(JobState.toString(j.getState()));
             this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
         }
 
@@ -144,5 +178,42 @@ public class HubTableModel {
         }
     }
     //</editor-fold>
+
+    private class DeleteService extends Service<Integer> {
+
+        private List<JobData> idList;
+        private ObservableList<JobData> data;
+
+        public void setIDList(List<JobData> idList) {
+            this.idList = idList;
+        }
+
+        public void setData(ObservableList<JobData> data) {
+            this.data = data;
+        }
+
+        @Override
+        protected Task<Integer> createTask() {
+            return new Task<Integer>() {
+                int jobRemoved = 0;
+
+                @Override
+                protected Integer call() throws Exception {
+                    if (data !=null && idList != null) {
+                        for (HubTableModel.JobData jobdata : idList) {
+                             data.remove(jobdata);
+                            jobRemoved++;
+
+                        }
+
+                        return jobRemoved;
+                    }
+                    else {
+                        return -1;
+                    }
+                }
+            };
+        }
+    }
 
 }

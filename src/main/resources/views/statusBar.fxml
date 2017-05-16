@@ -8,12 +8,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox alignment="CENTER_RIGHT" prefHeight="30.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.statusBar.StatusBarController">
+<HBox fx:id="masterPane" alignment="CENTER_RIGHT" prefHeight="30.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.statusBar.StatusBarController">
    <children>
       <Separator prefWidth="200.0" visible="false" />
       <HBox HBox.hgrow="ALWAYS" />
       <Separator orientation="VERTICAL" prefHeight="200.0" />
-      <HBox alignment="CENTER_LEFT" maxWidth="-Infinity" prefWidth="100.0" HBox.hgrow="ALWAYS">
+      <HBox fx:id="connectHBox" alignment="CENTER_LEFT" maxWidth="-Infinity" prefWidth="100.0" HBox.hgrow="ALWAYS">
          <children>
             <ImageView fx:id="imageViewer" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
                <HBox.margin>

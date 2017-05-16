@@ -1,22 +1,34 @@
 package gui.propertySheet;
 
+import com.google.common.eventbus.EventBus;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Parameter;
 import core.job.Job;
-import core.job.JobExecutionProgress;
 import core.parameters.ParameterSet;
+import gui.MainController;
 import gui.mainview.sidepanel.ComponentController;
+import gui.mainview.sidepanel.SidePanelController;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Control;
-import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.editor.Editors;
-import org.controlsfx.property.editor.PropertyEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by tctupangiu on 17/03/2017.
  */
-public class PropertyController implements ComponentController{
+public class PropertyController implements ComponentController {
 
     private PropertySheet propertySheet;
     private PropertyModel model;
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(MainController.class);
+
+    private EventBus propertyControllerEventBus = new EventBus();
 
     public PropertyController(PropertyModel model) {
         this.model = model;
@@ -28,23 +40,35 @@ public class PropertyController implements ComponentController{
         initializeController(model);
     }
 
+    /**
+     * Register listener
+     * @param propertyListener
+     */
+    public void registerListener(PropertyListener propertyListener) {
+        propertyControllerEventBus.register(propertyListener);
+    }
+
     public PropertySheet getPropertySheet() {
         return propertySheet;
     }
 
 
-    public void setEditable(boolean editable) {
-        this.propertySheet.setDisable((editable==true) ? false: true);
+    /**
+     * Return parameter set
+     * @return
+     */
+    public ParameterSet getData() {
+        return model.getData();
     }
 
     @Override
     public void loadJob(Job j) {
-        model.setParameterSet(j.getParameters());
+        model.setData(j.getParameters(),new ParameterChangeListener());
     }
 
     @Override
     public void updateJob(Job job) {
-        model.updateParameterSet(job.getParameters());
+        model.updateData(job.getParameters());
     }
 
     @Override
@@ -71,5 +95,16 @@ public class PropertyController implements ComponentController{
                 return Editors.createTextEditor(simpleItem);
             }
         });
+
+    }
+
+    private class ParameterChangeListener implements ChangeListener{
+
+        @Override
+        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            SimpleObjectProperty simpleObjectProperty = (SimpleObjectProperty) observable;
+//            logger.info("Parameter {} value updated: {}",simpleObjectProperty.getName(), simpleObjectProperty.getValue());
+            propertyControllerEventBus.post(new PropertyEvent(simpleObjectProperty,newValue));
+        }
     }
 }

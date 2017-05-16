@@ -1,11 +1,15 @@
 package gui.creator;
 
+import configuration.JobDefinition;
+import configuration.Preferences;
+import core.parameters.Parameter;
+import core.parameters.ParameterSet;
+import core.parameters.parametertypes.StringParameter;
 import gui.propertySheet.PropertyModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import configuration.JStesConfiguration;
-import configuration.JStesPreferences;
-import configuration.JobDefinition;
+import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +41,7 @@ public class CreatorModel {
 
     public CreatorModel() {
 
-        JStesPreferences preferences = JStesConfiguration.getPreferences();
+        Preferences preferences = JStesConfiguration.getPreferences();
         for(String jt: preferences.getJobTypes()) {
             getObsJobType().add(jt);
         }
@@ -92,12 +96,13 @@ public class CreatorModel {
      */
     public void loadParameters(String jobType) {
 
-        JStesPreferences preferences = JStesConfiguration.getPreferences();
+        Preferences preferences = JStesConfiguration.getPreferences();
         getPropertyModel().clear();
 
-         for(JobDefinition jobDefinition: preferences.getJobs()) {
+         for(JobDefinition jobDefinition: preferences.getJobDefinitions()) {
             if (jobDefinition.getType().getLabel().equals(jobType)) {
-                getPropertyModel().setParameterSet(jobDefinition.getParameters());
+
+                getPropertyModel().setData(addParameterFromPreferences(jobDefinition.getParameters()),null);
                 currentJobDefition = jobDefinition;
             }
         }
@@ -127,6 +132,7 @@ public class CreatorModel {
     public PropertyModel getPropertyModel() {
         return propertyModel;
     }
+
 
     public void clear() {
         obsFileNameList.clear();
@@ -160,5 +166,30 @@ public class CreatorModel {
         public File getFile() {
             return file;
         }
+    }
+
+    private ParameterSet addParameterFromPreferences(ParameterSet parameters) {
+        Preferences preferences = JStesConfiguration.getPreferences();
+
+        try {
+            Parameter parameter = parameters.getParameter("localFolder");
+            parameter.setValue(preferences.getValue("localFolder"));
+        }
+        catch (IllegalArgumentException ex) {
+            StringParameter localFolder = new StringParameter("localFolder", "Local folder where all the result files are uploaded",
+                    "Job", preferences.getValue("localFolder"), "Local folder", "external");
+            parameters.addParameter(localFolder);
+        }
+
+        try {
+            Parameter parameter = parameters.getParameter("destinationFolder");
+            parameter.setValue(preferences.getValue("remoteFolder"));
+        }
+        catch (IllegalArgumentException ex) {
+            StringParameter destinationFolder = new StringParameter("destinationFolder", "Remote folder",
+                    "Job", preferences.getValue("remoteFolder"), "Remote folder", "external");
+            parameters.addParameter(destinationFolder);
+        }
+        return parameters;
     }
 }

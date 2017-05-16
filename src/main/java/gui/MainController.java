@@ -1,8 +1,7 @@
 package gui;
 
-import core.CoreEvent;
-import core.CoreListener;
 import core.job.JobException;
+import eventbus.*;
 import gui.mainview.hub.HubController;
 import gui.mainview.hub.table.HubTableModel;
 import gui.mainview.sidepanel.SidePanelController;
@@ -14,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,6 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.JStesCore;
 import main.MainApp;
+import org.controlsfx.control.MaskerPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,7 @@ import java.util.UUID;
 import static main.JStesCore.getCoreEngine;
 
 
-public class MainController implements Initializable, CoreListener,ComponentEventHandler {
+public class MainController extends AbstractComponentEventHandler implements Initializable {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
@@ -64,14 +63,18 @@ public class MainController implements Initializable, CoreListener,ComponentEven
     private MenuItem quitMenuItem;
 
     @FXML
+    private MenuItem preferencesMenuItem;
+
+    @FXML
     private MenuItem newJobMenuItem;
 
     private SidePanelController sidePanelController;
+
     private HubController hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
 
     public MainController() {
-        JStesCore.registerController(this);
+        super();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -87,32 +90,27 @@ public class MainController implements Initializable, CoreListener,ComponentEven
         decorateButton(addJobButton,"images/newJob.png");
         decorateButton(deleteButton,"images/remove.png");
 
-
-    }
-
-    @Override
-    public void coreEvent(CoreEvent e) {
-
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onComponentEvent(ComponentEvent event) {
+    public void onJobEvent(JobEvent event) {
 
         switch (event.getAction()) {
-            case ComponentEvent.JOB_SELECTED:
+            case JOB_CREATED:
                 deleteButton.setDisable(false);
                 break;
-            case ComponentEvent.JOB_DELETED:
-                if (getCoreEngine().count() == 0) {
-                    deleteButton.setDisable(true);
-                }
-                break;
-            case ComponentEvent.SELECTION_CLEARED:
-                deleteButton.setDisable(true);
-                break;
+        }
+    }
+
+    public void onComponentAction(ComponentAction event) {
+        if (event.getAction() == ComponentAction.ComponentActions.DESELECT) {
+            deleteButton.setDisable(true);
+        }
+        else if (event.getAction() == ComponentAction.ComponentActions.SELECT) {
+            deleteButton.setDisable(false);
         }
     }
 
@@ -150,8 +148,6 @@ public class MainController implements Initializable, CoreListener,ComponentEven
             loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
             VBox hubPane = (VBox) loader.load();
             parentNode.getChildren().add(hubPane);
-
-            hubController = loader.getController();
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -216,19 +212,34 @@ public class MainController implements Initializable, CoreListener,ComponentEven
 
         deleteButton.setOnAction(event -> {
 
-            List<UUID> ids = new ArrayList<>();
-            for(Object obj: hubController.getHubTable().getSelectionModel().getSelectedItems()) {
-                HubTableModel.JobData jobData = (HubTableModel.JobData) obj;
-                ids.add(UUID.fromString(jobData.getId()));
-            }
-
-            try {
-                getCoreEngine().deleteJobs(ids);
-            } catch (JobException e) {
-                logger.debug("Exception delete job: {}",e.getMessage());
-            }
+            JStesCore.getEventBus().post(new DefaultComponentAction(ComponentAction.ComponentActions.DELETE));
 
         });
+
+        preferencesMenuItem.setOnAction(event -> {
+
+            Stage dialog = new Stage();
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                URL url = getClass().getClassLoader().getResource("views/preferences.fxml");
+                VBox root  = fxmlLoader.load(url);
+                Scene scene = new Scene(root);
+
+                dialog.setScene(scene);
+                dialog.setTitle("Preferences");
+                dialog.setResizable(false);
+
+                dialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.setWidth(700);
+                dialog.setHeight(520);
+                dialog.showAndWait();
+            }
+            catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        });
+
     }
 
 
@@ -242,5 +253,6 @@ public class MainController implements Initializable, CoreListener,ComponentEven
         imageView.setFitWidth(20);
         button.setGraphic(imageView);
     }
+
 
 }

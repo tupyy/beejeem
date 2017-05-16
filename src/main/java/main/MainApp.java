@@ -3,7 +3,7 @@ package main;
 import com.sun.javafx.application.LauncherImpl;
 import configuration.JStesConfiguration;
 import configuration.JStesPreferences;
-import core.util.TmpFileCleanup;
+import configuration.Preferences;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -17,6 +17,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import preloader.JStesPreloader;
 
 import javax.net.ssl.SSLException;
@@ -34,6 +36,8 @@ public class MainApp extends Application {
 
     private JStesCore jStesCore;
         BooleanProperty ready  = new SimpleBooleanProperty(false);
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     private String version = new String();
 
@@ -66,12 +70,12 @@ public class MainApp extends Application {
                     jStesConfiguration.loadConfiguration(fh);
                     notifyPreloader(new Preloader.ProgressNotification(0.5));
 
-                    JStesPreferences preferences = JStesConfiguration.getPreferences();
+                    Preferences preferences = JStesConfiguration.getPreferences();
                     /**
                      * Load plugins
                      */
                     try {
-                        String pluginPath = (String) preferences.getPluginConfiguration().getParameter("plugins_folder").getValue();
+                        String pluginPath = (String) preferences.getValue("pluginFolder");
                         getCoreEngine().loadPlugins(pluginPath);
                     }
                     catch (IllegalArgumentException ex) {
@@ -85,9 +89,9 @@ public class MainApp extends Application {
                      * Connect to ssh
                      */
 
-                    String username = (String) preferences.getUserConfiguration().getParameter("username").getValue();
-                    String host = (String) preferences.getUserConfiguration().getParameter("host").getValue();
-                    String password = (String) preferences.getUserConfiguration().getParameter("password").getValue();
+                    String username = preferences.getValue("username");
+                    String host =  preferences.getValue("host");
+                    String password =  preferences.getValue("password");
 
                     notifyPreloader(new Preloader.ProgressNotification(0.8));
 
@@ -131,7 +135,8 @@ public class MainApp extends Application {
         Parent root = FXMLLoader.load(MainApp.class.getClassLoader().getResource("mainView.fxml"));
 
         primaryStage.setTitle("JStes");
-        primaryStage.setScene(new Scene(root, 1024, 800));
+        Scene rootScene = new Scene(root, 1024, 800);
+        primaryStage.setScene(rootScene);
 
 //        // After the app is ready, show the stage
         ready.addListener(new ChangeListener<Boolean>(){
