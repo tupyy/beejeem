@@ -1,15 +1,9 @@
 package core;
 
-import core.creator.CreatorFactory;
 import core.job.Job;
 import core.job.JobException;
-import core.job.JobExecutionProgress;
-import core.job.ModuleController;
-import core.modules.ModuleStarter;
-import core.parameters.ParameterSet;
-import core.plugin.Plugin;
-import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
+import jdk.nashorn.internal.scripts.JO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +27,7 @@ public interface Core {
      * Add a new job
      * @param job
      */
-    public void addJob(Job job) throws JobException;
+    public boolean addJob(Job job) throws JobException;
 
     /**
      * Delete the job. A job which is running cannot be deleted immediately.
@@ -42,15 +36,12 @@ public interface Core {
      * @param id
      * @throws JobException
      */
-    public void deleteJob(UUID id) throws JobException;
+    public boolean deleteJob(UUID id);
 
     /**
-     * Delete a list of jobs
-     * @param ids
-     * @throws JobException
+     * Stop job
+     * @param id
      */
-    public void deleteJobs(List<UUID> ids) throws JobException;
-
     public void stopJob(UUID id);
 
     /**
@@ -64,7 +55,12 @@ public interface Core {
      * Run job
      * @param id
      */
-    public void executeJob(UUID id, JobExecutionProgress progress);
+    public void executeJob(UUID id);
+
+    /**
+     * Execute all the jobs
+     */
+    public void executeAll();
 
     /**
      * Return the SshFactory
@@ -95,6 +91,18 @@ public interface Core {
      * @param l
      */
     public void removeCoreEventListener(CoreListener l);
+
+    /**
+     * Add job listener
+     * @param listener
+     */
+    public void addJobListener(JobListener listener);
+
+    /**
+     * Remove job listener
+     * @param listener
+     */
+    public void removeJobListener(JobListener listener);
 
     /**
      * Close the executors

@@ -1,9 +1,7 @@
 package core;
 
 import com.sshtools.ssh.SshException;
-import core.job.AbstractJob;
 import core.job.Job;
-import core.job.SimpleJob;
 import core.modules.MethodResult;
 import core.modules.ModuleException;
 import core.modules.qstat.QStatModule;
@@ -103,13 +101,14 @@ public class QStatManager {
         //check the content
         if (qstatOutput.getExitCode() == 0) {
 
-            //set the content to GarbageCollector
-            core.getGarbageCollector().setQStatOutput(qstatOutput);
-
             StringParameter qstatOutputP = qstatOutput.getResultParameters().getParameter("qstatOutput");
             if (qstatOutputP.getValue().isEmpty()) {
                 missFired--;
             }
+        }
+        else {
+            logger.error("QStat error. Stopping qstat modules");
+            stop();
         }
 
         if (missFired == 0) {
@@ -128,10 +127,9 @@ public class QStatManager {
                 ModuleTask task = qStatModule.runModule(UUID.randomUUID(), SshRemoteFactory.getSshClient(),null);
 
                 try {
-                    CompletableFuture<MethodResult> completableFuture = CompletableFuture.supplyAsync(task, executor)
-                            .thenApply(methodResult -> {
+                    CompletableFuture<Void> completableFuture = CompletableFuture.supplyAsync(task, executor)
+                            .thenAccept(methodResult -> {
                                 receiveOutput(methodResult);
-                                return null;
                             });
 
                     completableFuture.exceptionally((th) -> null);

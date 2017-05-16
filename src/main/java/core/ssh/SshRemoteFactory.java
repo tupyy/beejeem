@@ -93,6 +93,7 @@ public class SshRemoteFactory implements SshFactory {
                 ChannelAdapter eventListener = new ChannelAdapter() {
 
                     public synchronized void channelClosed(SshChannel channel) {
+                        logger.info("SSH Client Disconnected");
                         fireEvent(CLIENT_DISCONNECTED);
                     }
 
@@ -106,6 +107,7 @@ public class SshRemoteFactory implements SshFactory {
                //cannot open channel;
                 throw new SshException("Error opening main channel",SshException.CHANNEL_FAILURE);
             }
+
         }
     }
 
@@ -115,7 +117,10 @@ public class SshRemoteFactory implements SshFactory {
         if (ssh != null) {
             if (ssh.isConnected()) {
                 ssh.disconnect();
+                ssh = null;
+                con = null;
                 logger.info("SSH disconnected");
+                fireEvent(CLIENT_DISCONNECTED);
             }
         }
 
@@ -133,6 +138,9 @@ public class SshRemoteFactory implements SshFactory {
 
     @Override
     public boolean isAuthenticated() {
+        if (ssh == null) {
+            return false;
+        }
         return ssh.isAuthenticated();
     }
 
@@ -190,6 +198,12 @@ public class SshRemoteFactory implements SshFactory {
                         break;
                     case CLIENT_CONNECTED:
                         l.connected();
+                        break;
+                    case CLIENT_DISCONNECTED:
+                        l.disconnected();
+                        break;
+                    case CLIENT_CLOSING:
+                        l.disconnected();
                         break;
                 }
 

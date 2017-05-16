@@ -23,6 +23,9 @@ public class PluginLoader implements Supplier<Boolean>{
     private ServiceLoader<Plugin> loader;
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
 
+    private static Map<String, Module> initializedModules = Collections
+            .synchronizedMap(new Hashtable<>());
+
     private List<Plugin> initializedPlugins = new ArrayList<>();
 
     public PluginLoader(String folderPath) {
@@ -67,6 +70,8 @@ public class PluginLoader implements Supplier<Boolean>{
             while (plugins.hasNext()) {
                 Plugin plugin = plugins.next();
                 initializedPlugins.add(plugin);
+                initializeModules(plugin.getModuleList());
+
                 logger.info("Plugin loaded: {}",plugin.getName());
 
             }
@@ -81,4 +86,14 @@ public class PluginLoader implements Supplier<Boolean>{
         return initializedPlugins;
     }
 
+    public static Module getModule(String className) {
+        return initializedModules.get(className);
+    }
+
+    private void initializeModules(List<Module> modules) {
+        for(Module module: modules) {
+            logger.info("Initialized module found: {}",module.getClass().getName());
+            initializedModules.put(module.getClass().getName(),module);
+        }
+    }
 }

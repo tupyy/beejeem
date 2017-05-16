@@ -2,10 +2,6 @@ package core.modules;
 
 import com.sshtools.ssh.SshClient;
 import com.sshtools.ssh.SshException;
-import core.modules.Method;
-import core.modules.MethodResult;
-import core.modules.SshSessionMethod;
-import core.modules.StandardMethodResult;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +10,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * This method runs the qstat command and return the output
+ * This method run any batch system command.
  */
 public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private static final String METHOD_NAME = "SimpleCommandMethod";
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private final String command;
 
     public SimpleCommandMethod(SshClient sshClient, String command) {
@@ -37,7 +33,7 @@ public class SimpleCommandMethod extends SshSessionMethod implements Method {
 
         try {
             String outString = executeSessionCommand(createCommand(command));
-            StringParameter commandOutput = new StringParameter("qdelOutput","Output from qdel","core",outString);
+            StringParameter commandOutput = new StringParameter("SimpleCommandMethod","Output from SimpleCommandMethod","core",outString);
             StandardMethodResult result = new StandardMethodResult("core",METHOD_NAME, UUID.randomUUID(), StandardMethodResult.OK, "");
             result.addParameter(commandOutput);
             return  result;

@@ -1,191 +1,111 @@
 package core.job;
 
+import com.github.oxo42.stateless4j.StateMachine;
+import com.github.oxo42.stateless4j.StateMachineConfig;
 import core.modules.MethodResult;
-import core.modules.qdel.QDelModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.BooleanParameter;
 import core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Observable;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
- * This class implements the basic job.
- * <br>The user has to keep in mind that the {@link ModuleController#setParent(AbstractJob)} have to be implemented in the
- * class which extends {@link AbstractJob} because the module will call {@code SetMethodResult(MethodResuult methodResult}
- * <br>The same thing is valid for the {@link ModuleController#addObserver(Observer)}
+ * Created by cosmin on 21/04/2017.
  */
+public abstract class AbstractJob extends Observable {
 
-public abstract class AbstractJob extends Observable implements Job,Observer{
-
-    private int qstatMissFire = 1;
-
-    private final Logger logger = LoggerFactory.getLogger(SimpleJob.class);
+    private final Logger logger = LoggerFactory.getLogger(AbstractJob.class);
 
     private UUID id = UUID.randomUUID();
 
-    //parameter set
-    private ParameterSet parameterSet = new ParameterSet();
-
-    //keeps the modules manager
-    private List<ModuleController> modules;
+    private int qstatMissFire = 1;
 
     /**
-     * Keeps track of the job execution progress
+     * Parameter set
      */
-    private JobExecutionProgress jobProgress = null;
+    private ParameterSet parameterSet;
 
     /**
-     * Status of the job
+     * State machine
      */
-    private int status;
-
-    /**
-     *
-     * @param parameterSet
-     */
-    public AbstractJob(ParameterSet parameterSet,List<ModuleController> modules) {
-        this(parameterSet);
-        this.setModules(modules);
-
-        //check the parameter set
-        if (modules.size() == 0) {
-            setStatus(JobState.ERROR);
-        }
-
-    }
+    private StateMachine<Integer, Integer> jobMachine;
 
     public AbstractJob(ParameterSet parameterSet) {
-        this();
+        this.parameterSet = parameterSet;
+        this.parameterSet.addParameter(createTemporaryFolderParameter(getId()));
 
-        for (Parameter p: parameterSet) {
-            this.parameterSet.addParameter(p);
-        }
-
-        //check the parameter set
-        if (!parameterSet.isValid()) {
-            setStatus(JobState.ERROR);
-        }
-
-    }
-    public AbstractJob() {
-        this.status = JobState.IDLE;
-
-        //create the temporary folder parameter
-        StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
-        temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(id.toString().substring(0,7)));
-        this.parameterSet.addParameter(temporaryParameter);
-
+        jobMachine = new StateMachine<Integer, Integer>(JobState.READY,new StateMachineConfig<>());
     }
 
-    //<editor-fold desc="Job interface">
-    @Override
-    public String getName() {
-        return parameterSet.getParameter("name").getValue().toString();
+    public AbstractJob(ParameterSet parameterSet, StateMachineConfig<Integer,Integer> jobStateMachineConfig) {
+        jobMachine = new StateMachine<Integer, Integer>(JobState.READY,jobStateMachineConfig);
+
+        parameterSet.addParameter(createTemporaryFolderParameter(getId()));
+        this.setParameterSet(parameterSet);
     }
-
-    @Override
-    public UUID getID() {
-        return this.id;
-    }
-
-    @Override
-    public boolean isEditable() {
-
-        return parameterSet.isEditable();
-    }
-
-    @Override
-    public Parameter<?> getParameter(String parameterName) {
-        Parameter<?> p = parameterSet.getParameter(parameterName);
-        if (p != null) {
-            return p.clone();
-        }
-
-        return null;
-    }
-
-    @Override
-    public void updateParameter(Parameter<?> newParameter) throws JobException {
-        //TODO cand o implementez interfata.
-    }
-
-    @Override
-    public void updateParametes(ParameterSet parameters) throws JobException {
-        //TODO cand o implementez interfata.
-    }
-
-    @Override
-    public ParameterSet getParameters() {
-        return parameterSet.clone();
-    }
-
-    @Override
-    public abstract void updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException;
-
-    @Override
-    public int getStatus() {
-        return status;
-    }
-
-    @Override
-    public abstract void stop();
-
-    @Override
-    public abstract void delete();
-
-    @Override
-    public JobRecord collectData() {
-        return null;
-    }
-
-    //</editor-fold>
 
     /**
-     * Set editable
-     * @param editable
+     * Create a new state machine with an initial configuration
+     * @param stateMachineConfiguration
      */
-    public void setEditable(boolean editable) {
-        parameterSet.setEditable(editable);
+    public void setStateMachineConfiguration(StateMachineConfig<Integer,Integer> stateMachineConfiguration) {
+        jobMachine = new StateMachine<Integer, Integer>(JobState.READY,stateMachineConfiguration);
     }
 
     /**
-     * Get the parameter set
-     * @return the parameter set
+     * Get parameter set
+     * @return
      */
     public ParameterSet getParameterSet() {
         return parameterSet;
     }
 
     /**
-     * Set module list
-     * @param modules ArrayList of modules
+     * Set parameter set
+     * @param parameterSet
      */
-    public void setModules(List<ModuleController> modules) {
-        this.modules = modules;
+    public void setParameterSet(ParameterSet parameterSet) {
+
+        this.parameterSet = parameterSet.clone();
     }
 
     /**
-     * Get the list of modules
-     * @return list of module
+     * Fire an event
+     * @param trigger to be fired
      */
-    public List<ModuleController> getModules() {
-        List<ModuleController> clone = new ArrayList<>();
-
-        for (ModuleController moduleController: modules) {
-            clone.add(moduleController);
-        }
-        return clone;
+    public void fireTrigger(Integer trigger) {
+        jobMachine.fire(trigger);
     }
 
-    //<editor-fold desc="Executable interface">
-    @Override
-    public abstract void execute(JobExecutionProgress progress) throws JobException;
-    //</editor-fold>
+    /**
+     * Return the state
+     * @return
+     */
+    public int getState() {
+        return jobMachine.getState();
+    }
 
-    //<editor-fold desc="QStat section">
+    /**
+     * Get id
+     * @return
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    public boolean isEditable() {
+
+        return parameterSet.isEditable();
+    }
+
+    public String getName() {
+        return parameterSet.getParameter("name").getValue().toString();
+    }
+
     /**
      * Counts how many qstat miss fired the job allows before
      * considering that the batch finished running the job.
@@ -196,13 +116,6 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
     }
 
     /**
-     * Reset the qstatMissFire to 2
-     */
-    public void resetQstatMissFire() {
-        qstatMissFire = 1;
-    }
-
-    /**
      * Setter for qstatmissfire
      * @param newValue
      */
@@ -210,46 +123,125 @@ public abstract class AbstractJob extends Observable implements Job,Observer{
         qstatMissFire = newValue;
     }
 
-    @Override
-    public void setQstatResult(MethodResult qStatMethodResult) {
+    /**
+     * Parse the qstat ouput and check if the batchID is present in the output
+     * Trigger the batch event if found
+     * @param qstatOutput
+     */
+    public void consumeQStatOutput(MethodResult qstatOutput) {
 
+        if (getQstatMissFire() < 0) {
+            return;
+        }
+
+        logger.debug("SimpleJob ID:{} Name:{} :Method name: {}", getName(), getId(), qstatOutput.getMethodName());
+
+        StringParameter qstatOutputS = qstatOutput.getResultParameters().getParameter("qstatOutput");
+        String statusString = parseQStatOutput(qstatOutputS.getValue());
+
+        if (!statusString.isEmpty()) {
+            fireTrigger(getBatchTrigger(statusString));
+
+        } else {
+            logger.debug("Job ID:{} Name:{} BatchID not found in qstat output");
+            if (getQstatMissFire() == 0) {
+                fireTrigger(Trigger.evDone);
+            } else {
+                logger.debug("Job ID:{} Name:{} -- QStat fire missed.Set value to: {}", getId(), getName(), getQstatMissFire() - 1);
+                setQstatMissFire(getQstatMissFire() - 1);
+            }
+        }
     }
 
-    //</editor-fold>
-
-    //<editor-fold desc="Observable interface">
     /**
-     * All the modules manager are extending the {@link Observable} class.
-     * The change in state is treated in the class which extends the {@code AbstractClass}
-     * @param moduleManager module to be observed
-     * @param newState of the module
+     * Parse the qstat output to get the status of the job in the batch system
+     * <br>If the batchID is not found in the output and it is set in the job, it means that the
+     * job has been finished running in the batch system.
+     * @param outString
+     * @return the qstat status. If not found return empty string
      */
-    @Override
-    public void update(Observable moduleManager, Object newState) {
+    private String parseQStatOutput(String outString) {
 
+        final String lineSep = System.getProperty("line.separator");
+
+        if (outString.isEmpty()) {
+            return "";
+        }
+
+        try {
+            StringParameter bathID = getParameterSet().getParameter("batchID");
+            String[] lines = outString.split(lineSep);
+            for (int i = 0; i < lines.length; i++) {
+                if (lines[i].contains(bathID.getValue())) {
+                    logger.debug("BatchID {} found in qstat for job {}",bathID.getValue(),getId());
+                    String[] fields =  lines[i].trim().split("\\s+");
+                    return fields[4];
+                }
+            }
+            return "";
+        }
+        catch (IllegalArgumentException ex) {
+            return "";
+        }
     }
-    //</editor-fold>
+
 
     /**
-     * Set status
-     * @param newStatus of the job
+     * Return the job status from the qstat string status
+     * @param statusString
+     * @return JobState status
      */
-    protected void setStatus(int newStatus) {
-        this.status = newStatus;
+    private int getBatchTrigger(String statusString) {
+        switch (statusString) {
+            case "r":
+                 return Trigger.evRunning;
+            case "qw":
+                return  Trigger.evWaiting;
+            case "d":
+                return Trigger.evDeletion;
+            case "h":
+                return Trigger.evHold;
+            case "E":
+                return Trigger.evError;
+        }
+
+        return 0;
     }
 
     /**
-     * Update job parameters from the results of a methods
-     * @param methodResult
+     * This class is used to trigger an event after the completion of the
+     * CompletableFuture. The CompletableFuture will call {@accept}.
+     * If the method has been executed successfully, the state machine will trigger
+     * the {@code okTrigger}, otherwise the {@code errorTrigger}
      */
-    protected abstract void updateParametersFromResult(MethodResult methodResult);
+    public class StageCompletion implements Consumer<Boolean> {
 
-    /**
-     * Verify if all the modules has finished
-     * @return true if all modules finished
-     */
-    protected boolean isJobFinished() {
-        return false;
+        private final Integer okTrigger;
+        private final Integer errorTrigger;
+
+        public StageCompletion(Integer okTrigger, Integer errorTrigger) {
+            this.okTrigger = okTrigger;
+            this.errorTrigger = errorTrigger;
+        }
+
+        @Override
+        public void accept(Boolean aBoolean) {
+            if (aBoolean) {
+                jobMachine.fire(okTrigger);
+            }
+            else {
+                jobMachine.fire(errorTrigger);
+            }
+        }
     }
+
+    private Parameter createTemporaryFolderParameter(UUID jobID) {
+        //create the temporary folder parameter
+        StringParameter temporaryParameter = new StringParameter("temporaryFolder","Temporary folder","internal");
+        temporaryParameter.setValue(System.getProperty("java.io.tmpdir").concat("Job_").concat(jobID.toString().substring(0,7)));
+        return temporaryParameter;
+    }
+
+
 
 }

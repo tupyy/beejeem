@@ -9,16 +9,13 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
 /**
  * Create an instance of the module based on the name of the module
  */
-public class ModuleStarter implements Runnable{
+public class ModuleLoader implements Runnable{
 
      private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -32,7 +29,7 @@ public class ModuleStarter implements Runnable{
         logger.info("Loading modules");
 
         try {
-            ClassLoader classLoader = ModuleStarter.class.getClassLoader();
+            ClassLoader classLoader = ModuleLoader.class.getClassLoader();
             InputStream fis = classLoader.getResourceAsStream("modules.xml");
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory

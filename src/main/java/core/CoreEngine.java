@@ -8,7 +8,6 @@ import core.ssh.SshFactory;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
 import core.util.TmpFileCleanup;
-import javafx.application.Preloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
  * This class implements the Core interface. It represents the main class of the app.
  * <br> It extends Observable to notify the observer when a job
  */
-public final class CoreEngine extends Observable implements Core, Observer {
+public final class CoreEngine extends AbstractCoreEngine implements Core, Observer {
 
 
     private final QStatManager qstatManager;
@@ -29,13 +28,18 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     private CreatorFactory creatorFactory = new CreatorFactory();
 
-    private transient Vector listeners;
     private SshRemoteFactory sshRemoteFactory;
 
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
 
     private final ModuleExecutor executor;
-    List<Job> jobList = new ArrayList<>();
+
+    /**
+     * Holds the jobs. The {@code Boolean} is for marking the job as deleted.
+     * When a job is deleted, it is marked as deleted and it is triggered the STOP trigger.
+     * After the job has stopped, the job is safely deleted
+     */
+    Map<Job,Boolean> jobList = new HashMap<>();
 
     //temp
     private int finishedJobs = 0;
@@ -98,75 +102,88 @@ public final class CoreEngine extends Observable implements Core, Observer {
     }
 
     @Override
-    public void addJob(Job j) throws JobException{
+    public boolean addJob(Job j) throws JobException{
         if (jobExists(j.getID())) {
             throw new JobException(JobException.JOB_EXISTS,"Job ".concat(j.getID().toString()).concat(" already exists"));
         }
 
-        jobList.add(j);
+        j.addObserver(this);
+        jobList.put(j,false);
 
-        AbstractJob aj = (AbstractJob) j;
-        aj.addObserver(this);
-
-        fireCoreEvent(CoreEventType.JOB_CREATED, aj.getID());
-        logger.info("Job created: {}",aj.getName());
+        logger.info("Job created: {}",j.getName());
+        return true;
     }
 
     @Override
-    public void deleteJob(UUID id) throws JobException {
+    public boolean deleteJob(UUID id) {
+
         Job j = getJob(id);
-        j.delete();
+        if (isJobRunning(j)) {
+            try {
+                markJobForDeletion(j);
+                j.stop();
+            } catch (IllegalArgumentException ex) {
+               return false;
+            }
+        } else {
+            logger.info("Delete job {}", j.getID());
+            jobList.remove(j);
+        }
+
+        return true;
     }
 
     @Override
-    public void deleteJobs(List<UUID> ids) throws JobException {
-        for (UUID id: ids) {
-            try {
-                Job j = getJob(id);
-                getGarbageCollector().registerJobForDeletion(j.getID(),j.getParameter("batchID"));
-            }
-            catch (IllegalArgumentException ex) {
-                ;
-            }
-            finally {
-                getJob(id).delete();
-            }
-        }
-    }
+    public void stopJob(UUID id) {
+        Job j = getJob(id);
 
-    public void stopJob(UUID jobId) {
-        Job job = getJob(jobId);
-
-        if (job !=null) {
-            job.stop();
+        if (j != null) {
+            j.stop();
         }
     }
 
     @Override
     public Job getJob(UUID id) {
-        for (Job j : jobList) {
-            if (j.getID().equals(id)) {
-                return j;
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue() ) {
+                if (entry.getKey().getID().equals(id)) {
+                    return entry.getKey();
+                }
             }
         }
         return null;
     }
 
     @Override
-    public void executeJob(UUID id,JobExecutionProgress progress) {
+    public void executeJob(UUID id) {
 
 //        //check if the ssh client is connected before executing jobs
         if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
             qstatManager.start();
             Job job = getJob(id);
             try {
-                job.execute(progress);
+                if (job.getState() == JobState.READY) {
+                    job.execute();
+                }
+                else if (job.getState() == JobState.STOP || job.getState() == JobState.ERROR || job.getState() == JobState.FINISHED) {
+                    job.restart();
+                }
             } catch (JobException e) {
                 e.printStackTrace();
             }
         }
         else {
-            fireCoreEvent(CoreEventType.SSH_CONNECTION_ERROR,UUID.randomUUID());
+            fireCoreEvent(CoreEvent.SSH_CONNECTION_ERROR);
+        }
+    }
+
+    @Override
+    public void executeAll() {
+
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue() ) {
+                executeJob(entry.getKey().getID());
+            }
         }
     }
 
@@ -177,82 +194,64 @@ public final class CoreEngine extends Observable implements Core, Observer {
 
     @Override
     public int count() {
-        return jobList.size();
+        int countJob = 0;
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue() ) {
+                countJob++;
+            }
+        }
+
+        return countJob;
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        SimpleJob j = (SimpleJob) o;
+        Job j = (Job) o;
 
-        switch (j.getStatus()) {
+             switch (j.getState()) {
 
-            case JobState.DELETED:
-                jobList.remove(j);
-                fireCoreEvent(CoreEventType.JOB_DELETED, j.getID());
-                break;
+                case JobState.FINISHED:
+                    finishedJobs++;
+                    logger.info("Finished jobs: {}", finishedJobs);
+                    break;
 
-            case JobState.FINISHED:
-                finishedJobs++;
-                logger.info("Finished jobs: {}", finishedJobs);
-                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
-                break;
+                case JobState.STOP:
+                    try {
+//                        garbageCollector.registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
+                        if (isMarkedForDeletion(j)) {
+                            logger.info("Job {} stopped. It is marked for deletion");
+                            jobList.remove(j);
+                            return;
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        ;
+                    }
+            }
 
-            case JobState.STOP:
-                try {
-                    garbageCollector.registerJobForDeletion(j.getID(), j.getParameter("batchID"));
-                }
-                catch (IllegalArgumentException ex) {
-                    ;
-                }
-            default:
-                fireCoreEvent(CoreEventType.JOB_UPDATED, j.getID());
-        }
+        fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
+
     }
 
     @Override
     public ArrayList<UUID> getJobIDList() {
         ArrayList<UUID> idList = new ArrayList<>();
 
-        for (Job job: jobList) {
-            idList.add(job.getID());
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if ( !entry.getValue()) {
+                idList.add(entry.getKey().getID());
+            }
         }
 
         return idList;
     }
 
-    public GarbageCollector getGarbageCollector() {
-        return garbageCollector;
-    }
-
     @Override
     public void shutdown() {
+        qstatManager.stop();
         garbageCollector.shutdown();
         executor.shutDownExecutor();
     }
 
-    /**
-     * Register a listener for JobEvents
-     */
-    @Override
-    synchronized public void addCoreEventListener(CoreListener l) {
-        if (listeners == null) {
-            listeners = new Vector();
-        }
-        listeners.addElement(l);
-    }
-
-    /**
-     * Remove a listener for JobEvents
-     */
-    @Override
-    synchronized public void removeCoreEventListener(CoreListener l) {
-        if (listeners == null) {
-            listeners = new Vector();
-        }
-        listeners.removeElement(l);
-    }
-
-    //</editor-fold>
 
     /**
      * Return true if the jobID exists
@@ -261,42 +260,72 @@ public final class CoreEngine extends Observable implements Core, Observer {
      * @return
      */
     public boolean jobExists(UUID jobID) {
-        for (Job job : jobList) {
-            if (job.getID().equals(jobID)) {
-                return true;
-            }
+        Job j = getJob(jobID);
+
+        if (j != null) {
+            return true;
         }
 
         return false;
     }
 
+    public GarbageCollector getGarbageCollector() {
+        return garbageCollector;
+    }
+
+    private boolean isJobRunning(Job j) {
+        int state = j.getState();
+
+        if (state == JobState.READY ||
+                state == JobState.STOP ||
+                state == JobState.ERROR
+                || state == JobState.FINISHED) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
-     * Fire JobEvent to all registered listeners
+     * Return true if the job has been marked for deletion
+     * @param job
+     * @return
      */
-    protected void fireCoreEvent(CoreEventType action, UUID id) {
-        // if we have no listeners, do nothing...
-        if (listeners != null && !listeners.isEmpty()) {
-            // create the event object to send
-            CoreEvent event =
-                    new CoreEvent(this, action, id);
+    private boolean isMarkedForDeletion(Job job) {
 
-            // make a copy of the listener list in case
-            //   anyone adds/removes listeners
-            Vector targets;
-            synchronized (this) {
-                targets = (Vector) listeners.clone();
-            }
+        if (jobList.containsKey(job)) {
+            return jobList.get(job);
+        }
 
-            // walk through the listener list and
-            //   call the sunMoved methods in each
-            Enumeration e = targets.elements();
-            while (e.hasMoreElements()) {
-                CoreListener l = (CoreListener) e.nextElement();
-                l.coreEvent(event);
+        return false;
+    }
+
+    private void markJobForDeletion(Job job) {
+
+        if (jobList.containsKey(job)) {
+            logger.info("Marking job {} for deletion",job.getID());
+            jobList.put(job,true);
+        }
+
+    }
+
+    /**
+     * Get the job even is is marked for deletion
+     * @param id
+     * @return
+     */
+    private Job getJobInternally(UUID id) {
+        ArrayList<UUID> idList = new ArrayList<>();
+
+        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
+            if (entry.getKey().equals(id)) {
+               return entry.getKey();
             }
         }
+
+        return null;
     }
+
 
 
 

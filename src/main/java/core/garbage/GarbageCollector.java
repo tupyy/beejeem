@@ -49,44 +49,6 @@ public final class GarbageCollector {
     }
 
     /**
-     * Get the output from qstat module and compare with the running job ids.
-     * If a id is not in the running job ids, remove it from batch system
-     * @param qStatOutput
-     */
-    public void setQStatOutput(MethodResult qStatOutput) {
-
-        if (qStatOutput.getExitCode() == 0) {
-
-            Thread newThread = new Thread(() -> {
-                Parameter qstatOutputP = qStatOutput.getResultParameters().getParameter("qstatOutput");
-
-                List<String> batchIDList = parseQStatOutput(qstatOutputP.getValue().toString());
-                List<UUID> jobListID = coreEngine.getJobIDList();
-
-                for (String batchID : batchIDList) {
-                    boolean batchFound = false;
-                    for (UUID jobID : jobListID) {
-                        try {
-                            Parameter batchIDParameter = coreEngine.getJob(jobID).getParameter("batchID");
-                            if (batchID.equals(batchIDParameter.getValue().toString())) {
-                                batchFound = true;
-                                break;
-                            }
-                        } catch (IllegalArgumentException ex) {
-                            ;
-                        }
-                    }
-
-                    if (!batchFound) {
-                        logger.debug("Job with batchID {} will be deleted", batchID);
-                        registerJobForDeletion(UUID.randomUUID(), batchID);
-                    }
-                }
-            });
-            newThread.start();
-        }
-    }
-    /**
      * Register a job for deletion.
      * @param batchID
      */
@@ -109,29 +71,6 @@ public final class GarbageCollector {
         logger.debug("Error removing job {} from batch system: {}",jobID,errorMessage);
     }
 
-    /**
-     * Parse the qstat output to get the status of the job in the batch system
-     * <br>If the batchID is not found in the output and it is set in the job, it means that the
-     * job has been finished running in the batch system.
-     * @param outString
-     * @return the qstat status. If not found return empty string
-     */
-    private List<String> parseQStatOutput(String outString) {
-        List<String> batchIDs = new ArrayList<>();
-
-        final Pattern pattern = Pattern.compile("(\\d{6})");
-
-        if (outString.isEmpty()) {
-            return batchIDs;
-        }
-
-        Matcher m = pattern.matcher(outString);
-        while (m.find()) {
-            batchIDs.add(m.group());
-        }
-
-        return batchIDs;
-    }
 
     public class JobEntry {
 

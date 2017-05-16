@@ -25,4 +25,9 @@ public interface SshListener {
      */
     void authenticated();
 
+    /**
+     * Disconnected
+     */
+    void disconnected();
+
 }
