@@ -1,128 +1,191 @@
-"2017-05-17 14:48:34 INFOS core.util.TmpFileCleanup run Delete the temporary folders
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader loadPlugins Plugin file: C:\Users\tctupangiu\Documents\100_H\Projects\plugins\a400m-1.2.jar
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader loadPlugins Plugin file: C:\Users\tctupangiu\Documents\100_H\Projects\plugins\defaultPlugin-1.0-SNAPSHOT.jar
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader loadPlugins Plugin file: C:\Users\tctupangiu\Documents\100_H\Projects\plugins\stesSpectre-1.3-SNAPSHOT.jar
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: a400m.modules.A400MPreprocessing
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: a400m.modules.A400MProcessing
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: a400m.modules.A400MPostprocessing
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader loadPlugins Plugin loaded: core.plugin.A400MPlugin
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: basicPlugin.modules.BasicPreprocessingModule
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader loadPlugins Plugin loaded: core.plugin.BasicPlugin
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: stesSpectre.modules.StesSpectrePreprocessingModule
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: stesSpectre.modules.StesSpectreProcessingModule
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader initializeModules Initialized module found: stesSpectre.modules.StesSpectrePostprocessingModule
-""2017-05-17 14:48:34 INFOS core.plugin.PluginLoader loadPlugins Plugin loaded: core.plugin.StesSpectrePlugin
-""2017-05-17 14:48:34 INFOS core.creator.CreatorFactory createCreatorList Creator loaded: a400m.creator.A400MSpectreCreator
-""2017-05-17 14:48:34 INFOS core.creator.CreatorFactory createCreatorList Creator loaded: basicPlugin.creator.BasicCreator
-""2017-05-17 14:48:34 INFOS core.creator.CreatorFactory createCreatorList Creator loaded: stesSpectre.creator.StesSpectreCreator
-""2017-05-17 14:48:34 INFOS core.ssh.SshRemoteFactory$1 verifyHost The connected host's key (ssh-dss) is
-""2017-05-17 14:48:34 INFOS core.ssh.SshRemoteFactory$1 verifyHost 2e:e3:e2:d8:1c:22:8c:81:4b:62:88:17:94:ac:5f:91
-""2017-05-17 14:48:34 INFOS main.JStesCore connected SSH client connected
-""2017-05-17 14:48:34 INFOS main.JStesCore authenticated SSH client authenticated
-""2017-05-17 14:48:34 PRÉCIS core.ssh.SshRemoteFactory connect Main session created
-""2017-05-17 14:48:41 INFOS core.CoreEngine addJob Job created: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS
-""2017-05-17 14:48:42 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1000
-""2017-05-17 14:48:42 INFOS stesSpectre.modules.StesSpectrePreprocessingModule runModule Module StesSpectrePreprocessingModule Method PreprocessingFileMethod created for job 4e621398-7fad-4de3-b944-5865aeb8de6b
-""2017-05-17 14:48:43 INFOS core.modules.preprocessing.PreprocessMethod createJobFile Method ok.Job file created: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.job
-""2017-05-17 14:48:43 INFOS stesSpectre.modules.StesSpectrePreprocessingMethod execute Creating code file for: 4e621398-7fad-4de3-b944-5865aeb8de6b
-""2017-05-17 14:48:43 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1001
-""2017-05-17 14:48:43 INFOS stesSpectre.modules.StesSpectreProcessingModule runModule Module StesSpectreProcessingModule Method StesSpectreProcessingMethod created for job 4e621398-7fad-4de3-b944-5865aeb8de6b
-""2017-05-17 14:48:43 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1001
-""2017-05-17 14:48:43 PRÉCIS stesSpectre.modules.StesSpectreProcessingMethod execute Job: 4e621398-7fad-4de3-b944-5865aeb8de6b Cd into destinationFolder /home/tupangiu/tmp
-""2017-05-17 14:48:43 PRÉCIS stesSpectre.modules.StesSpectreProcessingMethod execute Executing command for ID: 4e621398-7fad-4de3-b944-5865aeb8de6b
-""2017-05-17 14:48:43 PRÉCIS core.modules.processing.SimpleSshMethod submitJob Executing command: . /opt/sge/default/common/settings.sh;cd /home/tupangiu/tmp;/cae/aif/04310/SERIAL_PYLON/09_SPECTRES/runIsami.sh -l /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.job /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.py
+"2017-05-17 15:28:18 INFOS core.util.TmpFileCleanup run Delete the temporary folders
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader loadPlugins Plugin file: C:\Users\tctupangiu\Documents\100_H\Projects\plugins\a400m-1.2.jar
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader loadPlugins Plugin file: C:\Users\tctupangiu\Documents\100_H\Projects\plugins\defaultPlugin-1.0-SNAPSHOT.jar
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader loadPlugins Plugin file: C:\Users\tctupangiu\Documents\100_H\Projects\plugins\stesSpectre-1.3-SNAPSHOT.jar
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: a400m.modules.A400MPreprocessing
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: a400m.modules.A400MProcessing
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: a400m.modules.A400MPostprocessing
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader loadPlugins Plugin loaded: core.plugin.A400MPlugin
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: basicPlugin.modules.BasicPreprocessingModule
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader loadPlugins Plugin loaded: core.plugin.BasicPlugin
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: stesSpectre.modules.StesSpectrePreprocessingModule
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: stesSpectre.modules.StesSpectreProcessingModule
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader initializeModules Initialized module found: stesSpectre.modules.StesSpectrePostprocessingModule
+""2017-05-17 15:28:19 INFOS core.plugin.PluginLoader loadPlugins Plugin loaded: core.plugin.StesSpectrePlugin
+""2017-05-17 15:28:19 INFOS core.creator.CreatorFactory createCreatorList Creator loaded: a400m.creator.A400MSpectreCreator
+""2017-05-17 15:28:19 INFOS core.creator.CreatorFactory createCreatorList Creator loaded: basicPlugin.creator.BasicCreator
+""2017-05-17 15:28:19 INFOS core.creator.CreatorFactory createCreatorList Creator loaded: stesSpectre.creator.StesSpectreCreator
+""2017-05-17 15:28:19 INFOS core.ssh.SshRemoteFactory$1 verifyHost The connected host's key (ssh-dss) is
+""2017-05-17 15:28:19 INFOS core.ssh.SshRemoteFactory$1 verifyHost 2e:e3:e2:d8:1c:22:8c:81:4b:62:88:17:94:ac:5f:91
+""2017-05-17 15:28:19 INFOS main.JStesCore connected SSH client connected
+""2017-05-17 15:28:19 INFOS main.JStesCore authenticated SSH client authenticated
+""2017-05-17 15:28:19 PRÉCIS core.ssh.SshRemoteFactory connect Main session created
+""2017-05-17 15:28:26 INFOS core.CoreEngine addJob Job created: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS
+""2017-05-17 15:28:27 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1000
+""2017-05-17 15:28:27 INFOS stesSpectre.modules.StesSpectrePreprocessingModule runModule Module StesSpectrePreprocessingModule Method PreprocessingFileMethod created for job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a
+""2017-05-17 15:28:27 INFOS core.modules.preprocessing.PreprocessMethod createJobFile Method ok.Job file created: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.job
+""2017-05-17 15:28:27 INFOS stesSpectre.modules.StesSpectrePreprocessingMethod execute Creating code file for: 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a
+""2017-05-17 15:28:27 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1001
+""2017-05-17 15:28:27 INFOS stesSpectre.modules.StesSpectreProcessingModule runModule Module StesSpectreProcessingModule Method StesSpectreProcessingMethod created for job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a
+""2017-05-17 15:28:27 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1001
+""2017-05-17 15:28:27 PRÉCIS stesSpectre.modules.StesSpectreProcessingMethod execute Job: 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a Cd into destinationFolder /home/tupangiu/tmp
+""2017-05-17 15:28:27 PRÉCIS stesSpectre.modules.StesSpectreProcessingMethod execute Executing command for ID: 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a
+""2017-05-17 15:28:27 PRÉCIS core.modules.processing.SimpleSshMethod submitJob Executing command: . /opt/sge/default/common/settings.sh;cd /home/tupangiu/tmp;/cae/aif/04310/SERIAL_PYLON/09_SPECTRES/runIsami.sh -l /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.job /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.py
 
-""2017-05-17 14:48:44 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: Your job 945932 ("LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse") has been submitted
+""2017-05-17 15:28:28 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: Your job 946024 ("LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse") has been submitted
 
-""2017-05-17 14:48:44 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectreProcessingMethod Parameter updated: batchID
-""2017-05-17 14:48:44 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectreProcessingMethod New parameter found: batchID
-""2017-05-17 14:48:44 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1002
-""2017-05-17 14:48:44 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1002
-""2017-05-17 14:48:53 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
+""2017-05-17 15:28:28 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectreProcessingMethod Parameter updated: batchID
+""2017-05-17 15:28:28 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectreProcessingMethod New parameter found: batchID
+""2017-05-17 15:28:28 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1002
+""2017-05-17 15:28:28 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1002
+""2017-05-17 15:28:37 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
 -----------------------------------------------------------------------------------------------------------------
- 945932 0.60000 LR-SSI-74_ tupangiu     r     05/17/2017 14:43:44 isami_day.q@aec-afr-cal-06         1        
+ 946024 0.10000 LR-SSI-74_ tupangiu     r     05/17/2017 15:23:29 isami_day.q@aec-afr-cal-06         1        
 
-""2017-05-17 14:48:53 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:48:53 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 945932 found in qstat for job f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31
-""2017-05-17 14:48:53 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
-""2017-05-17 14:49:03 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
+""2017-05-17 15:28:37 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:28:37 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 946024 found in qstat for job a7a99932-0f43-4bff-bb59-ca2e4be10489
+""2017-05-17 15:28:37 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
+""2017-05-17 15:28:47 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
 -----------------------------------------------------------------------------------------------------------------
- 945932 0.60000 LR-SSI-74_ tupangiu     r     05/17/2017 14:43:44 isami_day.q@aec-afr-cal-06         1        
+ 946024 0.10000 LR-SSI-74_ tupangiu     r     05/17/2017 15:23:29 isami_day.q@aec-afr-cal-06         1        
 
-""2017-05-17 14:49:03 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:49:03 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 945932 found in qstat for job f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31
-""2017-05-17 14:49:03 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
-""2017-05-17 14:49:13 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
+""2017-05-17 15:28:47 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:28:47 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 946024 found in qstat for job a7a99932-0f43-4bff-bb59-ca2e4be10489
+""2017-05-17 15:28:47 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
+""2017-05-17 15:28:57 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
 -----------------------------------------------------------------------------------------------------------------
- 945932 0.60000 LR-SSI-74_ tupangiu     r     05/17/2017 14:43:44 isami_day.q@aec-afr-cal-06         1        
+ 946024 0.10000 LR-SSI-74_ tupangiu     r     05/17/2017 15:23:29 isami_day.q@aec-afr-cal-06         1        
 
-""2017-05-17 14:49:13 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:49:13 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 945932 found in qstat for job f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31
-""2017-05-17 14:49:13 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
-""2017-05-17 14:49:23 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
+""2017-05-17 15:28:57 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:28:57 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 946024 found in qstat for job a7a99932-0f43-4bff-bb59-ca2e4be10489
+""2017-05-17 15:28:57 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
+""2017-05-17 15:29:07 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
 -----------------------------------------------------------------------------------------------------------------
- 945932 0.60000 LR-SSI-74_ tupangiu     r     05/17/2017 14:43:44 isami_day.q@aec-afr-cal-06         1        
+ 946024 0.10000 LR-SSI-74_ tupangiu     r     05/17/2017 15:23:29 isami_day.q@aec-afr-cal-06         1        
 
-""2017-05-17 14:49:23 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:49:23 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 945932 found in qstat for job f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31
-""2017-05-17 14:49:23 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
-""2017-05-17 14:49:33 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
+""2017-05-17 15:29:07 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:29:07 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 946024 found in qstat for job a7a99932-0f43-4bff-bb59-ca2e4be10489
+""2017-05-17 15:29:07 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
+""2017-05-17 15:29:17 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID 
 -----------------------------------------------------------------------------------------------------------------
- 945932 0.60000 LR-SSI-74_ tupangiu     r     05/17/2017 14:43:44 isami_day.q@aec-afr-cal-06         1        
+ 946024 0.10000 LR-SSI-74_ tupangiu     r     05/17/2017 15:23:29 isami_day.q@aec-afr-cal-06         1        
 
-""2017-05-17 14:49:33 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:49:33 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 945932 found in qstat for job f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31
-""2017-05-17 14:49:33 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
-""2017-05-17 14:49:43 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: 
-""2017-05-17 14:49:43 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:49:43 PRÉCIS core.job.AbstractJob consumeQStatOutput Job ID:{} Name:{} BatchID not found in qstat output
-""2017-05-17 14:49:43 PRÉCIS core.job.AbstractJob consumeQStatOutput Job ID:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 Name:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS -- QStat fire missed.Set value to: 0
-""2017-05-17 14:49:53 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: 
-""2017-05-17 14:49:53 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31 :Method name: QStatMethod
-""2017-05-17 14:49:53 PRÉCIS core.job.AbstractJob consumeQStatOutput Job ID:{} Name:{} BatchID not found in qstat output
-""2017-05-17 14:49:53 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2006
-""2017-05-17 14:49:53 INFOS stesSpectre.modules.StesSpectrePostprocessingModule runModule Module StesSpectrePostprocessingModule Method StesSpectrePostprocessingMethod created for job 4e621398-7fad-4de3-b944-5865aeb8de6b
-""2017-05-17 14:49:53 INFOS core.modules.postprocessing.PostprocessingMethod getBatchName Batch name LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o945932
-""2017-05-17 14:49:53 INFOS stesSpectre.modules.StesSpectrePostprocessingMethod execute get param
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o945932 to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o945932
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o945932 downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS stesSpectre.modules.StesSpectrePostprocessingMethod execute Job: 4e621398-7fad-4de3-b944-5865aeb8de6b Batch file OK
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html downloaded to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm downloaded to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_f44f1a2
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 4e621398-7fad-4de3-b944-5865aeb8de6b: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\tctupangiu\Desktop
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod New parameter found: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod New parameter found: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod New parameter found: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
-""2017-05-17 14:49:53 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
-""2017-05-17 14:49:53 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1006
-""2017-05-17 14:49:53 INFOS core.CoreEngine update Finished jobs: 1
-""2017-05-17 14:49:53 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1006
-""2017-05-17 14:49:55 INFOS gui.jobinfo.WatchServiceRunnable readFileContent ReadFileContent return size: 328702
-""2017-05-17 14:49:55 INFOS gui.jobinfo.WatchServiceRunnable processFileContent File content size 328702
-""2017-05-17 14:50:03 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: 
-""2017-05-17 14:50:27 INFOS core.CoreEngine deleteJob Delete job f44f1a2e-a76c-47b6-b1e1-bbc31cdfaf31
-""2017-05-17 14:50:28 INFOS gui.mainview.statusBar.StatusBarController onCoreEvent Popup closing..
-""2017-05-17 14:50:28 PRÉCIS core.garbage.GarbageCollector shutdown Shutting down the garbage collector
-""2017-05-17 14:50:28 INFOS core.tasks.ModuleExecutor shutDownExecutor Shutdown the executors..
-""2017-05-17 14:50:28 INFOS core.tasks.ModuleExecutor shutDownExecutor Remaining tasks in local executor: 0
-""2017-05-17 14:50:28 INFOS core.tasks.ModuleExecutor shutDownExecutor Remaining tasks in ssh executor: 0
-""2017-05-17 14:50:28 INFOS core.ssh.SshRemoteFactory disconnect SSH disconnected
-""2017-05-17 14:50:28 INFOS main.JStesCore disconnected SSH client authenticated
+""2017-05-17 15:29:17 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:29:17 PRÉCIS core.job.AbstractJob parseQStatOutput BatchID 946024 found in qstat for job a7a99932-0f43-4bff-bb59-ca2e4be10489
+""2017-05-17 15:29:17 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2000
+""2017-05-17 15:29:27 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: 
+""2017-05-17 15:29:27 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:29:27 PRÉCIS core.job.AbstractJob consumeQStatOutput Job ID:{} Name:{} BatchID not found in qstat output
+""2017-05-17 15:29:27 PRÉCIS core.job.AbstractJob consumeQStatOutput Job ID:a7a99932-0f43-4bff-bb59-ca2e4be10489 Name:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS -- QStat fire missed.Set value to: 0
+""2017-05-17 15:29:37 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: 
+""2017-05-17 15:29:37 PRÉCIS core.job.AbstractJob consumeQStatOutput SimpleJob ID:LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS Name:a7a99932-0f43-4bff-bb59-ca2e4be10489 :Method name: QStatMethod
+""2017-05-17 15:29:37 PRÉCIS core.job.AbstractJob consumeQStatOutput Job ID:{} Name:{} BatchID not found in qstat output
+""2017-05-17 15:29:37 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 2006
+""2017-05-17 15:29:37 INFOS stesSpectre.modules.StesSpectrePostprocessingModule runModule Module StesSpectrePostprocessingModule Method StesSpectrePostprocessingMethod created for job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a
+""2017-05-17 15:29:37 INFOS core.modules.postprocessing.PostprocessingMethod getBatchName Batch name LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:37 INFOS stesSpectre.modules.StesSpectrePostprocessingMethod execute get param
+""2017-05-17 15:29:37 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024 to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024 content size: 0
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:37 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 2 size 0
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:37 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024 content size: 328702
+""2017-05-17 15:29:37 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 2 size 328702
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024 downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 PRÉCIS stesSpectre.modules.StesSpectrePostprocessingMethod execute Job: 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a Batch file OK
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html content size: 0
+""2017-05-17 15:29:38 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 3 size 0
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024 content size: 328702
+""2017-05-17 15:29:38 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 2 size 328702
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html content size: 16776
+""2017-05-17 15:29:38 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 3 size 16776
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html content size: 16776
+""2017-05-17 15:29:38 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 3 size 16776
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html downloaded to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html content size: 16776
+""2017-05-17 15:29:38 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 3 size 16776
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable lambda$processFileContent$0 File LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_medium_TF_tse.o946024 content size: 328702
+""2017-05-17 15:29:38 INFOS gui.jobinfo.JobInfo lambda$startWatchService$0 New entry: Filetype 2 size 328702
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm downloaded to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Changed detected file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Process file: C:\Users\TCTUPA~1\AppData\Local\Temp\Job_a7a9993\LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: Downloading file: /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 INFOS gui.jobinfo.WatchServiceRunnable run Key valid
+""2017-05-17 15:29:38 PRÉCIS core.modules.postprocessing.PostprocessingMethod downloadFile Job 04142d6c-4a4a-4310-8b4e-5d0bfde1d63a: File /home/tupangiu/tmp/LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace downloaded to C:\Users\tctupangiu\Desktop
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod New parameter found: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.html
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod New parameter found: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS.czm
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod New parameter found: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS core.job.DefaultJob$FutureCallback apply Method StesSpectrePostprocessingMethod Parameter updated: LR-SSI-74_FB_Y_Z_2__A330CeoRR__PyW--SR--MS_HIST1_N.trace
+""2017-05-17 15:29:38 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1006
+""2017-05-17 15:29:38 INFOS core.CoreEngine update Finished jobs: 1
+""2017-05-17 15:29:38 INFOS com.github.oxo42.stateless4j.StateMachine publicFire Firing 1006
+""2017-05-17 15:29:47 PRÉCIS core.modules.SshSessionMethod executeSessionCommand Output command: 
+""2017-05-17 15:30:39 INFOS gui.mainview.statusBar.StatusBarController onCoreEvent Popup closing..
+""2017-05-17 15:30:39 PRÉCIS core.garbage.GarbageCollector shutdown Shutting down the garbage collector
+""2017-05-17 15:30:39 INFOS core.tasks.ModuleExecutor shutDownExecutor Shutdown the executors..
+""2017-05-17 15:30:39 INFOS core.tasks.ModuleExecutor shutDownExecutor Remaining tasks in local executor: 0
+""2017-05-17 15:30:39 INFOS core.tasks.ModuleExecutor shutDownExecutor Remaining tasks in ssh executor: 0
+""2017-05-17 15:30:39 INFOS core.ssh.SshRemoteFactory disconnect SSH disconnected
+""2017-05-17 15:30:39 INFOS main.JStesCore disconnected SSH client authenticated
 "

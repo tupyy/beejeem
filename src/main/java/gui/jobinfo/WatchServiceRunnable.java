@@ -44,50 +44,50 @@ public class WatchServiceRunnable implements Runnable {
 
     @Override
     public void run() {
-// wait for key to be signalled
-        WatchKey key;
-        try {
-            key = watchService.take();
-        } catch (InterruptedException x) {
-            return;
-        }
 
-        for (WatchEvent<?> event : key.pollEvents()) {
-            @SuppressWarnings("rawtypes")
-            WatchEvent.Kind kind = event.kind();
+        while(true) {
+            // wait for key to be signalled
+            WatchKey key;
+            try {
+                key = watchService.take();
+            } catch (InterruptedException x) {
+                return;
+            }
 
-            // Context for directory entry event is the file name of entry
-            @SuppressWarnings("unchecked")
-            Path name = ((WatchEvent<Path>)event).context();
-            Path child = folderToWatch.resolve(name);
+            for (WatchEvent<?> event : key.pollEvents()) {
+                @SuppressWarnings("rawtypes")
+                WatchEvent.Kind kind = event.kind();
+
+                // Context for directory entry event is the file name of entry
+                @SuppressWarnings("unchecked")
+                Path name = ((WatchEvent<Path>) event).context();
+                Path child = folderToWatch.resolve(name);
+                logger.info("Changed detected file: {}", child.toString());
 
 
-            // if directory is created, and watching recursively, then register it and its sub-directories
-            if (kind == ENTRY_CREATE || kind == ENTRY_MODIFY) {
-                if (Files.isRegularFile(child)) {
-                    logger.info("Process file: {}",child.toString());
-
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        break;
+                // if directory is created, and watching recursively, then register it and its sub-directories
+                if (kind == ENTRY_CREATE || kind == ENTRY_MODIFY) {
+                    if (Files.isRegularFile(child)) {
+                        logger.info("Process file: {}", child.toString());
+                        processFileContent(child.toFile());
                     }
-                    processFileContent(child.toFile());
-                }
-            }
-            else if (kind == ENTRY_DELETE) {
-                if (Files.isRegularFile(child)) {
-                    Map<Integer,String> entry = new HashMap<Integer, String>();
-                    entry.put(getFileType(child.toString()),"");
-                    outputQueue.add(entry);
+                } else if (kind == ENTRY_DELETE) {
+                    if (Files.isRegularFile(child)) {
+                        Map<Integer, String> entry = new HashMap<Integer, String>();
+                        entry.put(getFileType(child.toString()), "");
+                        outputQueue.add(entry);
+                    }
+
                 }
 
-            }
-
-            // reset key
-            boolean valid = key.reset();
-            if (!valid) {
-                break;
+                // reset key
+                boolean valid = key.reset();
+                if (!valid) {
+                    logger.info("Watch key no longer valid");
+                    break;
+                } else {
+                    logger.info("Key valid");
+                }
             }
 
         }
@@ -130,37 +130,15 @@ public class WatchServiceRunnable implements Runnable {
 
         int fileType = getFileType(file.getAbsolutePath());
         if (fileType != 0) {
-            Map<Integer,String> entry = new HashMap<Integer, String>();
-            String filecontent = readFileContent(file);
-            logger.info("File content size {}",filecontent.length());
-            entry.put(fileType,filecontent);
-            outputQueue.add(entry);
+            CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(new ReadFileTask(file));
+            completableFuture.thenAccept(fileContent -> {
+                Map<Integer,String> entry = new HashMap<Integer, String>();
+                entry.put(fileType,fileContent);
+                logger.info("File {} content size: {}",file.getName(),fileContent.length());
+                outputQueue.add(entry);
+            });
         }
 
-    }
-
-    private synchronized String readFileContent(File file) {
-        StringBuilder fileContent = new StringBuilder();
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-
-            String line;
-            while ( (line = reader.readLine()) != null ) {
-                 fileContent.append(line).append("\n");
-            }
-
-            logger.info("ReadFileContent return size: {}",fileContent.length());
-            return fileContent.toString();
-
-        } catch (FileNotFoundException e) {
-            logger.info(e.getMessage());
-        }
-        catch (IOException ex) {
-            logger.info(ex.getMessage());
-        }
-
-        return "";
     }
 
 }

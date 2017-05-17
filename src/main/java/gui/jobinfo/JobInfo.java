@@ -95,14 +95,16 @@ public class JobInfo {
                 try {
                     while (true) {
                         Map<Integer, String> entry = outputQueue.take();
-                        for (Map.Entry<Integer, String> item : entry.entrySet()) {
-                            jobInfoController.accept(item.getKey(), item.getValue());
+                         for (Map.Entry<Integer, String> item : entry.entrySet()) {
+                             logger.info("New entry: Filetype {} size {}",item.getKey(),item.getValue().length());
+                             jobInfoController.accept(item.getKey(), item.getValue());
                         }
                     }
                 } catch (InterruptedException e) {
                     return;
                 }
             });
+            readQueueThread.start();
         }
         catch(IOException ex) {
             logger.error("JobInfo: Cannot start WatchServiceRunnable Exception: {}",ex.getMessage());

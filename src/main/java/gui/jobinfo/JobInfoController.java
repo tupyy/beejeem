@@ -1,5 +1,6 @@
 package gui.jobinfo;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -47,17 +48,21 @@ public class JobInfoController implements Initializable{
      * @param s
      */
     public void accept(int fileType, String s) {
-        switch (fileType) {
-            case CODE_FILE:
-                codeTextArea.replaceText(0,0,s);
-                break;
-            case BATCH_FILE:
-                batchFileTextArea.replaceText(0,0,s);
-                break;
-            case HTML_FILE:
-                resultWebArea.getEngine().loadContent(s);
-                break;
-        }
+
+        Platform.runLater(() -> {
+            switch (fileType) {
+                case CODE_FILE:
+                    codeTextArea.replaceText(0,0,s);
+                    break;
+                case BATCH_FILE:
+                    batchFileTextArea.replaceText(0,0,s);
+                    break;
+                case HTML_FILE:
+                    resultWebArea.getEngine().loadContent(s);
+                    break;
+            }
+        });
+
     }
 
     /**
