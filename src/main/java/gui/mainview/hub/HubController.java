@@ -284,7 +284,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
                 Scene scene = new Scene(jobInfo.getRootPane());
 
                 jobInfoDialog.setScene(scene);
-                jobInfoDialog.setTitle("Job info".concat(job.getName()));
+                jobInfoDialog.setTitle("Job ".concat(job.getName()));
                 jobInfoDialog.setResizable(true);
 
                 jobInfoDialog.initOwner((Stage) getHubTable().getScene().getWindow());

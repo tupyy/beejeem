@@ -60,6 +60,7 @@ public class JobInfo {
 
             rootPane = loader.load();
             jobInfoController = loader.<JobInfoController>getController();
+            jobInfoController.setParent(this);
 
         } catch (IOException e) {
             logger.error("Jobinfo Error loading fxml file: {}",e.getMessage());
@@ -77,10 +78,12 @@ public class JobInfo {
     public void close() {
 
         if (readQueueThread != null) {
+            logger.info("Shutting down readQueueThread");
             readQueueThread.interrupt();
         }
 
         if (watchServiceThread != null) {
+            logger.info("Shutting down watchServiceThread");
             watchServiceThread.interrupt();
         }
     }
