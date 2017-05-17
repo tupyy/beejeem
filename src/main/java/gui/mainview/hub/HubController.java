@@ -30,8 +30,10 @@ import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 import static main.JStesCore.getCoreEngine;
@@ -276,8 +278,9 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
     private void showJobInfoDialog(Job job) {
 
-        Stage jobInfoDialog = new Stage();
-             JobInfo jobInfo = new JobInfo(job);
+       if (Files.isDirectory( (new File(job.getParameters().getParameter("temporaryFolder").getValue().toString())).toPath())) {
+            Stage jobInfoDialog = new Stage();
+            JobInfo jobInfo = new JobInfo(job);
             Pane root = jobInfo.getRootPane();
 
             if (root != null) {
@@ -293,6 +296,13 @@ public class HubController extends AbstractComponentEventHandler implements Init
                 jobInfoDialog.setHeight(700);
                 jobInfoDialog.showAndWait();
             }
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Job info");
+            alert.setHeaderText("The temporary folder is not created. Please start the job and try again");
+            alert.show();
+        }
     }
 
     /**

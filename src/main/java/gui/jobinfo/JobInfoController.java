@@ -55,6 +55,7 @@ public class JobInfoController implements Initializable{
                     codeTextArea.replaceText(0,0,s);
                     break;
                 case BATCH_FILE:
+                    batchFileTextArea.clear();
                     batchFileTextArea.replaceText(0,0,s);
                     break;
                 case HTML_FILE:

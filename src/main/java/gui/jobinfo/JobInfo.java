@@ -78,12 +78,12 @@ public class JobInfo {
     public void close() {
 
         if (readQueueThread != null) {
-            logger.info("Shutting down readQueueThread");
+            logger.debug("Shutting down readQueueThread");
             readQueueThread.interrupt();
         }
 
         if (watchServiceThread != null) {
-            logger.info("Shutting down watchServiceThread");
+            logger.debug("Shutting down watchServiceThread");
             watchServiceThread.interrupt();
         }
     }
