@@ -3,6 +3,7 @@ package gui.mainview.hub;
 import core.job.Job;
 import core.job.JobState;
 import eventbus.*;
+import gui.jobinfo.JobInfo;
 import gui.mainview.hub.table.HubTableModel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -14,16 +15,22 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import main.JStesCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -251,6 +258,41 @@ public class HubController extends AbstractComponentEventHandler implements Init
         getHubTable().setItems(sortedData);
         getHubTable().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        getHubTable().setRowFactory( tv -> {
+            TableRow<HubTableModel.JobData> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    HubTableModel.JobData rowData = row.getItem();
+                    Job job = getCoreEngine().getJob(UUID.fromString(rowData.getId()));
+                    if (job != null) {
+                        showJobInfoDialog(job);
+                    }
+                }
+            });
+            return row ;
+        });
+
+    }
+
+    private void showJobInfoDialog(Job job) {
+
+        Stage jobInfoDialog = new Stage();
+             JobInfo jobInfo = new JobInfo(job);
+            Pane root = jobInfo.getRootPane();
+
+            if (root != null) {
+                Scene scene = new Scene(jobInfo.getRootPane());
+
+                jobInfoDialog.setScene(scene);
+                jobInfoDialog.setTitle("Job info".concat(job.getName()));
+                jobInfoDialog.setResizable(true);
+
+                jobInfoDialog.initOwner((Stage) getHubTable().getScene().getWindow());
+                jobInfoDialog.initModality(Modality.APPLICATION_MODAL);
+                jobInfoDialog.setWidth(1000);
+                jobInfoDialog.setHeight(700);
+                jobInfoDialog.showAndWait();
+            }
     }
 
     /**
