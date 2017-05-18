@@ -2,6 +2,8 @@ package gui.jobinfo;
 
 import core.job.Job;
 import core.parameters.Parameter;
+import eventbus.AbstractComponentEventHandler;
+import eventbus.JobEvent;
 import gui.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -19,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * Created by tctupangiu on 17/05/2017.
  */
-public class JobInfo {
+public class JobInfo extends AbstractComponentEventHandler {
 
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
@@ -30,11 +32,13 @@ public class JobInfo {
     private Thread readQueueThread;
     private Thread watchServiceThread;
     private JobInfoController jobInfoController;
+    private WatchServiceRunnable watchServiceRunnable;
 
     public JobInfo(Job job) {
         this();
         this.job = job;
 
+        jobInfoController.setJobEditable(job.isEditable());
         try {
             if (job != null) {
                 Parameter tempFolderParameter = job.getParameters().getParameter("temporaryFolder");
@@ -67,6 +71,15 @@ public class JobInfo {
         }
     }
 
+    @Override
+    public void onJobEvent(JobEvent event) {
+        if (event.getAction() == JobEvent.JobEventType.JOB_UPDATED) {
+            if (job.getID() == event.getJobId()) {
+                jobInfoController.setJobEditable(job.isEditable());
+            }
+        }
+
+    }
     /**
      * Get the root pane
      * @return null if the rootPane cannot be initialized
@@ -82,21 +95,29 @@ public class JobInfo {
             readQueueThread.interrupt();
         }
 
-        if (watchServiceThread != null) {
+        if (watchServiceRunnable != null) {
             logger.debug("Shutting down watchServiceThread");
             watchServiceThread.interrupt();
         }
     }
 
+    /**
+     * Get the job
+     * @return
+     */
+    public Job getJob() {
+        return job;
+    }
+
     private void startWatchService(Path folderPath) {
         try {
-            WatchServiceRunnable watchServiceRunnable = new WatchServiceRunnable(folderPath, outputQueue);
+            watchServiceRunnable = new WatchServiceRunnable(folderPath, outputQueue);
             watchServiceThread = new Thread(watchServiceRunnable);
             watchServiceThread.start();
 
             readQueueThread = new Thread(() -> {
                 try {
-                    while (true) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         Map<Integer, String> entry = outputQueue.take();
                          for (Map.Entry<Integer, String> item : entry.entrySet()) {
                              logger.info("New entry: Filetype {} size {}",item.getKey(),item.getValue().length());

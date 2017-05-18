@@ -45,12 +45,18 @@ public class WatchServiceRunnable implements Runnable {
     @Override
     public void run() {
 
-        while(true) {
+        while (!Thread.currentThread().isInterrupted()) {
             // wait for key to be signalled
-            WatchKey key;
+            WatchKey key = null;
             try {
                 key = watchService.take();
             } catch (InterruptedException x) {
+                try {
+                    logger.info("Closing watch service");
+                    watchService.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return;
             }
 
@@ -89,8 +95,16 @@ public class WatchServiceRunnable implements Runnable {
                     logger.info("Key valid");
                 }
             }
-
         }
+
+        try {
+            logger.info("Closing watch service");
+            watchService.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+
 
 
     }
