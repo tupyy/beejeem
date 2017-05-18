@@ -16,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -67,6 +68,8 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     @FXML
     private MenuItem newJobMenuItem;
+
+    @FXML MenuItem aboutMenuItem;
 
     private SidePanelController sidePanelController;
 
@@ -179,6 +182,29 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         });
 
         newJobMenuItem.setOnAction(newJobEventHandler);
+
+        aboutMenuItem.setOnAction(event -> {
+            Stage aboutDialog = new Stage();
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                URL url = getClass().getClassLoader().getResource("about.fxml");
+                GridPane root  = fxmlLoader.load(url);
+                Scene scene = new Scene(root);
+
+                aboutDialog.setScene(scene);
+                aboutDialog.setTitle("About");
+                aboutDialog.setResizable(false);
+
+                aboutDialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
+                aboutDialog.initModality(Modality.APPLICATION_MODAL);
+                aboutDialog.setWidth(1000);
+                aboutDialog.setHeight(650);
+                aboutDialog.showAndWait();
+            }
+            catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        });
     }
 
     /**
