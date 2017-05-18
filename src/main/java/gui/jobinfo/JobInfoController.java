@@ -112,10 +112,8 @@ public class JobInfoController implements Initializable{
             Optional<ButtonType> result = replaceCodeAlert.showAndWait();
             if (result.get() == ButtonType.OK){
                 initialCode = codeTextArea.getText();
-                Parameter codeParameter = parent.getJob().getParameters().getParameter("pythonCode");
-                codeParameter.setValue(codeTextArea.getText());
                 try {
-                    parent.getJob().updateParameter(codeParameter);
+                    parent.getJob().updateParameter("pythonCode",codeTextArea.getText());
                 } catch (JobException e) {
 
                 }
