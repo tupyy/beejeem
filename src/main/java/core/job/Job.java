@@ -64,7 +64,7 @@ public interface Job extends Executable {
      * @param parameterValue new value
      * @throws IllegalArgumentException if the parameter is not found or it cannot be updated
      */
-    public boolean updateParameter(String parameterName,Object parameterValue) throws IllegalArgumentException;
+    public boolean updateParameter(String parameterName,Object parameterValue) throws IllegalArgumentException,JobException;
 
     /**
      * Update the parameter set

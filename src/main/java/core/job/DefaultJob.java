@@ -10,6 +10,7 @@ import core.modules.clean.CleaningModule;
 import core.modules.qdel.QDelModule;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
+import core.parameters.parametertypes.CodeParameter;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
 import core.tasks.ModuleTask;
@@ -258,7 +259,7 @@ public class DefaultJob extends AbstractJob implements Job {
 
     @Override
     public boolean isEditable() {
-        return getParameterSet().isEditable();
+        return isRunning() ? false : true;
     }
 
     @Override
@@ -288,8 +289,16 @@ public class DefaultJob extends AbstractJob implements Job {
     }
 
     @Override
-    public boolean updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException {
-        throw new NotImplementedException();
+    public boolean updateParameter(String parameterName, Object parameterValue) throws IllegalArgumentException,JobException {
+        if (isEditable()) {
+            Parameter parameterToUpdate = getParameterSet().getParameter(parameterName);
+            parameterToUpdate.setValue(parameterValue);
+
+            return true;
+        }
+        else {
+            throw new JobException(JobException.UPDATE_EXCEPTION,"Job is not editable");
+        }
     }
 
     @Override
@@ -365,7 +374,17 @@ public class DefaultJob extends AbstractJob implements Job {
         }
 
         return false;
+    }
 
+    private boolean isRunning() {
+        if (getState() == JobState.STOP ||
+                getState() == JobState.ERROR ||
+                getState() == JobState.FINISHED
+                || getState() == JobState.READY) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
