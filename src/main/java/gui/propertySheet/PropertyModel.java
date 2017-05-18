@@ -101,11 +101,6 @@ public class PropertyModel {
                         }
                     }
                 }
-
-                //update the editable
-                if (parameterSet.isEditable() != newParameterSet.isEditable()) {
-                    setEditable(newParameterSet.isEditable());
-                }
             }
             catch (NullPointerException ex) {}
         });
@@ -160,13 +155,8 @@ public class PropertyModel {
      * Set editable
      * @param editable
      */
-    private void setEditable(boolean editable) {
-        parameterSet.setEditable(editable);
+    public void setEditable(boolean editable) {
 
-        for(PropertySheet.Item item: getPropertySheetItems()) {
-            SimpleItem simpleItem = (SimpleItem) item;
-            simpleItem.setEditable(editable);
-        }
     }
 
     public ObservableList<PropertySheet.Item> getPropertySheetItems() {
@@ -181,8 +171,7 @@ public class PropertyModel {
 
         Parameter parameter;
         private boolean editable = true;
-        private boolean isEditing = false;
-        private SimpleObjectProperty observableValue;
+         private SimpleObjectProperty observableValue;
 
         public SimpleItem(Parameter p,boolean editable) {
             this.parameter = p;
@@ -234,10 +223,6 @@ public class PropertyModel {
 
         @Override
         public void setValue(Object o) {
-
-            if (!isEditing) {
-                isEditing = true;
-            }
             parameter.setValue(o);
             observableValue.set(o);
         }

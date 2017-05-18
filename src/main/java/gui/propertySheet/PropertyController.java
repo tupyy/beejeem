@@ -63,12 +63,18 @@ public class PropertyController implements ComponentController {
 
     @Override
     public void loadJob(Job j) {
+        propertySheet.setDisable(!j.isEditable());
         model.setData(j.getParameters(),new ParameterChangeListener());
     }
 
     @Override
     public void updateJob(Job job) {
-        model.updateData(job.getParameters());
+
+        if (job.isEditable()) {
+            model.updateData(job.getParameters());
+        }
+
+        propertySheet.setDisable(!job.isEditable());
     }
 
     @Override

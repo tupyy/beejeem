@@ -39,7 +39,7 @@ public class MainApp extends Application {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private String version = new String();
+    private static String version = new String();
 
     public MainApp() {
     }
@@ -134,8 +134,9 @@ public class MainApp extends Application {
 
         Parent root = FXMLLoader.load(MainApp.class.getClassLoader().getResource("mainView.fxml"));
 
-        primaryStage.setTitle("JStes");
+        primaryStage.setTitle("Batch System Job Launcher");
         Scene rootScene = new Scene(root, 1024, 800);
+        rootScene.getStylesheets().add(MainApp.class.getClassLoader().getResource("css/mainapp.css").toExternalForm());
         primaryStage.setScene(rootScene);
 
 //        // After the app is ready, show the stage
@@ -175,6 +176,9 @@ public class MainApp extends Application {
 
     }
 
+    public static String getVersion() {
+        return version;
+    }
     public String getManifestInfo() {
         Enumeration resEnum;
         try {
