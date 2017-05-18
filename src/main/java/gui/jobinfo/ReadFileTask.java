@@ -17,15 +17,20 @@ public class ReadFileTask implements Supplier<String> {
     @Override
     public String get() {
         StringBuilder fileContent = new StringBuilder();
+        FileReader fileReader = null;
+        BufferedReader reader = null;
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            fileReader = new FileReader(file);
+            reader = new BufferedReader(fileReader);
 
                 String line;
                 while ( (line = reader.readLine()) != null ) {
                     fileContent.append(line +"\n");
                 }
 
+                fileReader.close();
+                reader.close();
                 return fileContent.toString();
 
         } catch (FileNotFoundException e) {
@@ -33,6 +38,17 @@ public class ReadFileTask implements Supplier<String> {
         }
         catch (IOException ex) {
             return "";
+        }
+        finally {
+            try {
+                if (fileReader != null & reader != null) {
+                    fileReader.close();
+                    reader.close();
+                }
+            }
+            catch (IOException ex) {
+
+            }
         }
     }
 }
