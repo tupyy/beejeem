@@ -41,7 +41,7 @@ public class DoubleParameter extends AbstractParameter<Double> {
 
     public DoubleParameter(String name,String description,
             String category, Double defaultValue,String label,String source) {
-        this(name, description, category,null,defaultValue,label, "");
+        this(name, description, category,null,defaultValue,label, source);
     }
 
     public DoubleParameter(String name,  String description,

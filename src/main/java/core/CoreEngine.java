@@ -1,7 +1,6 @@
 package core;
 
 import core.creator.CreatorFactory;
-import core.garbage.GarbageCollector;
 import core.job.*;
 import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
@@ -24,7 +23,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
 
     private final QStatManager qstatManager;
-    private final GarbageCollector garbageCollector;
 
     private CreatorFactory creatorFactory = new CreatorFactory();
 
@@ -61,8 +59,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         executor = new ModuleExecutor();
         sshRemoteFactory = new SshRemoteFactory();
         this.qstatManager = new QStatManager(this,executor);
-
-        garbageCollector = new GarbageCollector(this);
 
         //init the states
         JobState jobState = new JobState();
@@ -248,7 +244,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     @Override
     public void shutdown() {
         qstatManager.stop();
-        garbageCollector.shutdown();
         executor.shutDownExecutor();
     }
 
@@ -267,10 +262,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         }
 
         return false;
-    }
-
-    public GarbageCollector getGarbageCollector() {
-        return garbageCollector;
     }
 
     private boolean isJobRunning(Job j) {
