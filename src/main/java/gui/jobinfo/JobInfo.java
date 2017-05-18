@@ -136,7 +136,6 @@ public class JobInfo extends AbstractComponentEventHandler {
     }
 
     private void readDirectory(File folder) {
-
         if (folder.isDirectory() && folder.canRead()) {
             for (File file : folder.listFiles()) {
                 int fileType = getFileType(file.getName());

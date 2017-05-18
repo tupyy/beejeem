@@ -65,6 +65,9 @@ public class JobInfoController implements Initializable{
             }
         };
 
+        //read initial html
+        accept(3,"No results available yet!");
+
     }
 
 
