@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by tctupangiu on 03/04/2017.
+ * Class factory for the creators.
+ * <p>It keeps all the loaded creators in a {@code Map<ClassName,CreatorInstance>}</p>
  */
 public class CreatorFactory {
 
@@ -32,18 +33,7 @@ public class CreatorFactory {
     }
 
     /**
-     * Load a plugin
-     * @param plugin
-     */
-    public static void loadPlugin(Plugin plugin) {
-        Creator creator = plugin.getCreator();
-        if (creator != null) {
-            initializedCreators.put(creator.getJobType(), creator);
-        }
-    }
-
-    /**
-     * Get the creator for the type job {@code jobType}
+     * Get the creator for the type job {@code className}
      * @param className
      * @return initialized creator or null if not found
      */
@@ -53,18 +43,13 @@ public class CreatorFactory {
 
     private void createCreatorList(PluginLoader pluginLoader) {
         for(Plugin plugin: pluginLoader.getPlugins()) {
-            Creator creator = plugin.getCreator();
-            logger.info("Creator loaded: {}",creator.getClass().getName());
-            if (creator != null) {
-                initializedCreators.put(creator.getClass().getName(), creator);
+            for(Creator creator : plugin.getCreators()) {
+                logger.info("Creator loaded: {}", creator.getClass().getName());
+                if (creator != null) {
+                    initializedCreators.put(creator.getClass().getName(), creator);
+                }
             }
         }
     }
 
-    /**
-     * Initialized SimpleCreator
-     */
-    private void initializeSimpleCreators() {
-
-    }
 }
