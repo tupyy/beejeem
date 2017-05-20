@@ -3,7 +3,6 @@ package core.modules.clean;
 import core.modules.Method;
 import core.modules.MethodResult;
 import core.modules.StandardMethodResult;
-import core.modules.preprocessing.PreprocessMethod;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import org.slf4j.Logger;

@@ -4,8 +4,6 @@ import com.sshtools.ssh.SshClient;
 import core.modules.ModuleException;
 import core.modules.SimpleCommandMethod;
 import core.modules.SshModule;
-import core.modules.preprocessing.PreprocessingModule;
-import core.modules.qstat.QStatMethod;
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.tasks.ModuleTask;
@@ -22,7 +20,7 @@ import java.util.UUID;
  */
 public class QDelModule implements SshModule{
 
-    private Logger logger = LoggerFactory.getLogger(PreprocessingModule.class);
+    private Logger logger = LoggerFactory.getLogger(QDelModule.class);
     private static final String MODULE_NAME = "QDelModule";
 
     public QDelModule() {
@@ -49,11 +47,6 @@ public class QDelModule implements SshModule{
             throw  new ModuleException("Cannot create qdel command: ".concat(ex.getMessage()));
         }
 
-    }
-
-    @Override
-    public List<String> getMethodsName() {
-        return null;
     }
 
 }

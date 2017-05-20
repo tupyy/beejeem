@@ -2,7 +2,6 @@ package core.modules.clean;
 
 import core.modules.LocalModule;
 import core.modules.ModuleException;
-import core.modules.preprocessing.PreprocessingModule;
 import core.parameters.ParameterSet;
 import core.tasks.ModuleTask;
 import org.slf4j.Logger;
@@ -20,17 +19,10 @@ public class CleaningModule implements LocalModule {
 
     private Logger logger = LoggerFactory.getLogger(CleaningModule.class);
     private String moduleName = "CleaningModule";
-    private List<String> methodNames = new ArrayList<>();
-
 
     @Override
     public String getName() {
         return moduleName;
-    }
-
-    @Override
-    public List<String> getMethodsName() {
-        return methodNames;
     }
 
     @Override

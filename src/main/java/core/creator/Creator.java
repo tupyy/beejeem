@@ -46,7 +46,7 @@ public interface Creator {
      * @param parameterSet
      * @return
      */
-    public List<Job> createJobs(Optional<List<File>> inputFiles, List<Element> parameterValues, ParameterSet parameterSet, List<Element> moduleElements);
+    public List<Job> createJobs(Optional<List<File>> inputFiles, List<Element> parameterValues, ParameterSet parameterSet, List<Element> moduleElements) throws IllegalArgumentException,IOException;
 
     /**
      * Create jobs without external values for the job parameters
@@ -64,7 +64,6 @@ public interface Creator {
      * @param parameterSet
      * @return
      */
-    public List<Job> createJobs(Optional<List<File>> inputFiles, ParameterSet parameterSet, List<Element> moduleElements);
+    public List<Job> createJobs(Optional<List<File>> inputFiles, ParameterSet parameterSet, List<Element> moduleElements) throws IllegalArgumentException,IOException;
 
-    public String getJobType();
 }

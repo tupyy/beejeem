@@ -24,7 +24,6 @@ public class TestDefaultJob implements Observer {
         JobState jobState = new JobState();
     }
 
-    @Test
     public void myFirstTest() {
 
         ParameterSet parameters = new ParameterSet();

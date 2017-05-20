@@ -22,10 +22,4 @@ public interface Module {
      */
     public String getName();
 
-    /**
-     * Return the methods name created by the module
-     * @return list of methods name
-     */
-    public List<String> getMethodsName();
-
 }

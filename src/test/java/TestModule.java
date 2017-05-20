@@ -25,10 +25,6 @@ public class TestModule implements LocalModule {
         return name;
     }
 
-    @Override
-    public List<String> getMethodsName() {
-        return null;
-    }
 
     @Override
     public ModuleTask runModule(UUID jobID, ParameterSet parameterSet) throws ModuleException {
