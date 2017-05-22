@@ -17,8 +17,7 @@ public interface Creator {
 
     /**
      * Create jobs.
-     * If one of the {@code inputFiles} cannot be read, if processed silently to the next file.
-     * <p>The list of elements having the values for the parameters can be defined as follows:</p>
+     * The values for the parameters are read from the {@param xmlFile}. The structure of the file is:
      * <p><pre>
      *   <job name="values for the first job">
      *       <parameter_name1>value</parameter_name1>
@@ -28,25 +27,26 @@ public interface Creator {
      *       <parameter_name1>value</parameter_name1>
      *       <parameter_name2>value</parameter_name2>
      *   </job>
-     *
-     *   <p> The moduleElements are defined as follows
-     * <pre>
-     *     <modules>
-     *         <module>
-     *             <name>full class name of the module</name>
-     *             <trigger>trigger name</trigger>
-     *         </module>
-     *     </modules>
      * </pre>
      * </p>
      * </pre>
      *
-     * @param inputFiles external files used by Isami during the analysis (i.e. stf files)
-     * @param parameterValues List of elements having the values for each parameter
-     * @param parameterSet
+     * If the {@param inputFiles} is present, the name of the file associated with a set of values must be present in the
+     * element set which defines the job
+     * <p><pre>
+     *     <job name="values for the first job">
+     *       <file>name of the file in {@param inputFiles}</file>
+     *       <parameter_name1>value</parameter_name1>
+     *       <parameter_name2>value</parameter_name2>
+     *   </job>
+     * </pre></p>
+     *
+     *
+     * @param xmlFile external file containing the parameters values
+      * @param parameterSet
      * @return
      */
-    public List<Job> createJobs(Optional<List<File>> inputFiles, List<Element> parameterValues, ParameterSet parameterSet, List<Element> moduleElements) throws IllegalArgumentException,IOException;
+    public List<Job> createJobs(Optional<List<File>> inputFiles,File xmlFile, ParameterSet parameterSet, List<Element> moduleElements) throws IllegalArgumentException,IOException;
 
     /**
      * Create jobs without external values for the job parameters

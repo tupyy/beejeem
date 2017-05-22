@@ -66,6 +66,7 @@ public class XMLWorker {
 
     }
 
+
     /**
      * Get the element describing the tasks
      * @param name Element to be parsed
