@@ -20,14 +20,14 @@ public interface Creator {
      * If one of the {@code inputFiles} cannot be read, if processed silently to the next file.
      * <p>The list of elements having the values for the parameters can be defined as follows:</p>
      * <p><pre>
-     *   <elements name="values for the first job">
+     *   <job name="values for the first job">
      *       <parameter_name1>value</parameter_name1>
      *       <parameter_name2>value</parameter_name2>
-     *   </elements>
-     *   <elements name="values for the second job">
+     *   </job>
+     *   <job name="values for the second job">
      *       <parameter_name1>value</parameter_name1>
      *       <parameter_name2>value</parameter_name2>
-     *   </elements>
+     *   </job>
      *
      *   <p> The moduleElements are defined as follows
      * <pre>

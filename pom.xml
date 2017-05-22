@@ -79,11 +79,9 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
+            <groupId>stes.isami</groupId>
+            <artifactId>junit4</artifactId>
+            <version>4.4</version>
         </dependency>
-
     </dependencies>
 </project>
