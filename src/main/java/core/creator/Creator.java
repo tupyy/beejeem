@@ -19,11 +19,7 @@ public interface Creator {
      * Create jobs.
      * The values for the parameters are read from the {@param xmlFile}. The structure of the file is:
      * <p><pre>
-     *   <job name="values for the first job">
-     *       <parameter_name1>value</parameter_name1>
-     *       <parameter_name2>value</parameter_name2>
-     *   </job>
-     *   <job name="values for the second job">
+     *   <job name="jobName">
      *       <parameter_name1>value</parameter_name1>
      *       <parameter_name2>value</parameter_name2>
      *   </job>
@@ -34,7 +30,7 @@ public interface Creator {
      * If the {@param inputFiles} is present, the name of the file associated with a set of values must be present in the
      * element set which defines the job
      * <p><pre>
-     *     <job name="values for the first job">
+     *     <job name="job name">
      *       <file>name of the file in {@param inputFiles}</file>
      *       <parameter_name1>value</parameter_name1>
      *       <parameter_name2>value</parameter_name2>
@@ -42,11 +38,11 @@ public interface Creator {
      * </pre></p>
      *
      *
-     * @param xmlFile external file containing the parameters values
+     * @param parameterValues element containing the parameters value
       * @param parameterSet
      * @return
      */
-    public List<Job> createJobs(Optional<List<File>> inputFiles,File xmlFile, ParameterSet parameterSet, List<Element> moduleElements) throws IllegalArgumentException,IOException;
+    public Job createJob(Optional<File> inputFile,Element parameterValues, ParameterSet parameterSet, List<Element> moduleElements) throws IllegalArgumentException,IOException;
 
     /**
      * Create jobs without external values for the job parameters
