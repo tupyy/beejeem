@@ -95,7 +95,7 @@ public class PropertyController implements ComponentController {
                 return Editors.createChoiceEditor(simpleItem,simpleItem.getOptions());
             } else if (simpleItem.getValue() instanceof Boolean) {
                 return Editors.createCheckEditor(simpleItem);
-            } else if (simpleItem.getValue() instanceof Integer) {
+            } else if (simpleItem.getValue() instanceof Integer || simpleItem.getValue() instanceof Double) {
                 return Editors.createNumericEditor(simpleItem);
             } else {
                 return Editors.createTextEditor(simpleItem);
