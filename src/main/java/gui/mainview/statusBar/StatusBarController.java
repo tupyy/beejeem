@@ -1,9 +1,11 @@
 package gui.mainview.statusBar;
 
+import com.google.common.eventbus.Subscribe;
 import com.sshtools.ssh.SshException;
 import configuration.JStesConfiguration;
 import configuration.Preferences;
 import eventbus.*;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,6 +23,7 @@ import main.MainApp;
 import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stes.isami.tcpserver.TcpEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -40,6 +43,7 @@ public class StatusBarController implements Initializable, ComponentEventHandler
 
     @FXML private HBox connectHBox;
     @FXML private HBox masterPane;
+    @FXML private Label tcpServerStatusLabel;
 
     private PopOver popOver = null;
     private Button connectButton;
@@ -117,6 +121,27 @@ public class StatusBarController implements Initializable, ComponentEventHandler
                 }
                 break;
         }
+    }
+
+    @Subscribe
+    public void onTcpServerEvent(TcpEvent tcpEvent) {
+
+        Platform.runLater(() -> {
+            switch (tcpEvent.getEventName()) {
+                case TCP_CLIENT_CONNECTED:
+                    tcpServerStatusLabel.setText("Client connected");
+                    logger.info("Excel client connected");
+                    break;
+                case TCP_CLIENT_DISCONNECTED:
+                    tcpServerStatusLabel.setText("Excel client disconnected");
+                    logger.info("Client disconnected");
+                    break;
+                case RECEIVING_STARTED:
+                    tcpServerStatusLabel.setText("Receiving data...");
+                    break;
+            }
+        });
+
     }
 
     /**

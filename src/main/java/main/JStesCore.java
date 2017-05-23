@@ -1,27 +1,32 @@
 package main;
 
-import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import core.*;
-import core.job.JobException;
 import core.ssh.SshListener;
 import eventbus.*;
 import eventbus.CoreEvent;
 import eventbus.JobEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import stes.isami.tcpserver.TcpEvent;
+import stes.isami.tcpserver.TcpServer;
+import stes.isami.tcpserver.TcpServerImpl;
 
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
+public class JStesCore implements JobListener,SshListener,ComponentEventHandler {
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final TcpServer tcpServer;
+
+    private LinkedBlockingDeque<Element> tcpClientOutputQueue = new LinkedBlockingDeque<>();
 
     private static EventBus eventBus;
 
@@ -32,6 +37,9 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
 
         eventBus = new EventBus();
         eventBus.register(this);
+
+        tcpServer = new TcpServerImpl(eventBus);
+        tcpServer.start(1000,tcpClientOutputQueue);
 
     }
 
@@ -63,6 +71,7 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
         eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SHUTDOWN));
         getCoreEngine().shutdown();
         getCoreEngine().getSshFactory().disconnect();
+        tcpServer.stop();
     }
 
     //<editor-fold desc="SSH Listener">
