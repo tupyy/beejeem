@@ -65,11 +65,6 @@
                   </GridPane>
                </content>
           </Tab>
-          <Tab closable="false" text="Template">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
-          </Tab>
         </tabs>
       </TabPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="40.0" prefWidth="685.0">

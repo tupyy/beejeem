@@ -42,6 +42,6 @@
             <VBox fx:id="splitPaneHub" />
          </items>
       </SplitPane>
-      <HBox fx:id="statusBarPane" alignment="CENTER_RIGHT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" VBox.vgrow="NEVER" />
+      <HBox fx:id="statusBarPane" alignment="CENTER_LEFT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" VBox.vgrow="NEVER" />
     </children>
 </VBox>

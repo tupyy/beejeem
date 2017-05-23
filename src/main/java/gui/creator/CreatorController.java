@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -151,7 +152,10 @@ public class CreatorController implements Initializable {
                 addFolderButton.setDisable(true);
             }
 
-            if (model.getFiles().size() > 0) {
+            if (model.getFiles().size() > 0 && model.fileRequired()) {
+                okButton.setDisable(false);
+            }
+            else if ( !model.fileRequired() ) {
                 okButton.setDisable(false);
             }
         });
@@ -165,25 +169,29 @@ public class CreatorController implements Initializable {
     private void createJob(Creator creator, List<File> files, ParameterSet parameterSet) {
 
         CreatorLogger logger = new CreatorLogger();
+        List<Job> jobs = null;
         try {
-            List<Job> jobs = creator.createJobs(files,parameterSet,model.getCurrentJobDefintion().getModuleElements(),logger);
-            for (Job j: jobs) {
-                try {
-                    if (getCoreEngine().addJob(j)) {
-                        JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED,j.getID()));
-                    }
-                } catch (JobException e) {
-                    logger.error(e.getMessage());
-                }
-            }
-
-            Stage stage  = (Stage)this.okButton.getScene().getWindow();
-            stage.close();
+            jobs = creator.createJobs(Optional.of(files), parameterSet, model.getCurrentJobDefintion().getModuleElements());
+            jobs.forEach(this::addJobToCore);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        Stage stage  = (Stage)this.okButton.getScene().getWindow();
+        stage.close();
+
     }
 
+    private void addJobToCore(Job job) {
+        try {
+            if (getCoreEngine().addJob(job)) {
+                JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
+            }
+        } catch (JobException e) {
+            logger.error(e.getMessage());
+        }
+    }
     /**
      * Set action handlers for the fileList buttons
      */

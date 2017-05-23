@@ -2,10 +2,7 @@ package gui.propertySheet;
 
 import core.parameters.Parameter;
 import core.parameters.ParameterSet;
-import core.parameters.parametertypes.AircraftParameter;
-import core.parameters.parametertypes.BooleanParameter;
-import core.parameters.parametertypes.IntegerParameter;
-import core.parameters.parametertypes.ListParameter;
+import core.parameters.parametertypes.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -151,14 +148,6 @@ public class PropertyModel {
         return null;
     }
 
-    /**
-     * Set editable
-     * @param editable
-     */
-    public void setEditable(boolean editable) {
-
-    }
-
     public ObservableList<PropertySheet.Item> getPropertySheetItems() {
         return propertySheetItems;
     }
@@ -192,6 +181,8 @@ public class PropertyModel {
                 return parameter.getClass();
             } else if (parameter instanceof ListParameter) {
                 return List.class;
+            } else if (parameter instanceof DoubleParameter) {
+                return Double.class;
             } else {
                 return String.class;
             }
@@ -239,10 +230,6 @@ public class PropertyModel {
         @Override
         public boolean isEditable() {
             return editable;
-        }
-
-        public void setEditable(boolean editable) {
-            this.editable = editable;
         }
 
         public UUID getID() {
