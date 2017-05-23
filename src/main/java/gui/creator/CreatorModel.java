@@ -109,6 +109,16 @@ public class CreatorModel {
 
     }
 
+    public boolean fileRequired() {
+        try {
+            Parameter fileName = getPropertyModel().getData().getParameter("filename");
+            return true;
+        }
+        catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
     /**
      * Get the list of the files
      * @return {@code ObservableList<String> containing the list of files}
