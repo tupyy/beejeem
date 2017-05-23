@@ -17,6 +17,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -278,7 +279,11 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
     private void showJobInfoDialog(Job job) {
 
+
        if (Files.isDirectory( (new File(job.getParameters().getParameter("temporaryFolder").getValue().toString())).toPath())) {
+
+           Platform.runLater(() -> getStage().getScene().setCursor(Cursor.WAIT));
+
             Stage jobInfoDialog = new Stage();
             JobInfo jobInfo = new JobInfo(job);
             Pane root = jobInfo.getRootPane();
@@ -290,10 +295,13 @@ public class HubController extends AbstractComponentEventHandler implements Init
                 jobInfoDialog.setTitle("Job ".concat(job.getName()));
                 jobInfoDialog.setResizable(true);
 
-                jobInfoDialog.initOwner((Stage) getHubTable().getScene().getWindow());
+                jobInfoDialog.initOwner(getStage());
                 jobInfoDialog.initModality(Modality.APPLICATION_MODAL);
                 jobInfoDialog.setWidth(1000);
                 jobInfoDialog.setHeight(700);
+
+                Platform.runLater(() -> getStage().getScene().setCursor(Cursor.DEFAULT));
+
                 jobInfoDialog.showAndWait();
             }
         }
@@ -450,7 +458,9 @@ public class HubController extends AbstractComponentEventHandler implements Init
     }
 
 
-
+    private Stage getStage() {
+        return (Stage) getHubTable().getScene().getWindow();
+    }
     /**
      * Implantation for the EventHandler to have the name of the action
      *
