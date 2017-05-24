@@ -37,8 +37,17 @@ public class CreatorFactory {
      * @param className
      * @return initialized creator or null if not found
      */
-    public static Creator getCreator(String className) {
-        return initializedCreators.get(className);
+    public static Creator getCreator(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        if (initializedCreators.containsKey(className)) {
+            Creator creatorInstance = initializedCreators.get(className).getClass().newInstance();
+            return creatorInstance;
+        }
+        else {
+            throw new ClassNotFoundException("No creator loaded for "+className);
+        }
+
+
     }
 
     private void createCreatorList(PluginLoader pluginLoader) {

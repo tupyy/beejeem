@@ -56,7 +56,7 @@ public class XMLWorker {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element elem = (Element) node;
-                if (elem.getNodeName().equals(name)) {
+                if (elem.getNodeName().equalsIgnoreCase(name)) {
                     return elem;
                 }
             }
