@@ -4,14 +4,19 @@ import com.google.common.eventbus.EventBus;
 import core.Core;
 import core.CoreEngine;
 import core.JobListener;
+import core.job.Job;
+import core.job.JobException;
 import core.ssh.SshListener;
 import eventbus.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 import stes.isami.tcpserver.ClientMessage;
 import stes.isami.tcpserver.TcpServer;
 import stes.isami.tcpserver.TcpServerImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -157,6 +162,19 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler 
     public void onTcpMessage(ClientMessage tcpClientMessage) {
         switch (tcpClientMessage.getType()) {
             case ClientMessage.PAYLOAD_MESSAGE:
+                List<String> errorMessage = new ArrayList<>();
+
+                TcpJobCreator tcpJobCreator = new TcpJobCreator();
+                List<Job> createdJobs =  tcpJobCreator.createJobs((Element) tcpClientMessage.getPayload(),errorMessage);
+                for(Job job: createdJobs) {
+                    try {
+                        if (getCoreEngine().addJob(job)) {
+                            JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
+                        }
+                    } catch (JobException e) {
+                        logger.error(e.getMessage());
+                    }
+                }
                 break;
             case ClientMessage.ERROR_MESSAGE:
                 logger.info("TcpClient error message: {}",tcpClientMessage.getErrorMessage());
