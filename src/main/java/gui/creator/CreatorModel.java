@@ -100,7 +100,7 @@ public class CreatorModel {
         getPropertyModel().clear();
 
          for(JobDefinition jobDefinition: preferences.getJobDefinitions()) {
-            if (jobDefinition.getType().getLabel().equals(jobType)) {
+            if (jobDefinition.getType().equals(jobType)) {
 
                 getPropertyModel().setData(addParameterFromPreferences(jobDefinition.getParameters()),null);
                 currentJobDefition = jobDefinition;
