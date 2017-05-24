@@ -204,27 +204,15 @@ public class CreatorController implements Initializable {
 
             try {
                 //get the type of the job
-                Parameter type = model.getPropertyModel().getData().getParameter("type");
-                String jobType = (String) type.getValue();
-                Creator creator = CreatorFactory.getCreator(jobType);
-                if ( creator!= null ) {
-                    createJob(creator, model.getFiles(), model.getPropertyModel().getData());
-                } else {
-                    //parameter type don't exists
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Create job");
-                    alert.setHeaderText("Plugin not found");
-                    alert.setContentText(String.format("The creator for the job type %s is not found", jobType));
-                    alert.show();
-                    return;
-                }
+                Creator creator = CreatorFactory.getCreator((String) model.getPropertyModel().getData().getParameter("creator").getValue());
+                createJob(creator, model.getFiles(), model.getPropertyModel().getData());
             }
-            catch (IllegalArgumentException e) {
+            catch (Exception e) {
                 //parameter type don't exists
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Create job");
                 alert.setHeaderText("Creation error");
-                alert.setContentText("The current job type has no value defined");
+                alert.setContentText(e.getMessage());
                 alert.show();
                 return;
             }
