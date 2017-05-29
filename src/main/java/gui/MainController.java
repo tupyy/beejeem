@@ -16,10 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.JStesCore;
@@ -188,7 +185,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 URL url = getClass().getClassLoader().getResource("about.fxml");
-                GridPane root  = fxmlLoader.load(url);
+                BorderPane root  = fxmlLoader.load(url);
                 Scene scene = new Scene(root);
 
                 aboutDialog.setScene(scene);
@@ -197,8 +194,8 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
                 aboutDialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
                 aboutDialog.initModality(Modality.APPLICATION_MODAL);
-                aboutDialog.setWidth(1000);
-                aboutDialog.setHeight(650);
+                aboutDialog.setWidth(800);
+                aboutDialog.setHeight(524);
                 aboutDialog.showAndWait();
             }
             catch (IOException e) {

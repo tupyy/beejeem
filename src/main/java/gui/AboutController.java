@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
  */
 public class AboutController implements Initializable {
 
-    @FXML private AnchorPane imageAnchorPane;
     @FXML private VBox labelPane;
     @FXML private Button closebutton;
     @FXML private ImageView logoImageView;
@@ -31,8 +30,8 @@ public class AboutController implements Initializable {
 
         Label text = new Label();
         text.setText("\n\n" +
-                "Batch System Job Launcher is free software, which is licensed to you under the\n" +
-                "GNU General Public License, version 2. Please see the file\n" +
+                "Batch System Job Launcher is free software, which is licensed \nto you under the " +
+                "GNU General Public License, version 2. \nPlease see the file " +
                 "LICENSE for more details, or visit 'www.gnu.org'.\n" +
                 "\n" +
                 "This software is provided AS-IS, with ABSOLUTELY NO WARRANTY.\n" +
@@ -45,7 +44,7 @@ public class AboutController implements Initializable {
         labelPane.getChildren().add(textArea);
         labelPane.getChildren().add(text);
 
-        String image = JStesPreloader.class.getClassLoader().getResource("images/logo_splash.png").toExternalForm();
+        String image = JStesPreloader.class.getClassLoader().getResource("images/small_logo.png").toExternalForm();
         Image img = new Image(image);
 
         logoImageView.setImage(img);

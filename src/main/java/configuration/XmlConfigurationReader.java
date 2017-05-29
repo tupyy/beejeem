@@ -5,7 +5,9 @@ import core.parameters.ParameterSet;
 import core.parameters.parametertypes.CodeParameter;
 import core.parameters.parametertypes.StringParameter;
 import core.util.XMLWorker;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,8 +241,15 @@ public class XmlConfigurationReader implements ConfigurationReader {
                 Node node = user.getChildNodes().item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element elem = (Element) node;
-                    SimpleStringProperty simpleStringProperty = new SimpleStringProperty(elem.getTagName(),elem.getTagName(),elem.getTextContent());
-                    properties.add(simpleStringProperty);
+                    Property property;
+                    if (elem.getTextContent().equalsIgnoreCase("true") || elem.getTextContent().equalsIgnoreCase("false")) {
+                       property = new SimpleBooleanProperty(elem.getTagName(),elem.getTagName(),Boolean.valueOf(elem.getTextContent()));
+                    }
+                    else {
+                        property = new SimpleStringProperty(elem.getTagName(), elem.getTagName(), elem.getTextContent());
+
+                    }
+                    properties.add(property);
                 }
             }
         }

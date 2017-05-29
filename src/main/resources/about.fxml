@@ -6,29 +6,33 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="633.0" prefWidth="999.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AboutController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="NEVER" maxWidth="452.0" minWidth="10.0" prefWidth="366.0" />
-    <ColumnConstraints hgrow="ALWAYS" maxWidth="600.0" minWidth="10.0" prefWidth="600.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="652.0" minHeight="10.0" prefHeight="585.0" vgrow="ALWAYS" />
-    <RowConstraints maxHeight="301.0" minHeight="0.0" prefHeight="47.0" vgrow="NEVER" />
-  </rowConstraints>
-   <children>
-      <AnchorPane fx:id="imageAnchorPane" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AboutController">
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="677.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="logoImageView" fitHeight="555.0" fitWidth="584.0" layoutX="14.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="122.0" AnchorPane.topAnchor="9.0">
-               <viewport>
-                  <Rectangle2D height="555.0" width="584.0" />
-               </viewport></ImageView>
-         </children></AnchorPane>
-      <HBox alignment="CENTER_RIGHT" prefHeight="67.0" prefWidth="571.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Button fx:id="closebutton" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Close" />
+         </children>
+         <BorderPane.margin>
+            <Insets right="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <center>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="closebutton" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Close" />
-            <Separator prefWidth="10.0" visible="false" />
+            <VBox fx:id="labelPane" alignment="CENTER" prefHeight="481.0" prefWidth="546.0" HBox.hgrow="ALWAYS">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="10.0" />
+               </padding></VBox>
+            <VBox alignment="CENTER" prefHeight="481.0" prefWidth="528.0" HBox.hgrow="NEVER">
+               <children>
+                  <ImageView fx:id="logoImageView" fitHeight="244.0" fitWidth="283.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </VBox>
          </children>
       </HBox>
-      <VBox fx:id="labelPane" alignment="CENTER" prefHeight="586.0" prefWidth="365.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
-   </children>
-</GridPane>
+   </center>
+</BorderPane>

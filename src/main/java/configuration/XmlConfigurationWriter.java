@@ -1,6 +1,8 @@
 package configuration;
 
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,7 +34,12 @@ public class XmlConfigurationWriter implements ConfigurationWriter {
         rootElement.appendChild(userElement);
         for (Property property: preferences.getProperties()) {
             Element element = doc.createElement(property.getName());
-            element.appendChild(doc.createTextNode((String) property.getValue()));
+            if (property instanceof SimpleStringProperty) {
+                element.appendChild(doc.createTextNode((String) property.getValue()));
+            }
+            else if (property instanceof SimpleBooleanProperty) {
+                element.appendChild(doc.createTextNode(property.getValue().toString()));
+            }
             userElement.appendChild(element);
         }
 

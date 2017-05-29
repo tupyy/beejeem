@@ -9,12 +9,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import main.JStesCore;
@@ -34,21 +32,22 @@ import static eventbus.CoreEvent.CoreEventType.PREFERENCES_UPDATED;
 /**
  * Preferences view controller
  */
-public final class PreferenceController implements Initializable, ComponentEventHandler {
+public final class PreferenceController extends AbstractComponentEventHandler implements Initializable {
 
     //<editor-fold desc="Injections">
     @FXML private GridPane gridPane;
-    @FXML private TextField hostTextField;
-    @FXML private TextField usernameTextField;
-    @FXML private TextField passwordTextField;
+    @FXML private TextField host;
+    @FXML private TextField username;
+    @FXML private TextField password;
     @FXML private Button selectLocalFolderButton;
-    @FXML private TextField localFolderTextField;
-    @FXML private TextField remoteFolderTextField;
-    @FXML private TextField pluginFolderTextField;
+    @FXML private TextField localFolder;
+    @FXML private TextField remoteFolder;
+    @FXML private TextField pluginFolder;
     @FXML private Button selectPluginFolderButton;
     @FXML private Button okButton;
     @FXML private Button cancelButton;
     @FXML private Button saveButton;
+    @FXML private CheckBox autoJobRun;
     //</editor-fold>
 
     private Scene scene;
@@ -64,7 +63,6 @@ public final class PreferenceController implements Initializable, ComponentEvent
     private ValidationDecoration iconDecorator = new GraphicValidationDecoration();
 
     public PreferenceController() {
-        JStesCore.registerController(this);
         validationSupport.setValidationDecorator(iconDecorator);
         validationSupport.initInitialDecoration();
     }
@@ -78,31 +76,15 @@ public final class PreferenceController implements Initializable, ComponentEvent
 //        /**
 //         * Create validators
 //         */
-        createRegexValidator(hostTextField,"IP incorrect format",IPADDRESS_PATTERN);
-        createFolderValidator(localFolderTextField,"Folder do not exists");
-        createFolderValidator(pluginFolderTextField,"Folder do not exists");
-        createEmptyValidator(usernameTextField,"Username must be set");
-        createEmptyValidator(passwordTextField,"Password must be set");
-        createEmptyValidator(remoteFolderTextField,"Remote folder must be set");
+        createRegexValidator(host,"IP incorrect format",IPADDRESS_PATTERN);
+        createFolderValidator(localFolder,"Folder do not exists");
+        createFolderValidator(pluginFolder,"Folder do not exists");
+        createEmptyValidator(username,"Username must be set");
+        createEmptyValidator(password,"Password must be set");
+        createEmptyValidator(remoteFolder,"Remote folder must be set");
 
         setupActions();
         bindProperties();
-    }
-
-
-    @Override
-    public void onJobEvent(JobEvent event) {
-
-    }
-
-    @Override
-    public void onComponentAction(ComponentAction event) {
-
-    }
-
-    @Override
-    public void onCoreEvent(CoreEvent event) {
-
     }
 
     /**
@@ -160,14 +142,18 @@ public final class PreferenceController implements Initializable, ComponentEvent
             saveButton.setDisable(true);
         });
 
-        selectLocalFolderButton.setOnAction(new MyEventHandler(localFolderTextField));
-        selectPluginFolderButton.setOnAction(new MyEventHandler(pluginFolderTextField));
+        selectLocalFolderButton.setOnAction(new MyEventHandler(localFolder));
+        selectPluginFolderButton.setOnAction(new MyEventHandler(pluginFolder));
 
         cancelButton.setOnAction(event -> {
              closeWindow();
         });
     }
 
+    /**
+     * On ok action
+     * @param saveFile
+     */
     private void onOkAction(boolean saveFile) {
 
         if (validationSupport.isInvalid()) {
@@ -192,19 +178,36 @@ public final class PreferenceController implements Initializable, ComponentEvent
 
         Preferences preferences = JStesConfiguration.getPreferences();
 
-        for (Node n: getNodesOfType(gridPane,TextField.class)) {
-            String propertyName = n.getId().substring(0,n.getId().lastIndexOf("TextField"));
-            if ( !propertyName.isEmpty() ) {
+        for (Node n : getNodesOfType(gridPane, TextField.class)) {
+            String propertyName = n.getId();
+            if (!propertyName.isEmpty()) {
                 Property property = preferences.getProperty(propertyName);
                 if (property != null) {
                     TextField textField = (TextField) n;
                     textField.setText((String) property.getValue());
-                    textField.textProperty().addListener(new TextEventHandler());
+                    textField.textProperty().addListener(new TextEventListener());
                     property.bindBidirectional(textField.textProperty());
                 }
             }
         }
+
+        //bind checkboxes
+        for (Node n : getNodesOfType(gridPane, CheckBox.class)) {
+            String propertyName = n.getId();
+            if (!propertyName.isEmpty()) {
+                Property property = preferences.getProperty(propertyName);
+                if (property != null) {
+                    CheckBox checkBox = (CheckBox) n;
+                    checkBox.setSelected((Boolean) property.getValue());
+                    checkBox.selectedProperty().addListener(new CheckboxEventListener());
+                    property.bindBidirectional(checkBox.selectedProperty());
+                }
+            }
+        }
     }
+
+
+
 
     private void closeWindow() {
         Stage stage  = (Stage) okButton.getScene().getWindow();
@@ -252,10 +255,19 @@ public final class PreferenceController implements Initializable, ComponentEvent
         }
     }
 
-    private class TextEventHandler implements ChangeListener<String> {
+    private class TextEventListener implements ChangeListener<String> {
 
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            saveButton.setDisable(false);
+        }
+    }
+
+    private class CheckboxEventListener implements ChangeListener<Boolean> {
+
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             saveButton.setDisable(false);
         }
     }
