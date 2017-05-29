@@ -8,12 +8,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="masterPane" alignment="CENTER_RIGHT" prefHeight="30.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.statusBar.StatusBarController">
+<HBox fx:id="masterPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.jstes.gui.mainview.statusBar.StatusBarController">
    <children>
-      <Separator prefWidth="200.0" visible="false" />
-      <HBox HBox.hgrow="ALWAYS" />
+      <HBox alignment="CENTER_LEFT" minWidth="400.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="Tcp Server Status: " HBox.hgrow="NEVER" />
+            <Label fx:id="tcpServerStatusLabel" text="Excel client not connected" HBox.hgrow="ALWAYS" />
+            <Separator maxWidth="2000.0" visible="false" HBox.hgrow="ALWAYS" />
+         </children></HBox>
+      <HBox maxWidth="2000.0" prefWidth="2000.0" HBox.hgrow="ALWAYS" />
       <Separator orientation="VERTICAL" prefHeight="200.0" />
-      <HBox fx:id="connectHBox" alignment="CENTER_LEFT" maxWidth="-Infinity" prefWidth="100.0" HBox.hgrow="ALWAYS">
+      <HBox fx:id="connectHBox" alignment="CENTER" maxWidth="-Infinity" prefWidth="100.0" HBox.hgrow="NEVER">
          <children>
             <ImageView fx:id="imageViewer" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
                <HBox.margin>
@@ -23,4 +28,7 @@
          </children>
       </HBox>
    </children>
+   <padding>
+      <Insets left="10.0" right="10.0" />
+   </padding>
 </HBox>

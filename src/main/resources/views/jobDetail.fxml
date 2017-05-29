@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="260.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.mainview.jobDetail.JobDetailController">
+<VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="260.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.jstes.gui.jobinfo.JobInfoController">
    <children>
       <HBox maxHeight="-Infinity" prefHeight="30.0" prefWidth="200.0">
          <children>

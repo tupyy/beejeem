@@ -9,7 +9,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 
-<VBox prefHeight="706.0" prefWidth="918.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainController">
+<VBox prefHeight="706.0" prefWidth="918.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.jstes.gui.MainController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -42,6 +42,6 @@
             <VBox fx:id="splitPaneHub" />
          </items>
       </SplitPane>
-      <HBox fx:id="statusBarPane" alignment="CENTER_RIGHT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" VBox.vgrow="NEVER" />
+      <HBox fx:id="statusBarPane" alignment="CENTER_LEFT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" VBox.vgrow="NEVER" />
     </children>
 </VBox>
