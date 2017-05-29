@@ -1,8 +1,8 @@
-import core.job.*;
-import core.modules.Module;
-import core.modules.StandardMethodResult;
-import core.parameters.ParameterSet;
-import core.parameters.parametertypes.StringParameter;
+import stes.isami.core.job.*;
+import stes.isami.core.modules.Module;
+import stes.isami.core.modules.StandardMethodResult;
+import stes.isami.core.parameters.ParameterSet;
+import stes.isami.core.parameters.parametertypes.StringParameter;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
