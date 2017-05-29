@@ -1,6 +1,8 @@
 package main;
 
 import com.google.common.eventbus.EventBus;
+import configuration.JStesConfiguration;
+import configuration.JStesPreferences;
 import core.Core;
 import core.CoreEngine;
 import core.JobListener;
@@ -8,6 +10,7 @@ import core.job.Job;
 import core.job.JobException;
 import core.ssh.SshListener;
 import eventbus.*;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -169,7 +172,16 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler 
                 for(Job job: createdJobs) {
                     try {
                         if (getCoreEngine().addJob(job)) {
-                            JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
+
+                            Platform.runLater(() -> {
+                                JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
+
+                                //check if autoRun is true
+                                if (JStesConfiguration.getPreferences().getProperty("autoJobRun").getValue() == Boolean.TRUE) {
+                                    getCoreEngine().executeJob(job.getID());
+                                }
+                            });
+
                         }
                     } catch (JobException e) {
                         logger.error(e.getMessage());
