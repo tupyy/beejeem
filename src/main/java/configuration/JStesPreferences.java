@@ -1,5 +1,6 @@
 package configuration;
 
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
 import javafx.beans.property.Property;
@@ -95,9 +96,9 @@ public final class JStesPreferences  implements Preferences{
 
         List<String> retJobTypes = new ArrayList<>();
         for (JobDefinition jd: jobs) {
-            StringParameter jobType = jd.getType();
-            if (jobType != null) {
-                retJobTypes.add(jobType.getLabel());
+            String jobType = jd.getType();
+            if ( !jobType.isEmpty() ) {
+                retJobTypes.add(jobType);
             }
         }
 
@@ -106,14 +107,14 @@ public final class JStesPreferences  implements Preferences{
 
     /**
      * Get a list of job configurations of type {@code jobType}
-     * @param name of the job
+     * @param jobType of the job
      * @return the {@link JobDefinition} defining the job or null if not found
      */
     @Override
-    public JobDefinition getJobDefinition(String name) {
+    public JobDefinition getJobDefinition(String jobType) {
 
         for (JobDefinition jd: jobs) {
-            if (jd.getName().equals(name)) {
+            if (jd.getType().equals(jobType)) {
                 return jd;
             }
         }

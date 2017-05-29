@@ -1,5 +1,6 @@
 package configuration;
 
+import core.parameters.Parameter;
 import core.parameters.ParameterSet;
 import core.parameters.parametertypes.StringParameter;
 import org.w3c.dom.Element;
@@ -28,28 +29,37 @@ public class JobDefinition {
     }
 
 
-    public StringParameter getName() {
+    public String getName() {
 
         try {
-            StringParameter nameParameter = parameters.getParameter("name");
-            return nameParameter;
+            Parameter nameParameter = parameters.getParameter("name");
+            return nameParameter.getValue().toString();
         }
         catch (IllegalArgumentException e) {
-            return null;
+            return "";
         }
     }
 
-    public StringParameter getType() {
+    public String getType() {
 
         try {
-            StringParameter nameParameter = parameters.getParameter("type");
-            return nameParameter;
+            Parameter typeParameter = parameters.getParameter("type");
+            return typeParameter.getValue().toString();
         }
         catch (IllegalArgumentException e) {
-            return null;
+            return "";
         }
     }
 
+    public String getCreator() {
+        try {
+            Parameter creatorParameter = parameters.getParameter("creator");
+            return creatorParameter.getValue().toString();
+        }
+        catch (IllegalArgumentException e) {
+            return "";
+        }
+    }
     public ParameterSet getParameters() {
         return parameters;
     }

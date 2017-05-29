@@ -1,27 +1,37 @@
 package main;
 
-import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-import core.*;
+import core.Core;
+import core.CoreEngine;
+import core.JobListener;
+import core.job.Job;
 import core.job.JobException;
 import core.ssh.SshListener;
 import eventbus.*;
-import eventbus.CoreEvent;
-import eventbus.JobEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import stes.isami.tcpserver.ClientMessage;
+import stes.isami.tcpserver.TcpServer;
+import stes.isami.tcpserver.TcpServerImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
+public class JStesCore implements JobListener,SshListener,ComponentEventHandler {
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final TcpServer tcpServer;
+    private Thread readerThread;
+
+    private LinkedBlockingDeque<ClientMessage> tcpClientOutputQueue = new LinkedBlockingDeque<>();
 
     private static EventBus eventBus;
 
@@ -32,6 +42,16 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
 
         eventBus = new EventBus();
         eventBus.register(this);
+
+        /**
+         * Start tcp server
+         */
+        tcpServer = TcpServerImpl.getInstance(eventBus);
+        tcpServer.start(1000,tcpClientOutputQueue);
+
+        readerThread = new Thread(new TcpMessageReader(tcpClientOutputQueue));
+        readerThread.start();
+
 
     }
 
@@ -63,6 +83,8 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
         eventBus.post(new DefaultCoreEvent(CoreEvent.CoreEventType.SHUTDOWN));
         getCoreEngine().shutdown();
         getCoreEngine().getSshFactory().disconnect();
+        tcpServer.stop();
+        readerThread.interrupt();
     }
 
     //<editor-fold desc="SSH Listener">
@@ -132,4 +154,57 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler{
     }
 
     //</editor-fold>
+
+    /**
+     * Method called when a new message from the tcpClient arrived.
+     * @param tcpClientMessage
+     */
+    public void onTcpMessage(ClientMessage tcpClientMessage) {
+        switch (tcpClientMessage.getType()) {
+            case ClientMessage.PAYLOAD_MESSAGE:
+                List<String> errorMessage = new ArrayList<>();
+
+                TcpJobCreator tcpJobCreator = new TcpJobCreator();
+                List<Job> createdJobs =  tcpJobCreator.createJobs((Element) tcpClientMessage.getPayload(),errorMessage);
+                for(Job job: createdJobs) {
+                    try {
+                        if (getCoreEngine().addJob(job)) {
+                            JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
+                        }
+                    } catch (JobException e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+                break;
+            case ClientMessage.ERROR_MESSAGE:
+                logger.info("TcpClient error message: {}",tcpClientMessage.getErrorMessage());
+                break;
+        }
+
+    }
+
+    /**
+     * Class to read from the inputQueue
+     */
+    private class TcpMessageReader implements Runnable {
+
+        private final BlockingDeque<ClientMessage> inputQueue;
+
+        public TcpMessageReader(BlockingDeque<ClientMessage> inputQueue) {
+            this.inputQueue = inputQueue;
+        }
+
+        @Override
+        public void run() {
+            while(!Thread.currentThread().isInterrupted()) {
+                try {
+                    ClientMessage clientMessage = inputQueue.take();
+                    onTcpMessage(clientMessage);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.info("TcpMessageReader interrupted");
+                }
+            }
+        }
+    }
 }
