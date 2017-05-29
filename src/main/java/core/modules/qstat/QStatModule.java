@@ -3,7 +3,6 @@ package core.modules.qstat;
 import com.sshtools.ssh.SshClient;
 import core.modules.ModuleException;
 import core.modules.SshModule;
-import core.modules.preprocessing.PreprocessingModule;
 import core.parameters.ParameterSet;
 import core.tasks.ModuleTask;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class QStatModule implements SshModule{
 
     private final String command;
-    private Logger logger = LoggerFactory.getLogger(PreprocessingModule.class);
+    private Logger logger = LoggerFactory.getLogger(QStatModule.class);
     private static final String MODULE_NAME = "QStatModule";
 
     public QStatModule(String command) {
@@ -36,11 +35,6 @@ public class QStatModule implements SshModule{
     public ModuleTask runModule(UUID jobID, SshClient sshClient,ParameterSet parameterSet) throws ModuleException {
         QStatMethod qStatMethod = new QStatMethod(sshClient,command);
         return new ModuleTask("qstatMethod",qStatMethod);
-    }
-
-    @Override
-    public List<String> getMethodsName() {
-        return null;
     }
 
 }

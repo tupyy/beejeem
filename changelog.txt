@@ -4,3 +4,12 @@
 
 - open channel exception when creating the SFTP client
 
+[0.5.0] 29/05/2017
+
+**ADD**
+- tcp server for the communication with excel
+- job info dialog window
+
+**FIX**
+cancel a module
+

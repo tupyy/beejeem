@@ -26,7 +26,7 @@ public class ModuleAction implements Action {
     private final Consumer<Boolean> consumer;
     private final Module moduleInstance;
     private final Job parent;
-    private CancelableFuture<MethodResult> methodFuture;
+    private CompletableFuture<MethodResult> methodFuture;
 
     public ModuleAction(Job parent,Module moduleInstace, Function<MethodResult, Boolean> callbackFunction, Consumer<Boolean> consumer) {
         this.moduleInstance = moduleInstace;

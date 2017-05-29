@@ -16,6 +16,6 @@ public interface Plugin {
 
     public <T> List<T> getModuleList();
 
-    public <T extends Creator> T getCreator();
+    public <T extends Creator> List<T> getCreators();
 
 }

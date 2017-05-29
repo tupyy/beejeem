@@ -26,6 +26,8 @@ import java.util.UUID;
 
 import core.parameters.parametertypes.*;
 import core.util.XMLWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -33,7 +35,7 @@ import org.w3c.dom.Element;
  */
 public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
 
- //   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private UUID ID = java.util.UUID.randomUUID();
 
@@ -110,7 +112,7 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
                 return (T) p;
         }
         throw new IllegalArgumentException(
-                "Parameter with ID" + parameterName + " does not exist");
+                "Parameter with ID " + parameterName + " does not exist");
     }
 
     /**
@@ -239,6 +241,57 @@ public class ParameterSet  implements Iterable<Parameter<?>>,Cloneable {
         }
     }
 
+    /**
+     * Update the parameter set from external value element
+     * @param values
+     * @return
+     */
+    public void updateParameters(Element values) {
+        XMLWorker xmlWorker = new XMLWorker();
+
+        if (values != null) {
+            for (Parameter parameter : parameters) {
+                Element paramElement = xmlWorker.getElementByName(values, parameter.getName());
+                if (paramElement != null) {
+                    if (parameter instanceof DoubleParameter) {
+                        try {
+                            Double doubleValue = Double.parseDouble(paramElement.getTextContent());
+                            parameter.setValue(doubleValue);
+                        }
+                        catch (NumberFormatException ex) {
+                            logger.error("Parameter {} cannot cast value {} to double",parameter.getName(),paramElement.getTextContent());
+                        }
+                    }
+                    else if (parameter instanceof IntegerParameter) {
+                        try {
+                            Integer intValue = Integer.parseInt(paramElement.getTextContent());
+                            parameter.setValue(intValue);
+                        }
+                        catch (NumberFormatException ex) {
+                            logger.error("Parameter {} cannot cast value {} to integer",parameter.getName(),paramElement.getTextContent());
+                        }
+                    }
+                    else if (parameter instanceof AircraftParameter) {
+                        Aircraft aircraft = Aircraft.fromString(paramElement.getTextContent());
+                        parameter.setValue(aircraft);
+                    }
+                    else if (parameter instanceof BooleanParameter) {
+                        String paramValueString = paramElement.getTextContent();
+
+                        if (paramValueString.equalsIgnoreCase("yes") || paramValueString.equalsIgnoreCase("no"))  {
+                            parameter.setValue(paramValueString.equalsIgnoreCase("yes"));
+                        }
+                        else {
+                            parameter.setValue(Boolean.valueOf(paramElement.getTextContent()));
+                        }
+                    }
+                    else {
+                        parameter.setValue(paramElement.getTextContent());
+                    }
+                }
+            }
+        }
+    }
     /**
      * Load the parameters values from list.
      * Each value in the list is attributed to a parameter having the same index as the value.

@@ -6,9 +6,7 @@
 
     <groupId>stes.isami</groupId>
     <artifactId>core</artifactId>
-    <version>0.9.0</version>
-
-
+    <version>0.5.0</version>
 
     <build>
         <plugins>
@@ -84,8 +82,6 @@
             <groupId>stes.isami</groupId>
             <artifactId>junit4</artifactId>
             <version>4.4</version>
-            <scope>test</scope>
         </dependency>
-
     </dependencies>
 </project>
