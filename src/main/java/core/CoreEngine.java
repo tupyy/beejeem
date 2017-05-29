@@ -4,6 +4,7 @@ import core.creator.CreatorFactory;
 import core.job.*;
 import core.plugin.PluginLoader;
 import core.ssh.SshFactory;
+import core.ssh.SshListener;
 import core.ssh.SshRemoteFactory;
 import core.tasks.ModuleExecutor;
 import core.util.TmpFileCleanup;
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
  * This class implements the Core interface. It represents the main class of the app.
  * <br> It extends Observable to notify the observer when a job
  */
-public final class CoreEngine extends AbstractCoreEngine implements Core, Observer {
+public final class CoreEngine extends AbstractCoreEngine implements Core, Observer,SshListener {
 
 
     private final QStatManager qstatManager;
@@ -58,6 +59,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
         executor = new ModuleExecutor();
         sshRemoteFactory = new SshRemoteFactory();
+        sshRemoteFactory.addSshEventListener(this);
         this.qstatManager = new QStatManager(this,executor);
 
         //init the states
@@ -247,6 +249,44 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         executor.shutDownExecutor();
     }
 
+    /***********************************************************************************
+     *
+     *
+     *                                      SSH LISTENER
+     *
+     ***********************************************************************************/
+
+    @Override
+    public void channelClosed() {
+
+    }
+
+    @Override
+    public void channelClosing() {
+
+    }
+
+    @Override
+    public void connected() {
+
+    }
+
+    @Override
+    public void authenticated() {
+
+    }
+
+    @Override
+    public void disconnected() {
+        qstatManager.stop();
+
+        for (UUID id: getJobIDList()) {
+            Job job = getJob(id);
+            if (isJobRunning(job)) {
+                job.stop();
+            }
+        }
+    }
 
     /**
      * Return true if the jobID exists
@@ -264,6 +304,18 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         return false;
     }
 
+    /***********************************************************************************
+     *
+     *
+     *                                      PRIVATE
+     *
+     ***********************************************************************************/
+
+    /**
+     * Return true if the job {@code j} is running
+     * @param j
+     * @return
+     */
     private boolean isJobRunning(Job j) {
         int state = j.getState();
 
@@ -316,7 +368,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
         return null;
     }
-
 
 
 
