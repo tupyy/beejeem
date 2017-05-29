@@ -1,8 +1,8 @@
-import core.modules.Method;
-import core.modules.MethodResult;
-import core.modules.StandardMethodResult;
-import core.parameters.parametertypes.IntegerParameter;
-import core.parameters.parametertypes.StringParameter;
+import stes.isami.core.modules.Method;
+import stes.isami.core.modules.MethodResult;
+import stes.isami.core.modules.StandardMethodResult;
+import stes.isami.core.parameters.parametertypes.IntegerParameter;
+import stes.isami.core.parameters.parametertypes.StringParameter;
 
 import java.util.Random;
 import java.util.UUID;

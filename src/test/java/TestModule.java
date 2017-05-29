@@ -1,8 +1,8 @@
-import core.modules.LocalModule;
-import core.modules.Module;
-import core.modules.ModuleException;
-import core.parameters.ParameterSet;
-import core.tasks.ModuleTask;
+import stes.isami.core.modules.LocalModule;
+import stes.isami.core.modules.Module;
+import stes.isami.core.modules.ModuleException;
+import stes.isami.core.parameters.ParameterSet;
+import stes.isami.core.tasks.ModuleTask;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +25,6 @@ public class TestModule implements LocalModule {
         return name;
     }
 
-    @Override
-    public List<String> getMethodsName() {
-        return null;
-    }
 
     @Override
     public ModuleTask runModule(UUID jobID, ParameterSet parameterSet) throws ModuleException {
