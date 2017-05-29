@@ -1,8 +1,8 @@
 package stes.isami.jstes.main;
 
 import com.sun.javafx.application.LauncherImpl;
-import configuration.JStesConfiguration;
-import configuration.Preferences;
+import stes.isami.jstes.configuration.JStesConfiguration;
+import stes.isami.jstes.configuration.Preferences;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;

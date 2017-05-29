@@ -1,8 +1,8 @@
 package stes.isami.jstes.configuration;
 
-import core.parameters.Parameter;
-import core.parameters.ParameterSet;
-import core.parameters.parametertypes.StringParameter;
+import stes.isami.core.parameters.Parameter;
+import stes.isami.core.parameters.ParameterSet;
+import stes.isami.core.parameters.parametertypes.StringParameter;
 import javafx.beans.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

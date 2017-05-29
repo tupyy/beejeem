@@ -1,6 +1,6 @@
 package stes.isami.jstes.configuration;
 
-import eventbus.*;
+import stes.isami.jstes.eventbus.*;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

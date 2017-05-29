@@ -1,9 +1,5 @@
 package stes.isami.jstes.gui;
 
-import stes.isami.core.job.JobException;
-import stes.isami.jstes.eventbus.*;
-import stes.isami.jstes.gui.mainview.hub.HubController;
-import stes.isami.jstes.gui.mainview.sidepanel.SidePanelController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,9 +11,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stes.isami.jstes.eventbus.AbstractComponentEventHandler;
 import stes.isami.jstes.eventbus.ComponentAction;
 import stes.isami.jstes.eventbus.DefaultComponentAction;
@@ -26,10 +27,6 @@ import stes.isami.jstes.gui.mainview.hub.HubController;
 import stes.isami.jstes.gui.mainview.sidepanel.SidePanelController;
 import stes.isami.jstes.main.JStesCore;
 import stes.isami.jstes.main.MainApp;
-import stes.isami.jstes.main.JStesCore;
-import stes.isami.jstes.main.MainApp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;

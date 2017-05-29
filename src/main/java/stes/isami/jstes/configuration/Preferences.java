@@ -1,6 +1,6 @@
 package stes.isami.jstes.configuration;
 
-import core.parameters.ParameterSet;
+import stes.isami.core.parameters.ParameterSet;
 import javafx.beans.property.Property;
 
 import java.util.List;

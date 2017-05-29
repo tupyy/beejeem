@@ -1,10 +1,10 @@
 package stes.isami.jstes.configuration;
 
-import core.parameters.Parameter;
-import core.parameters.ParameterSet;
-import core.parameters.parametertypes.CodeParameter;
-import core.parameters.parametertypes.StringParameter;
-import core.util.XMLWorker;
+import stes.isami.core.parameters.Parameter;
+import stes.isami.core.parameters.ParameterSet;
+import stes.isami.core.parameters.parametertypes.CodeParameter;
+import stes.isami.core.parameters.parametertypes.StringParameter;
+import stes.isami.core.util.XMLWorker;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;

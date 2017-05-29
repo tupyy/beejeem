@@ -1,10 +1,5 @@
 package stes.isami.jstes.gui.mainview.hub;
 
-import stes.isami.core.job.Job;
-import stes.isami.core.job.JobState;
-import stes.isami.jstes.eventbus.*;
-import stes.isami.jstes.gui.jobinfo.JobInfo;
-import stes.isami.jstes.gui.mainview.hub.table.HubTableModel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -25,23 +20,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import stes.isami.jstes.eventbus.ComponentAction;
-import stes.isami.jstes.eventbus.CoreEvent;
-import stes.isami.jstes.eventbus.DefaultComponentAction;
-import stes.isami.jstes.eventbus.JobEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import stes.isami.core.job.Job;
+import stes.isami.core.job.JobState;
+import stes.isami.jstes.eventbus.*;
 import stes.isami.jstes.gui.jobinfo.JobInfo;
 import stes.isami.jstes.gui.mainview.hub.table.HubTableModel;
 import stes.isami.jstes.main.JStesCore;
-import stes.isami.jstes.main.JStesCore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.*;
-
-import static stes.isami.jstes.main.JStesCore.getCoreEngine;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * CreatorController for the hubView

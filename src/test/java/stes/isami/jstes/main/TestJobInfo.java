@@ -1,9 +1,9 @@
 package stes.isami.jstes.main;
 
-import core.job.DefaultJob;
-import core.modules.Module;
-import core.parameters.ParameterSet;
-import core.parameters.parametertypes.StringParameter;
+import stes.isami.core.job.DefaultJob;
+import stes.isami.core.modules.Module;
+import stes.isami.core.parameters.ParameterSet;
+import stes.isami.core.parameters.parametertypes.StringParameter;
 import org.junit.Test;
 
 import java.util.regex.Pattern;
