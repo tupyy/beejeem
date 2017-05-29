@@ -61,7 +61,7 @@ public class ModuleAction implements Action {
                  executor = ModuleExecutor.getSshPoolExecutor();
             }
 
-            methodFuture = CompletableFuture.supplyAsync(moduleTask,executor);
+            methodFuture = new CancelableFuture(moduleTask,executor);
             CompletableFuture<Boolean> booleanCompletableFuture =  methodFuture.thenApply(methodResult -> callbackFunction.apply(methodResult));
             booleanCompletableFuture.thenAccept(t -> consumer.accept(t));
 
