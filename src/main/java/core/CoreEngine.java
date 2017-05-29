@@ -258,7 +258,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
     @Override
     public void channelClosed() {
-
+        disconnected();
     }
 
     @Override
