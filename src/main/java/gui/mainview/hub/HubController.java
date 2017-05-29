@@ -112,6 +112,15 @@ public class HubController extends AbstractComponentEventHandler implements Init
         if (event.getEventName() == CoreEvent.CoreEventType.SHUTDOWN) {
             model.shutdown();
         }
+        else if (event.getEventName() == CoreEvent.CoreEventType.SSH_CLIENT_DISCONNECTED) {
+            runJobButton.setDisable(true);
+            runAllButton.setDisable(true);
+        }
+        else if (event.getEventName() == CoreEvent.CoreEventType.SSH_CLIENT_AUTHENTICATED) {
+            if (getCoreEngine().count() > 0 ) {
+                runAllButton.setDisable(false);
+            }
+        }
     }
 
     @Override
@@ -444,6 +453,10 @@ public class HubController extends AbstractComponentEventHandler implements Init
      * @param data
      */
     private void onJobSelection(HubTableModel.JobData data) {
+
+        if ( !getCoreEngine().getSshFactory().isAuthenticated() ) {
+            return;
+        }
 
         if (data != null) {
             if (runJobButton.isDisabled()) {
