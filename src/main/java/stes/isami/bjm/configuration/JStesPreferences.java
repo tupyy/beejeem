@@ -79,6 +79,11 @@ public final class JStesPreferences  implements Preferences{
     }
 
     @Override
+    public void addProperty(Property property) {
+        configurationSet.add(property);
+    }
+
+    @Override
     public List<Property> getProperties() {
         return configurationSet;
     }

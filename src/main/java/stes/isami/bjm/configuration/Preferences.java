@@ -15,6 +15,8 @@ public interface Preferences {
 
     public Property getProperty(String name);
 
+    public void addProperty(Property property);
+
     public List<Property> getProperties();
 
     public List<String> getJobTypes();

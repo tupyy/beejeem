@@ -1,5 +1,9 @@
 package stes.isami.bjm.configuration;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import stes.isami.bjm.eventbus.*;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
@@ -27,6 +31,7 @@ import org.controlsfx.validation.decoration.ValidationDecoration;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 /**
  * Preferences view controller
@@ -181,12 +186,16 @@ public final class PreferenceController extends AbstractComponentEventHandler im
             String propertyName = n.getId();
             if (!propertyName.isEmpty()) {
                 Property property = preferences.getProperty(propertyName);
+                TextField textField = (TextField) n;
                 if (property != null) {
-                    TextField textField = (TextField) n;
                     textField.setText((String) property.getValue());
-                    textField.textProperty().addListener(new TextEventListener());
-                    property.bindBidirectional(textField.textProperty());
                 }
+                else {
+                    property = new SimpleStringProperty(n.getId(),n.getId(),textField.getText());
+                    preferences.addProperty(property);
+                }
+                textField.textProperty().addListener(new TextEventListener());
+                property.bindBidirectional(textField.textProperty());
             }
         }
 
@@ -195,12 +204,19 @@ public final class PreferenceController extends AbstractComponentEventHandler im
             String propertyName = n.getId();
             if (!propertyName.isEmpty()) {
                 Property property = preferences.getProperty(propertyName);
+                CheckBox checkBox = (CheckBox) n;
                 if (property != null) {
-                    CheckBox checkBox = (CheckBox) n;
                     checkBox.setSelected((Boolean) property.getValue());
+                }
+                else {
+                    boolean initialValue = checkBox.isSelected();
+                    property = new SimpleBooleanProperty(n.getId(), n.getId(), initialValue);
                     checkBox.selectedProperty().addListener(new CheckboxEventListener());
                     property.bindBidirectional(checkBox.selectedProperty());
+                    preferences.addProperty(property);
                 }
+                checkBox.selectedProperty().addListener(new CheckboxEventListener());
+                property.bindBidirectional(checkBox.selectedProperty());
             }
         }
     }
