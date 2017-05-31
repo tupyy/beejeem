@@ -13,7 +13,7 @@
       <HBox alignment="CENTER_LEFT" minWidth="400.0" HBox.hgrow="ALWAYS">
          <children>
             <Label text="Tcp Server Status: " HBox.hgrow="NEVER" />
-            <Label fx:id="tcpServerStatusLabel" text="Excel client not connected" HBox.hgrow="ALWAYS" />
+            <Label fx:id="tcpServerStatusLabel" style="-fx-font-weight: bold;" text="Excel client not connected" HBox.hgrow="ALWAYS" />
             <Separator maxWidth="2000.0" visible="false" HBox.hgrow="ALWAYS" />
          </children></HBox>
       <HBox maxWidth="2000.0" prefWidth="2000.0" HBox.hgrow="ALWAYS" />

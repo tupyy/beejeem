@@ -2,6 +2,7 @@ package stes.isami.bjm.gui.mainview.statusBar;
 
 import com.google.common.eventbus.Subscribe;
 import com.sshtools.ssh.SshException;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Alert;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.configuration.Preferences;
@@ -26,7 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.tcpserver.TcpEvent;
 
+import java.net.Inet4Address;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
 import static stes.isami.bjm.main.JStesCore.getCoreEngine;
@@ -47,6 +50,7 @@ public class StatusBarController implements Initializable, ComponentEventHandler
     @FXML private Label tcpServerStatusLabel;
 
     private PopOver popOver = null;
+    private SimpleStringProperty tcpSimpleProperty = new SimpleStringProperty();
     private Button connectButton;
     private Label popupLabel;
 
@@ -58,6 +62,7 @@ public class StatusBarController implements Initializable, ComponentEventHandler
 
         JStesCore.registerController(this);
 
+        tcpSimpleProperty.bindBidirectional(tcpServerStatusLabel.textProperty());
         if (getCoreEngine().getSshFactory().isConnected() && getCoreEngine().getSshFactory().isAuthenticated()) {
             onClientAuthenticated();
         }
@@ -89,6 +94,12 @@ public class StatusBarController implements Initializable, ComponentEventHandler
                 }
             }
         });
+
+        try {
+            tcpSimpleProperty.setValue("Listening on "+ Inet4Address.getLocalHost().getHostAddress() +":1000");
+        } catch (UnknownHostException e) {
+            ;
+        }
     }
 
     @Override
@@ -130,15 +141,15 @@ public class StatusBarController implements Initializable, ComponentEventHandler
         Platform.runLater(() -> {
             switch (tcpEvent.getEventName()) {
                 case TCP_CLIENT_CONNECTED:
-                    tcpServerStatusLabel.setText("Client connected");
+                    tcpSimpleProperty.setValue("Client connected");
                     logger.info("Excel client connected");
                     break;
                 case TCP_CLIENT_DISCONNECTED:
-                    tcpServerStatusLabel.setText("Excel client disconnected");
+                    tcpSimpleProperty.setValue("Excel client disconnected");
                     logger.info("Client disconnected");
                     break;
                 case RECEIVING_STARTED:
-                    tcpServerStatusLabel.setText("Receiving data...");
+                    tcpSimpleProperty.setValue("Receiving data...");
                     break;
             }
         });
