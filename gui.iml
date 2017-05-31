@@ -18,11 +18,11 @@
     <orderEntry type="library" name="Maven: com.github.oxo42:stateless4j:2.5.0" level="project" />
     <orderEntry type="module" module-name="utils" />
     <orderEntry type="module" module-name="tcpServer" />
+    <orderEntry type="library" name="Maven: stes.isami:controlfx:8.40.12" level="project" />
+    <orderEntry type="module" module-name="preloader" />
     <orderEntry type="library" name="Maven: stes.isami:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: stes.isami:slf4j-jdk:1.7.21" level="project" />
-    <orderEntry type="library" name="Maven: stes.isami:controlfx:8.40.12" level="project" />
-    <orderEntry type="library" name="Maven: stes.isami:preloader:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: stes.isami:guava:20.0" level="project" />
     <orderEntry type="library" name="Maven: stes.isami:junit4:4.4" level="project" />
+    <orderEntry type="library" name="Maven: stes.isami:guava:20.0" level="project" />
   </component>
 </module>

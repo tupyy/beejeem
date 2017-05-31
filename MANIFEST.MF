@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Implementation-Title: gui
 Implementation-Version: 0.2
 Class-Path: core.jar controlfx-8.40.12.jar JStesPreloader.jar
-Main-Class: stes.isami.jstes.main.MainApp
+Main-Class: stes.isami.bjm.main.MainApp
 
