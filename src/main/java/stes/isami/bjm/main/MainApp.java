@@ -1,5 +1,6 @@
 package stes.isami.bjm.main;
 
+import com.sshtools.ssh.SshException;
 import com.sun.javafx.application.LauncherImpl;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.configuration.Preferences;
@@ -92,7 +93,12 @@ public class MainApp extends Application {
 
                     notifyPreloader(new Preloader.ProgressNotification(0.8));
 
-                    JStesCore.getCoreEngine().getSshFactory().connect(host, username, password);
+                    try {
+                        JStesCore.getCoreEngine().getSshFactory().connect(host, username, password);
+                    }
+                    catch (IllegalArgumentException | SshException ex) {
+                        logger.error(ex.getMessage());
+                    }
 
                     notifyPreloader(new Preloader.ProgressNotification(1));
 

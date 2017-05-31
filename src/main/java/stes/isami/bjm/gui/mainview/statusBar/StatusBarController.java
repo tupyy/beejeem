@@ -2,6 +2,7 @@ package stes.isami.bjm.gui.mainview.statusBar;
 
 import com.google.common.eventbus.Subscribe;
 import com.sshtools.ssh.SshException;
+import javafx.scene.control.Alert;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.configuration.Preferences;
 import stes.isami.bjm.eventbus.*;
@@ -219,6 +220,13 @@ public class StatusBarController implements Initializable, ComponentEventHandler
                     getCoreEngine().getSshFactory().connect(preferences.getValue("host"),preferences.getValue("username"),preferences.getValue("password"));
                 } catch (SshException e) {
                     JStesCore.getEventBus().post(new DefaultCoreEvent(CoreEvent.CoreEventType.SSH_CLIENT_DISCONNECTED));
+                }
+                catch (IllegalArgumentException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Connect to host");
+                    alert.setHeaderText("Cannot connect to host");
+                    alert.setContentText(ex.getMessage() + "\n"+"Please set the hostname, user and passoword in the preference");
+                    alert.show();
                 }
             }
             closePopUp();
