@@ -137,7 +137,7 @@ public class MainApp extends Application {
 
         Parent root = FXMLLoader.load(MainApp.class.getClassLoader().getResource("mainView.fxml"));
 
-        primaryStage.setTitle("Batch System Job Launcher");
+        primaryStage.setTitle("Batch Job Manager");
         Scene rootScene = new Scene(root, 1024, 800);
         rootScene.getStylesheets().add(MainApp.class.getClassLoader().getResource("css/mainapp.css").toExternalForm());
         primaryStage.setScene(rootScene);

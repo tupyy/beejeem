@@ -29,7 +29,7 @@ public class AboutController implements Initializable {
 
         Label text = new Label();
         text.setText("\n\n" +
-                "Batch System Job Launcher is free software, which is licensed \nto you under the " +
+                "Batch Job Manager is free software, which is licensed \nto you under the " +
                 "GNU General Public License, version 2. \nPlease see the file " +
                 "LICENSE for more details, or visit 'www.gnu.org'.\n" +
                 "\n" +
