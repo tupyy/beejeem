@@ -50,7 +50,7 @@ public class HubTableModel {
     }
     /**
      * Delete a job from model
-     * @param id
+     * @param jobData
      */
     public void deleteJob(JobData jobData) {
         data.remove(jobData);
@@ -116,6 +116,7 @@ public class HubTableModel {
         }
 
         public void updateJob(Job j) {
+            this.name.set((String) j.getParameters().getParameter("name").getValue());
             this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
             this.status.set(JobState.toString(j.getState()));
             this.batchID.set(getParameterValue(j.getParameters(),"batchID"));

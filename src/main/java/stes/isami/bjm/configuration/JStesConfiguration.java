@@ -36,18 +36,18 @@ public class JStesConfiguration extends AbstractComponentEventHandler {
 
     /**
      * Load the configuration file
-     * @param file
+     * @param configurationFile
      * @throws IOException
      */
-    public void loadConfiguration(File file) throws IOException {
+    public void loadConfiguration(File configurationFile) throws IOException {
 
-        if (file.exists() && file.canRead()) {
-            configurationFile = file;
-            if (file.getName().endsWith("xml")) {
+        if (configurationFile.exists() && configurationFile.canRead()) {
+            this.configurationFile = configurationFile;
+            if (configurationFile.getName().endsWith("xml")) {
                 XmlConfigurationReader xmlConfigurationReader = new XmlConfigurationReader();
                 try {
-                    preferences.setJobDefinitions(xmlConfigurationReader.getJobDefintions(file));
-                    preferences.setConfigurationSet(xmlConfigurationReader.getUserConfiguration(file));
+                    preferences.setJobDefinitions(xmlConfigurationReader.getJobDefintions(configurationFile));
+                    preferences.setConfigurationSet(xmlConfigurationReader.getUserConfiguration(configurationFile));
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 } catch (SAXException e) {

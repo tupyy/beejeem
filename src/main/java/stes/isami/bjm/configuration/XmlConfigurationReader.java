@@ -71,7 +71,7 @@ public class XmlConfigurationReader implements ConfigurationReader {
                         } else {
                             logger.error("Job definition null for {}", element.getTextContent());
                         }
-                    } catch (IllegalArgumentException ex) {
+                    } catch (IllegalArgumentException | IOException ex) {
                         logger.error(ex.getMessage());
                     } catch (ParserConfigurationException e) {
                         logger.error(e.getMessage());
