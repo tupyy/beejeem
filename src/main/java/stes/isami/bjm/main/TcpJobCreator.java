@@ -1,5 +1,7 @@
 package stes.isami.bjm.main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.configuration.JobDefinition;
 import stes.isami.bjm.configuration.Preferences;
@@ -40,6 +42,8 @@ import java.util.Optional;
  */
 public class TcpJobCreator {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     public TcpJobCreator() {
 
     }
@@ -65,8 +69,10 @@ public class TcpJobCreator {
                 createdJobs.add(job);
             } catch (IOException e) {
                 errorMessages.add("IOException " + e.getMessage());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                logger.error("IOException " + e.getMessage());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException e) {
                 errorMessages.add("Creator instantiation error for creator " +getCreatorName(element) + " exception: " + e.getMessage());
+                logger.error(errorMessages.get(0));
             }
         }
 
