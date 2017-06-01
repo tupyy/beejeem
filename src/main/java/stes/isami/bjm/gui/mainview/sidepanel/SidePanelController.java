@@ -7,6 +7,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stes.isami.bjm.eventbus.DefaultJobEvent;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobException;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
@@ -71,6 +72,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
             try {
                 if (currentJobID != null) {
                     JStesCore.getCoreEngine().getJob(currentJobID).updateParametes(propertyController.getData());
+                    JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_UPDATED,currentJobID));
                     applyButton.setDisable(true);
                     cancelButton.setDisable(true);
                 }
