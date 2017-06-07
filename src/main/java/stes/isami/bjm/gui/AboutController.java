@@ -38,12 +38,12 @@ public class AboutController implements Initializable {
                 "YOU ASSUME ALL RESPONSIBILITY FOR ANY AND ALL CONSEQUENCE\n" +
                 "THAT MAY RESULT FROM THE USE OF THIS SOFTWARE!");
 
-        Label textArea = new Label("Batch System Job Launcher v " + MainApp.getVersion()+	"\n" +
-                "Written by Cosmin Tupangiu\n");
+        Label textArea = new Label("Batch System Job Launcher " + MainApp.getVersion()+	"\n" +
+                "          Created by Cosmin Tupangiu\n");
         labelPane.getChildren().add(textArea);
         labelPane.getChildren().add(text);
 
-        String image = JStesPreloader.class.getClassLoader().getResource("images/small_logo.png").toExternalForm();
+        String image = AboutController.class.getClassLoader().getResource("images/small_logo.png").toExternalForm();
         Image img = new Image(image);
 
         logoImageView.setImage(img);

@@ -32,6 +32,7 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
+                    <finalName>gui</finalName>
                 </configuration>
             </plugin>
         </plugins>

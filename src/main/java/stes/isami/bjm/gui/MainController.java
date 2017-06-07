@@ -182,7 +182,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             Stage aboutDialog = new Stage();
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                URL url = getClass().getClassLoader().getResource("about.fxml");
+                URL url = getClass().getClassLoader().getResource("views/about.fxml");
                 BorderPane root  = fxmlLoader.load(url);
                 Scene scene = new Scene(root);
 
@@ -190,7 +190,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
                 aboutDialog.setTitle("About");
                 aboutDialog.setResizable(false);
 
-                aboutDialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
+                aboutDialog.initOwner((Stage) addJobButton.getScene().getWindow());
                 aboutDialog.initModality(Modality.APPLICATION_MODAL);
                 aboutDialog.setWidth(800);
                 aboutDialog.setHeight(524);

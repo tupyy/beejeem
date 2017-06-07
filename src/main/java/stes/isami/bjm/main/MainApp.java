@@ -150,7 +150,7 @@ public class MainApp extends Application {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             if ( !version.isEmpty() ) {
-                                primaryStage.setTitle(primaryStage.getTitle() + " version " + version);
+                                primaryStage.setTitle(primaryStage.getTitle() + " " + version);
                             }
                             primaryStage.show();
 
@@ -196,7 +196,7 @@ public class MainApp extends Application {
                             Attributes mainAttribs = manifest.getMainAttributes();
                             String version = mainAttribs.getValue("Implementation-Version");
                             if (version != null) {
-                                return version;
+                                return "version " + version;
                             }
                         }
                     }

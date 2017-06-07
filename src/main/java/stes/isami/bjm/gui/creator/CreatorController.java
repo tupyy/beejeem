@@ -165,7 +165,6 @@ public class CreatorController implements Initializable {
      */
     private void createJob(Creator creator, List<File> files, ParameterSet parameterSet) {
 
-        CreatorLogger logger = new CreatorLogger();
         List<Job> jobs = null;
         try {
             jobs = creator.createJobs(Optional.of(files), parameterSet, model.getCurrentJobDefintion().getModuleElements());
