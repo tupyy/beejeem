@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 /**
- * Created by cosmin on 22/04/2017.
+ * Abstract class for {@link CoreEngine}
  */
 public abstract class AbstractCoreEngine implements Core {
 

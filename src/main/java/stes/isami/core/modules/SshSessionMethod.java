@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Implement the basic method for executing a sidepanel on the remote host
+ * Implement the basic method for executing a command on the remote host
  */
 public class SshSessionMethod {
 

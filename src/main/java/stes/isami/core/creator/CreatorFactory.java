@@ -26,6 +26,10 @@ public class CreatorFactory {
 
     }
 
+    /**
+     * Load the {@link Creator} classes from a {@link Plugin}
+     * @param pluginLoader
+     */
     public void loadCreators(PluginLoader pluginLoader) {
         createCreatorList(pluginLoader);
     }

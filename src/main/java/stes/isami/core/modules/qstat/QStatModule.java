@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * This module creates the qstat method which execute the batch system
- * qstat sidepanel.
+ * qstat command.
  * <br>This is a internal module and it will be created externally of ModuleExecutor.
  */
 public class QStatModule implements SshModule {

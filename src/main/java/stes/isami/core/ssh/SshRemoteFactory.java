@@ -41,7 +41,15 @@ public class SshRemoteFactory implements SshFactory {
     }
 
     @Override
-    public void connect(String hostname, String user, String password) throws SshException {
+    public void connect(String hostname, String user, String password) throws SshException,IllegalArgumentException {
+
+        if (hostname == null || user == null || password == null) {
+            throw new IllegalArgumentException("Either hostname or username are null");
+        }
+
+        if (hostname.isEmpty() && user.isEmpty() && password.isEmpty()) {
+            throw new IllegalArgumentException("Either hostname or username are empty");
+        }
 
         //create the connector instance
         con = SshConnector.createInstance();

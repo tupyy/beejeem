@@ -16,7 +16,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Implementation of the Action interface of the state machine
+ * Implementation of the Action interface of the state machine.
+ *
+ * <p>Upon the entry in the associated state, the state machine will execute the {@code doIt()} method.
+ * <br>The module {@code moduleInstace} will be executed using {@link CancelableFuture}. When it finished, it will
+ * call the {@code callbackFunction} which will evaluate the result of the module. It returns {@code true} if the
+ * module has been successfully executed.
+ * <br> The {@code consumer} will fire the trigger associated with the result of the module.
+ * </p>
+ *
  */
 public class ModuleAction implements Action {
 
@@ -28,6 +36,13 @@ public class ModuleAction implements Action {
     private final Job parent;
     private CompletableFuture<MethodResult> methodFuture;
 
+    /**
+     * Default constructor
+     * @param parent job associated with the module
+     * @param moduleInstace module to be executed
+     * @param callbackFunction callback function called when the module finished executing
+     * @param consumer consumer
+     */
     public ModuleAction(Job parent,Module moduleInstace, Function<MethodResult, Boolean> callbackFunction, Consumer<Boolean> consumer) {
         this.moduleInstance = moduleInstace;
         this.callbackFunction = callbackFunction;
