@@ -1,7 +1,7 @@
 package stes.isami.core.job;
 
 /**
- * Created by cosmin on 21/04/2017.
+ * It defines the triggers
  */
 public class Trigger {
 

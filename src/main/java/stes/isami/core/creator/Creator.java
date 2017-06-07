@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface to be implemented by all the class which creates jobs
+ * Interface to be implemented by all the classes which creates jobs.
  */
 public interface Creator {
 

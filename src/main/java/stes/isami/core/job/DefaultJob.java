@@ -25,7 +25,36 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
- * Default job class
+ * It implements the default behaviour for a job. By extending the {@link AbstractJob}, this class has access to the
+ * state machine.
+ * <p>The default state machine configuration has three main states: </p>
+ * <ui>
+ *     <li>Prepocessing</li>
+ *     <li>Processing</li>
+ *     <li>Postprocessing</li>
+ * </ui>
+ * <p>For each state, a module is associated which is defined in the xml configuration job file.</p>
+ * <pre>{@code
+*     <modules>
+*         <module>
+            <name>stesSpectre.modules.StesSpectrePreprocessingModule</name>
+            <trigger>Preprocessing</trigger>
+        </module>
+        <module>
+            <name>stesSpectre.modules.StesSpectreProcessingModule</name>
+            <trigger>Submitting</trigger>
+        </module>
+        <module>
+            <name>stesSpectre.modules.StesSpectrePostprocessingModule</name>
+            <trigger>Postprocessing</trigger>
+        </module>
+    </modules>
+}
+ * </pre>
+ * In the above example, three modules are defined which will be executed when a associated trigger will be fired.
+ * The first module {@code stesSpectre.modules.StesSpectrePreprocessingModule} will be executed when the state machine
+ * will fire the {@code Preprocessing} trigger.
+ * For each trigger, the user must specify which module will be executed upon the entry in the state.
  */
 public class DefaultJob extends AbstractJob implements Job {
     private final Logger logger = LoggerFactory.getLogger(DefaultJob.class);

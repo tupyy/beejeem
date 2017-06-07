@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by tctupangiu on 12/01/2017.
+ * Basic implementation of the {@link MethodResult}
  */
 public class StandardMethodResult implements MethodResult {
 
