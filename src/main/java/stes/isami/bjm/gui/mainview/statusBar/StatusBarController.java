@@ -27,11 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.tcpserver.TcpEvent;
 
-import java.net.Inet4Address;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import static java.net.NetworkInterface.getNetworkInterfaces;
 import static stes.isami.bjm.main.JStesCore.getCoreEngine;
 
 /**
@@ -96,8 +98,26 @@ public class StatusBarController implements Initializable, ComponentEventHandler
         });
 
         try {
-            tcpSimpleProperty.setValue("Listening on "+ Inet4Address.getLocalHost().getHostAddress() +":1000");
-        } catch (UnknownHostException e) {
+            List networkInterfaces = Collections.list(getNetworkInterfaces());
+            for (Object niObject: networkInterfaces) {
+                NetworkInterface networkInterface = (NetworkInterface) niObject;
+                List addresses = Collections.list(networkInterface.getInetAddresses());
+                for (Object addressObj: addresses) {
+                    try {
+                        Inet4Address address = (Inet4Address) addressObj;
+                        if (address.getHostAddress().startsWith("172")) {
+                            System.out.println("address.getHostAddress()");
+                            tcpSimpleProperty.setValue("Listening on " + address.getHostAddress() + ":1000");
+                            break;
+                        }
+                    }
+                    catch (ClassCastException ex) {
+
+                    }
+                }
+            }
+
+        } catch (SocketException e) {
             ;
         }
     }

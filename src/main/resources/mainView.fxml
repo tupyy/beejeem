@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -36,12 +37,19 @@
             <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
               </items>
           </ToolBar>
-      <SplitPane fx:id="splitPane" dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-         <items>
-            <VBox fx:id="splitPaneVBox" maxWidth="400.0" prefWidth="400.0" />
-            <VBox fx:id="splitPaneHub" />
-         </items>
-      </SplitPane>
+      <BorderPane fx:id="borderHubPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <left>
+            <ToolBar orientation="VERTICAL" prefHeight="591.0" prefWidth="33.0" BorderPane.alignment="CENTER">
+              <items>
+                  <Group>
+                     <children>
+                        <ToggleButton fx:id="showParameterView" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" rotate="-90.0" text="Parameters" translateY="40.0" />
+                     </children>
+                  </Group>
+              </items>
+            </ToolBar>
+         </left>
+      </BorderPane>
       <HBox fx:id="statusBarPane" alignment="CENTER_LEFT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" VBox.vgrow="NEVER" />
     </children>
 </VBox>
