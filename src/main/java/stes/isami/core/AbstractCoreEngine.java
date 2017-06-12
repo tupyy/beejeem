@@ -14,27 +14,6 @@ public abstract class AbstractCoreEngine implements Core {
 
     public AbstractCoreEngine() {}
 
-    /**
-     * Register a listener for JobEvents
-     */
-    @Override
-    synchronized public void addCoreEventListener(CoreListener l) {
-        if (listeners == null) {
-            listeners = new Vector();
-        }
-        listeners.addElement(l);
-    }
-
-    /**
-     * Remove a listener for JobEvents
-     */
-    @Override
-    synchronized public void removeCoreEventListener(CoreListener l) {
-        if (listeners == null) {
-            return;
-        }
-        listeners.removeElement(l);
-    }
 
     @Override
     synchronized public void addJobListener(JobListener l) {
@@ -79,38 +58,12 @@ public abstract class AbstractCoreEngine implements Core {
                 switch (action) {
                     case JOB_UPDATED:
                         l.jobUpdated(id);
-                }
-            }
-        }
-    }
-
-    protected void fireCoreEvent(CoreEvent action) {
-        // if we have no listeners, do nothing...
-        if (listeners != null && !listeners.isEmpty()) {
-
-            // make a copy of the listener list in case
-            //   anyone adds/removes listeners
-            Vector targets;
-            synchronized (this) {
-                targets = (Vector) listeners.clone();
-            }
-
-            // walk through the listener list and
-            //   call the sunMoved methods in each
-            Enumeration e = targets.elements();
-            while (e.hasMoreElements()) {
-                CoreListener l = (CoreListener) e.nextElement();
-                switch (action) {
-                    case SSH_CONNECTION_ERROR:
-                        l.connectionEvent(CoreEvent.SSH_CONNECTION_ERROR);
+                        break;
+                    case JOB_CREATED:
+                        l.jobCreated(id);
                         break;
                 }
             }
         }
     }
-
-
-
-
-
 }

@@ -111,6 +111,8 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         jobList.put(j,false);
 
         logger.info("Job created: {}",j.getName());
+        fireJobEvent(JobEvent.JOB_CREATED,j.getID());
+
         return true;
     }
 
@@ -155,27 +157,27 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     }
 
     @Override
-    public void executeJob(UUID id) {
+    public void executeJob(UUID id) throws IllegalStateException {
 
 //        //check if the ssh client is connected before executing jobs
-        if (sshRemoteFactory.isConnected() && sshRemoteFactory.isAuthenticated()) {
-            qstatManager.start();
-            Job job = getJob(id);
-            try {
-                if (job.getState() == JobState.READY) {
-                    job.execute();
-                }
-                else if (job.getState() == JobState.STOP || job.getState() == JobState.ERROR || job.getState() == JobState.FINISHED) {
-                    job.restart();
-                }
-            } catch (JobException e) {
-                e.printStackTrace();
-            }
+        if ( !sshRemoteFactory.isConnected() && !sshRemoteFactory.isAuthenticated()) {
+            throw new IllegalStateException("SSH disconnected");
         }
-        else {
-            fireCoreEvent(CoreEvent.SSH_CONNECTION_ERROR);
+
+        qstatManager.start();
+        Job job = getJob(id);
+        try {
+            if (job.getState() == JobState.READY) {
+                job.execute();
+            }
+            else if (job.getState() == JobState.STOP || job.getState() == JobState.ERROR || job.getState() == JobState.FINISHED) {
+                job.restart();
+            }
+        } catch (JobException e) {
+            e.printStackTrace();
         }
     }
+
 
     @Override
     public void executeAll() {

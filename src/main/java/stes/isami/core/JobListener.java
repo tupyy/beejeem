@@ -14,4 +14,6 @@ public interface JobListener {
      */
     void jobUpdated(UUID id);
 
+    void jobCreated(UUID id);
+
 }
