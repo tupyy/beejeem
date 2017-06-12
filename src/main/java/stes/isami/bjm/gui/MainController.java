@@ -5,18 +5,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.MasterDetailPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
@@ -51,10 +48,13 @@ public class MainController extends AbstractComponentEventHandler implements Ini
     private SplitPane splitPane;
 
     @FXML
-    private VBox splitPaneVBox;
+    private BorderPane borderHubPane;
 
-    @FXML
-    private VBox splitPaneHub;
+    private MasterDetailPane masterDetailPane;
+
+    private VBox detailPane;
+
+    @FXML private ToggleButton showParameterView;
 
     @FXML
     private HBox statusBarPane;
@@ -82,8 +82,15 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     public void initialize(URL location, ResourceBundle resources) {
 
-        showSidePanelView(splitPaneVBox);
-        showHubView(splitPaneHub);
+        masterDetailPane = new MasterDetailPane(Side.LEFT);
+        masterDetailPane.setShowDetailNode(true);
+        masterDetailPane.setDividerPosition(0.35);
+
+        createHubDetailView(masterDetailPane);
+        createHubView(masterDetailPane);
+        borderHubPane.setCenter(masterDetailPane);
+        showParameterView.selectedProperty().bindBidirectional(masterDetailPane.showDetailNodeProperty());
+
         showStatusBar(statusBarPane);
 
         createActions();
@@ -133,14 +140,14 @@ public class MainController extends AbstractComponentEventHandler implements Ini
      * Show sidepanel view
      * @param parentNode
      */
-    private void showSidePanelView(VBox parentNode) {
+    private void createHubDetailView(MasterDetailPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/sidePanel.fxml"));
-            VBox command = (VBox) loader.load();
+            VBox detailPane = (VBox) loader.load();
 
             sidePanelController = loader.getController();
-            parentNode.getChildren().add(command);
+            parentNode.setDetailNode(detailPane);
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -151,12 +158,12 @@ public class MainController extends AbstractComponentEventHandler implements Ini
      * Add hub view
      * @param parentNode
      */
-    private void showHubView(VBox parentNode) {
+    private void createHubView(MasterDetailPane parentNode) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
             VBox hubPane = (VBox) loader.load();
-            parentNode.getChildren().add(hubPane);
+            parentNode.setMasterNode(hubPane);
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -261,7 +268,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
                 dialog.setTitle("Preferences");
                 dialog.setResizable(false);
 
-                dialog.initOwner((Stage) splitPaneVBox.getScene().getWindow());
+                dialog.initOwner((Stage) borderHubPane.getScene().getWindow());
                 dialog.initModality(Modality.APPLICATION_MODAL);
                 dialog.setWidth(700);
                 dialog.setHeight(520);
