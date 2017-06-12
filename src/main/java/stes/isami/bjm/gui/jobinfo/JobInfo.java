@@ -1,9 +1,9 @@
 package stes.isami.bjm.gui.jobinfo;
 
+import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
 import stes.isami.core.parameters.Parameter;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
-import stes.isami.bjm.eventbus.JobEvent;
 import stes.isami.bjm.gui.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.regex.Pattern;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Created by tctupangiu on 17/05/2017.
  */
-public class JobInfo extends AbstractComponentEventHandler {
+public class JobInfo extends AbstractComponentEventHandler implements JobListener{
 
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
@@ -72,14 +73,17 @@ public class JobInfo extends AbstractComponentEventHandler {
     }
 
     @Override
-    public void onJobEvent(JobEvent event) {
-        if (event.getAction() == JobEvent.JobEventType.JOB_UPDATED) {
-            if (job.getID() == event.getJobId()) {
-                jobInfoController.setJobEditable(job.isEditable());
-            }
+    public void jobUpdated(UUID id) {
+        if (job.getID() == id) {
+            jobInfoController.setJobEditable(job.isEditable());
         }
+    }
+
+    @Override
+    public void jobCreated(UUID id) {
 
     }
+
     /**
      * Get the root pane
      * @return null if the rootPane cannot be initialized
@@ -181,5 +185,6 @@ public class JobInfo extends AbstractComponentEventHandler {
 
         return 0;
     }
+
 
 }

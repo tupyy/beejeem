@@ -20,20 +20,24 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
-import stes.isami.bjm.eventbus.ComponentAction;
-import stes.isami.bjm.eventbus.DefaultComponentAction;
 import stes.isami.bjm.eventbus.JobEvent;
+import stes.isami.bjm.eventbus.DefaultJobEvent;
+import stes.isami.bjm.eventbus.JobEvent.JobEventType;
 import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.gui.mainview.sidepanel.SidePanelController;
 import stes.isami.bjm.main.JStesCore;
 import stes.isami.bjm.main.MainApp;
+import stes.isami.core.JobListener;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
+
+import static stes.isami.bjm.main.JStesCore.getCoreEngine;
 
 
-public class MainController extends AbstractComponentEventHandler implements Initializable {
+public class MainController extends AbstractComponentEventHandler implements Initializable,JobListener {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
@@ -73,6 +77,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     public MainController() {
         super();
+        getCoreEngine().addJobListener(this);
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -90,25 +95,31 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void onJobEvent(JobEvent event) {
+    public void jobUpdated(UUID id) {
 
-        switch (event.getAction()) {
-            case JOB_CREATED:
-                deleteButton.setDisable(false);
-                break;
-        }
     }
 
-    public void onComponentAction(ComponentAction event) {
-        if (event.getAction() == ComponentAction.ComponentActions.DESELECT) {
-            deleteButton.setDisable(true);
-        }
-        else if (event.getAction() == ComponentAction.ComponentActions.SELECT) {
-            deleteButton.setDisable(false);
+    @Override
+    public void jobCreated(UUID id) {
+        deleteButton.setDisable(false);
+    }
+
+    /**
+     * On job event handler
+     * @param event
+     */
+    public void onJobEvent(JobEvent event) {
+
+        switch (event.getEvent()) {
+            case DESELECT:
+                deleteButton.setDisable(true);
+                break;
+            case DELETE:
+                break;
+            case SELECT:
+                deleteButton.setDisable(false);
+                break;
         }
     }
 
@@ -233,7 +244,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         deleteButton.setOnAction(event -> {
 
-            JStesCore.getEventBus().post(new DefaultComponentAction(ComponentAction.ComponentActions.DELETE));
+            JStesCore.getEventBus().post(new DefaultJobEvent(JobEventType.DELETE));
 
         });
 
@@ -274,6 +285,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         imageView.setFitWidth(20);
         button.setGraphic(imageView);
     }
+
 
 
 }

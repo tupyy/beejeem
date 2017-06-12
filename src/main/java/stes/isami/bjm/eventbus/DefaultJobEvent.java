@@ -1,33 +1,53 @@
 package stes.isami.bjm.eventbus;
 
-import stes.isami.bjm.main.JStesCore;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Event fired by the {@link JStesCore} when an event is received from {@link core.CoreEngine}
+ * Created by tctupangiu on 27/04/2017.
  */
 public class DefaultJobEvent implements JobEvent {
 
     private final JobEventType action;
-    /**
-     * List of jobs
-     */
-    private UUID jobId = null;
+    private final ComponentEventHandler source;
+    private final UUID jobID;
+    private final List<UUID> jobIDs;
 
-    public DefaultJobEvent(JobEventType action, UUID jobId) {
+    public DefaultJobEvent(JobEventType action) {
+        this(null,action,UUID.randomUUID());
+    }
+
+    public DefaultJobEvent(ComponentEventHandler source, JobEventType action, UUID jobID) {
         this.action = action;
-        this.jobId = jobId;
+        this.source = source;
+        this.jobID = jobID;
+        this.jobIDs = Arrays.asList(jobID);
     }
 
-
-    public UUID getJobId() {
-        return jobId;
+    public DefaultJobEvent(ComponentEventHandler source, JobEventType action, List<UUID> jobIDs) {
+        this.action = action;
+        this.source = source;
+        this.jobIDs = jobIDs;
+        this.jobID = jobIDs.get(0);
     }
-
     @Override
-    public JobEventType getAction() {
+    public JobEventType getEvent() {
         return action;
     }
 
+    @Override
+    public ComponentEventHandler getSource() {
+        return source;
+    }
+
+    @Override
+    public UUID getJobId() {
+        return jobID;
+    }
+
+    @Override
+    public List<UUID> getIds() {
+        return jobIDs;
+    }
 }

@@ -7,11 +7,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import stes.isami.bjm.eventbus.DefaultJobEvent;
+import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobException;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
-import stes.isami.bjm.eventbus.ComponentAction;
 import stes.isami.bjm.eventbus.JobEvent;
 import stes.isami.bjm.gui.propertySheet.PropertyController;
 import stes.isami.bjm.gui.propertySheet.PropertyEvent;
@@ -27,7 +26,7 @@ import java.util.UUID;
 /**
  * CreatorController class for the CommandView
  */
-public class SidePanelController extends AbstractComponentEventHandler implements Initializable,PropertyListener {
+public class SidePanelController extends AbstractComponentEventHandler implements Initializable,PropertyListener,JobListener {
     private static final Logger logger = LoggerFactory
             .getLogger(SidePanelController.class);
 
@@ -72,7 +71,6 @@ public class SidePanelController extends AbstractComponentEventHandler implement
             try {
                 if (currentJobID != null) {
                     JStesCore.getCoreEngine().getJob(currentJobID).updateParametes(propertyController.getData());
-                    JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_UPDATED,currentJobID));
                     applyButton.setDisable(true);
                     cancelButton.setDisable(true);
                 }
@@ -94,28 +92,26 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     }
 
     @Override
-    public void onJobEvent(JobEvent event) {
-
-        switch (event.getAction()) {
-            case JOB_UPDATED:
-                if (currentJobID == event.getJobId()) {
-                    for (ComponentController componentController: componentControllerList) {
-                        componentController.updateJob(JStesCore.getCoreEngine().getJob(event.getJobId()));
-                    }
-                }
-                break;
-            case JOB_CREATED:
-                for (ComponentController componentController: componentControllerList) {
-                    componentController.updateJob(JStesCore.getCoreEngine().getJob(event.getJobId()));
-                }
-                break;
+    public void jobUpdated(UUID id) {
+        if (currentJobID == id) {
+            for (ComponentController componentController: componentControllerList) {
+                componentController.updateJob(JStesCore.getCoreEngine().getJob(id));
+            }
         }
     }
 
     @Override
-    public void onComponentAction(ComponentAction event) {
+    public void jobCreated(UUID id) {
+        for (ComponentController componentController: componentControllerList) {
+            componentController.updateJob(JStesCore.getCoreEngine().getJob(id));
+        }
+    }
 
-        switch (event.getAction()) {
+
+    @Override
+    public void onJobEvent(JobEvent event) {
+
+        switch (event.getEvent()) {
             case SELECT:
                     UUID id = event.getJobId();
                     logger.debug("Selected job id {}", id);
@@ -160,7 +156,5 @@ public class SidePanelController extends AbstractComponentEventHandler implement
         }
 
     }
-
-
 
 }

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import stes.isami.core.Core;
 import stes.isami.core.CoreEngine;
-import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobException;
 import stes.isami.core.ssh.SshListener;
@@ -19,14 +18,13 @@ import stes.isami.tcpserver.TcpServerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by tctupangiu on 09/03/2017.
  */
-public class JStesCore implements JobListener,SshListener,ComponentEventHandler {
+public class JStesCore implements SshListener,ComponentEventHandler {
 
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -40,7 +38,6 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler 
     public JStesCore() {
 
         getCoreEngine().getSshFactory().addSshEventListener(this);
-        getCoreEngine().addJobListener(this);
 
         eventBus = new EventBus();
         eventBus.register(this);
@@ -118,35 +115,12 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler 
     }
     //</editor-fold>
 
-    //<editor-fold desc="JobListener">
-
-    @Override
-    public void jobUpdated(UUID id) {
-        eventBus.post(new DefaultJobEvent(JobEvent.JobEventType.JOB_UPDATED,id));
-    }
-
    //</editor-fold>
 
     //<editor-fold desc="ComponentEventHandler">
+
     @Override
     public void onJobEvent(JobEvent event) {
-
-    }
-
-    @Override
-    public void onComponentAction(ComponentAction event) {
-
-        switch (event.getAction()) {
-            case EXECUTE:
-                getCoreEngine().executeJob(event.getJobId());
-                break;
-            case EXECUTE_ALL:
-                getCoreEngine().executeAll();
-                break;
-            case STOP:
-                getCoreEngine().stopJob(event.getJobId());
-                break;
-        }
 
     }
 
@@ -171,10 +145,7 @@ public class JStesCore implements JobListener,SshListener,ComponentEventHandler 
                 for(Job job: createdJobs) {
                     try {
                         if (getCoreEngine().addJob(job)) {
-
                             Platform.runLater(() -> {
-                                JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
-
                                 //check if autoRun is true
                                 if (JStesConfiguration.getPreferences().getProperty("autoJobRun").getValue() == Boolean.TRUE) {
                                     getCoreEngine().executeJob(job.getID());

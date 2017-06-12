@@ -17,11 +17,6 @@ public abstract class AbstractComponentEventHandler implements ComponentEventHan
     }
 
     @Override
-    public void onComponentAction(ComponentAction event) {
-
-    }
-
-    @Override
     public void onCoreEvent(CoreEvent event) {
 
     }

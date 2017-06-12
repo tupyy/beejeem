@@ -108,11 +108,6 @@ public class StatusBarController implements Initializable, ComponentEventHandler
     }
 
     @Override
-    public void onComponentAction(ComponentAction event) {
-
-    }
-
-    @Override
     public void onCoreEvent(CoreEvent event) {
         switch (event.getEventName()) {
             case SSH_CLIENT_CONNECTED:

@@ -10,7 +10,7 @@ public interface CoreEvent {
         SSH_CLIENT_DISCONNECTED,
         SSH_CLIENT_AUTHENTICATED,
         SSH_CLIENT_AUTHENTICATE_ERROR,
-        PREFERENCES_UPDATED,
+        PREFERENCES_SAVED,
         SHUTDOWN
     }
 

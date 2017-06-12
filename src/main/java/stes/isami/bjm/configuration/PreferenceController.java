@@ -163,14 +163,12 @@ public final class PreferenceController extends AbstractComponentEventHandler im
         if (validationSupport.isInvalid()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Invalid input data");
-            alert.setContentText("Some textfields containts invalid data. Please correct the values");
+            alert.setContentText("Some text fields containts invalid data. Please correct the values");
             alert.show();
         }
         else {
-            JStesCore.getEventBus().post(new DefaultCoreEvent(CoreEvent.CoreEventType.PREFERENCES_UPDATED));
-
             if (saveFile) {
-                JStesCore.getEventBus().post(new DefaultComponentAction(this,ComponentAction.ComponentActions.PREFERENCES_SAVED, UUID.randomUUID()));
+                JStesCore.getEventBus().post(new DefaultCoreEvent(CoreEvent.CoreEventType.PREFERENCES_SAVED));
             }
         }
 

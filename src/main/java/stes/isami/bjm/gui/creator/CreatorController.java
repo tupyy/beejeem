@@ -26,8 +26,6 @@ import org.controlsfx.control.PropertySheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.bjm.configuration.JStesConfiguration;
-import stes.isami.bjm.eventbus.DefaultJobEvent;
-import stes.isami.bjm.eventbus.JobEvent;
 import stes.isami.bjm.gui.propertySheet.PropertyController;
 import stes.isami.bjm.main.JStesCore;
 
@@ -181,9 +179,7 @@ public class CreatorController implements Initializable {
 
     private void addJobToCore(Job job) {
         try {
-            if (JStesCore.getCoreEngine().addJob(job)) {
-                JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.JOB_CREATED, job.getID()));
-            }
+            JStesCore.getCoreEngine().addJob(job);
         } catch (JobException e) {
             logger.error(e.getMessage());
         }

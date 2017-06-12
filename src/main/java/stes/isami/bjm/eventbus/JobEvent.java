@@ -1,30 +1,27 @@
 package stes.isami.bjm.eventbus;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Default event interface for the component events.
- * <pre>A component event can be a job is selected, deleted or updated</pre>
+ * Created by tctupangiu on 27/04/2017.
  */
 public interface JobEvent {
 
+
+    public JobEventType getEvent();
+
+    public ComponentEventHandler getSource();
+
+    public UUID getJobId();
+
+    public List<UUID> getIds();
+
     public enum JobEventType {
-        JOB_CREATED,
-        JOB_DELETED,
-        JOB_UPDATED,
-        JOB_STOPPED
+        DELETE,
+        SELECT,
+        DESELECT
     }
 
-    /**
-     * Get the list of job ids on which the event occured
-     * @return
-     */
-   public UUID getJobId();
-
-    /**
-     * Get the event action
-     * @return
-     */
-   public JobEventType getAction();
 
 }

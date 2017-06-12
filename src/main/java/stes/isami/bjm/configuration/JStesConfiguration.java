@@ -58,8 +58,8 @@ public class JStesConfiguration extends AbstractComponentEventHandler {
     }
 
     @Override
-    public void onComponentAction(ComponentAction event) {
-        switch (event.getAction()) {
+    public void onCoreEvent(CoreEvent event) {
+        switch (event.getEventName()) {
             case PREFERENCES_SAVED:
                 if (configurationFile.canWrite()) {
                     if (configurationFile.getName().endsWith("xml")) {
