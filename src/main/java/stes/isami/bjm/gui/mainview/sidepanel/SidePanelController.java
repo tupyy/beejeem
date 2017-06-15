@@ -135,6 +135,8 @@ public class SidePanelController extends AbstractComponentEventHandler implement
                 clear();
                 applyButton.setDisable(true);
                 cancelButton.setDisable(true);
+                break;
+
         }
     }
 

@@ -335,7 +335,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
             if (!isDeleteInProgress()) {
                 if (newSelection != null) {
                     HubTableModel.JobData jobData = (HubTableModel.JobData) newSelection;
-                        onJobSelection(jobData);
+                    onJobSelection(jobData);
                     }
             }
         });
@@ -421,7 +421,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
     }
 
     private boolean isDeleteInProgress() {
-        return deleteInProgress;
+        return this.deleteInProgress;
     }
 
     private void setDeleteInProgress(boolean deleteInProgress) {
@@ -440,11 +440,15 @@ public class HubController extends AbstractComponentEventHandler implements Init
             @Override
             public void handle(WorkerStateEvent event) {
                 if ( (Boolean) event.getSource().getValue()) {
-                    JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.DESELECT));
+//                    JStesCore.getEventBus().post(new DefaultJobEvent(JobEvent.JobEventType.DESELECT));
                  }
 
                 hubTable.requestFocus();
                 setDeleteInProgress(false);
+
+                HubTableModel.JobData jobData = (HubTableModel.JobData) hubTable.getSelectionModel().getSelectedItem();
+                onJobSelection(jobData);
+
             }
         });
 
@@ -457,10 +461,6 @@ public class HubController extends AbstractComponentEventHandler implements Init
      * @param data
      */
     private void onJobSelection(HubTableModel.JobData data) {
-
-        if ( !getCoreEngine().getSshFactory().isAuthenticated() ) {
-            return;
-        }
 
         if (data != null) {
             if (runJobButton.isDisabled()) {

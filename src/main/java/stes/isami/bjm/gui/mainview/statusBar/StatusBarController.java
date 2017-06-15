@@ -106,7 +106,6 @@ public class StatusBarController implements Initializable, ComponentEventHandler
                     try {
                         Inet4Address address = (Inet4Address) addressObj;
                         if (address.getHostAddress().startsWith("172")) {
-                            System.out.println("address.getHostAddress()");
                             tcpSimpleProperty.setValue("Listening on " + address.getHostAddress() + ":1000");
                             break;
                         }

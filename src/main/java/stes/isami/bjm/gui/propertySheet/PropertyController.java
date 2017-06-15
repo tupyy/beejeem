@@ -30,11 +30,13 @@ public class PropertyController implements ComponentController {
     public PropertyController(PropertyModel model) {
         this.model = model;
         initializeController(model);
+        propertySheet.setMode(PropertySheet.Mode.CATEGORY);
     }
 
     public PropertyController() {
         this.model = new PropertyModel();
         initializeController(model);
+        propertySheet.setMode(PropertySheet.Mode.CATEGORY);
     }
 
     /**
