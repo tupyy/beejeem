@@ -269,8 +269,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
         });
 
         final KeyCombination keyComb1 = new KeyCodeCombination(KeyCode.DELETE);
-        final KeyCombination keyEnter = new KeyCodeCombination(KeyCode.ENTER);
-        getHubTable().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+         getHubTable().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 if (keyComb1.match(event)) {

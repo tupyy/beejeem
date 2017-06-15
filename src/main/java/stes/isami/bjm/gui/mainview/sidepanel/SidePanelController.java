@@ -51,6 +51,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     public SidePanelController() {
         super();
 
+        JStesCore.getCoreEngine().addJobListener(this);
 
     }
 
