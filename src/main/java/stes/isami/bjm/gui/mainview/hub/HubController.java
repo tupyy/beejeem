@@ -17,6 +17,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -264,6 +268,16 @@ public class HubController extends AbstractComponentEventHandler implements Init
             };
         });
 
+        final KeyCombination keyComb1 = new KeyCodeCombination(KeyCode.DELETE);
+        final KeyCombination keyEnter = new KeyCodeCombination(KeyCode.ENTER);
+        getHubTable().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (keyComb1.match(event)) {
+                    onJobEvent(new DefaultJobEvent(JobEvent.JobEventType.DELETE));
+                }
+            }
+        });
 
         SortedList<HubTableModel.JobData> sortedData = new SortedList<>(filteredData);
 
