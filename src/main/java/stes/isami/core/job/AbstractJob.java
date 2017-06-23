@@ -204,6 +204,8 @@ public abstract class AbstractJob extends Observable {
                 return Trigger.evDeletion;
             case "h":
                 return Trigger.evHold;
+            case "t":
+                return Trigger.evTransferring;
             case "E":
                 return Trigger.evError;
         }
