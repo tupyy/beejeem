@@ -322,6 +322,9 @@ public class DefaultJob extends AbstractJob implements Job {
             Parameter parameterToUpdate = getParameterSet().getParameter(parameterName);
             parameterToUpdate.setValue(parameterValue);
 
+            setChanged();
+            notifyObservers();
+
             return true;
         }
         else {
@@ -333,6 +336,10 @@ public class DefaultJob extends AbstractJob implements Job {
     public boolean updateParametes(ParameterSet parameters) throws JobException {
         if (isEditable()) {
             setParameterSet(parameters);
+
+            setChanged();
+            notifyObservers();
+            
             return true;
         }
         else {
