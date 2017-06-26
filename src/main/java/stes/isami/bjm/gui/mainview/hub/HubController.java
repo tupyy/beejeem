@@ -164,9 +164,9 @@ public class HubController extends AbstractComponentEventHandler implements Init
 
         TableColumn typeCol = new TableColumn("Type");
         typeCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("type"));
-        typeCol.setMaxWidth(100);
-        typeCol.setMinWidth(100);
-        typeCol.setPrefWidth(100);
+        typeCol.setMaxWidth(150);
+        typeCol.setMinWidth(150);
+        typeCol.setPrefWidth(150);
         typeCol.setResizable(false);
 
         TableColumn statusCol = new TableColumn("Status");

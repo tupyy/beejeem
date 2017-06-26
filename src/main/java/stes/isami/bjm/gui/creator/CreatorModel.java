@@ -1,5 +1,6 @@
 package stes.isami.bjm.gui.creator;
 
+import javafx.collections.transformation.SortedList;
 import stes.isami.bjm.configuration.JobDefinition;
 import stes.isami.bjm.configuration.Preferences;
 import stes.isami.core.parameters.Parameter;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -131,6 +133,7 @@ public class CreatorModel {
      * @return {@code ObservableList<String> containing the list of job types}
      */
     public ObservableList<String> getObsJobType() {
+        FXCollections.sort(obsJobType);
         return obsJobType;
     }
 
@@ -161,7 +164,7 @@ public class CreatorModel {
         return obsFileNameList.size();
     }
 
-    public class FileEntry {
+    public class FileEntry  {
         private File file;
 
         public FileEntry(File file) {
@@ -175,6 +178,7 @@ public class CreatorModel {
         public File getFile() {
             return file;
         }
+
     }
 
     private ParameterSet addParameterFromPreferences(ParameterSet parameters) {
@@ -200,5 +204,18 @@ public class CreatorModel {
             parameters.addParameter(destinationFolder);
         }
         return parameters;
+    }
+
+    public int compare(FileEntry obj1, FileEntry obj2) {
+        if (obj1.getName() == obj2.getName()) {
+            return 0;
+        }
+        if (obj1 == null) {
+            return -1;
+        }
+        if (obj2 == null) {
+            return 1;
+        }
+        return obj1.getName().compareTo(obj2.getName());
     }
 }
