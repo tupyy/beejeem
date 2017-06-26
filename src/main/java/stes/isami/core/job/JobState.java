@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by tctupangiu on 23/01/2017.
+ * It enumerates the states of a job.
  */
 public class JobState {
     /**
@@ -74,6 +74,11 @@ public class JobState {
         statusMap.put(STOPPING,"Stopping");
     }
 
+    /**
+     * Return the description of a state
+     * @param stateCode
+     * @return
+     */
     public static String toString(int stateCode) {
         if (statusMap.containsKey(stateCode)) {
             return statusMap.get(stateCode);
@@ -82,6 +87,11 @@ public class JobState {
         return "";
     }
 
+    /**
+     * Return the code of the state based on its name.
+     * @param statusName
+     * @return state code
+     */
     public static int getStatusCode(String statusName) {
         for(Map.Entry<Integer,String> entry:statusMap.entrySet()) {
             if (entry.getValue().equals(statusName)) {

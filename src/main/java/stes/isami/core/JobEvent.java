@@ -5,5 +5,5 @@ package stes.isami.core;
  */
 public enum JobEvent {
      JOB_UPDATED,
-     JOB_STATUS_CHANGED
+     JOB_CREATED
 }

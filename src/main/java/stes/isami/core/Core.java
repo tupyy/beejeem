@@ -53,7 +53,7 @@ public interface Core {
      * Run job
      * @param id
      */
-    public void executeJob(UUID id);
+    public void executeJob(UUID id) throws IllegalStateException;
 
     /**
      * Execute all the jobs
@@ -77,19 +77,6 @@ public interface Core {
      * @return ArrayList of IDs
      */
     public ArrayList<UUID> getJobIDList();
-
-    /**
-     * Add CoreListener
-     * @param l CoreListener interface
-     */
-    public void addCoreEventListener(CoreListener l);
-
-    /**
-     * Remove listener
-     * @param l
-     */
-    public void removeCoreEventListener(CoreListener l);
-
     /**
      * Add job listener
      * @param listener

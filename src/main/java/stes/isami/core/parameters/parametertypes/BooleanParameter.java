@@ -31,8 +31,14 @@ public class BooleanParameter extends AbstractParameter<Boolean> {
 
     @Override
     public void loadValueFromXML(Element xmlElement) {
-        if (xmlElement.getTextContent().equalsIgnoreCase("true") || xmlElement.getTextContent().equalsIgnoreCase("false")) {
-            super.setValue(Boolean.parseBoolean(xmlElement.getTextContent()));
+
+        try {
+            if (xmlElement.getTextContent().equalsIgnoreCase("true") || xmlElement.getTextContent().equalsIgnoreCase("false")) {
+                super.setValue(Boolean.parseBoolean(xmlElement.getTextContent()));
+            }
+        }
+        catch (NullPointerException ex) {
+
         }
 
     }

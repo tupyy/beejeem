@@ -7,7 +7,8 @@ import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 /**
- * Created by tctupangiu on 09/05/2017.
+ * A wrapper class on the {@link CompletableFuture} to provides a functional cancel feature.
+ * To be able to interrupt the underline thread when canceling a {@link CompletableFuture}, the user must use this class.
  */
 class CancelableFuture<T> extends CompletableFuture<T> {
     private Future<?> inner;

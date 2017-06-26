@@ -14,7 +14,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * Created by cosmin on 21/04/2017.
+ * Abstract class for {@link Job}.
+ * <p>It provides basic behaviour for a job like being observable by the {@link stes.isami.core.CoreEngine}.</p>
+ * <p>This class provides function for consuming the Qstat messages.</p>
+ *
  */
 public abstract class AbstractJob extends Observable {
 
@@ -201,6 +204,8 @@ public abstract class AbstractJob extends Observable {
                 return Trigger.evDeletion;
             case "h":
                 return Trigger.evHold;
+            case "t":
+                return Trigger.evTransferring;
             case "E":
                 return Trigger.evError;
         }

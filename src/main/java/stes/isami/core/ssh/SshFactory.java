@@ -15,7 +15,7 @@ public interface SshFactory {
      * @param user
      * @param password
      */
-    public void connect(String hostname, String user, String password) throws SshException;
+    public void connect(String hostname, String user, String password) throws SshException,IllegalArgumentException;
 
     /**
      * Disconnect from host
