@@ -155,15 +155,15 @@ public class StatusBarController implements Initializable, ComponentEventHandler
         Platform.runLater(() -> {
             switch (tcpEvent.getEventName()) {
                 case TCP_CLIENT_CONNECTED:
-                    tcpSimpleProperty.setValue("Client connected");
+//                    tcpSimpleProperty.setValue("Client connected");
                     logger.info("Excel client connected");
                     break;
                 case TCP_CLIENT_DISCONNECTED:
-                    tcpSimpleProperty.setValue("Excel client disconnected");
+//                    tcpSimpleProperty.setValue("Excel client disconnected");
                     logger.info("Client disconnected");
                     break;
                 case RECEIVING_STARTED:
-                    tcpSimpleProperty.setValue("Receiving data...");
+//                    tcpSimpleProperty.setValue("Receiving data...");
                     break;
             }
         });
