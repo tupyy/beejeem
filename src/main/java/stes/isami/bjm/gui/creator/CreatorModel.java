@@ -58,12 +58,18 @@ public class CreatorModel {
      */
     public void addFiles(List<File> fileList) {
         for (File f: fileList) {
-            obsFileNameList.add(new FileEntry(f));
+            FileEntry fileEntry = new FileEntry(f);
+            if (!entryExists(fileEntry)) {
+                obsFileNameList.add(fileEntry);
+            }
         }
     }
 
     public void addFile(File file) {
+        FileEntry fileEntry = new FileEntry(file);
+        if(!entryExists(fileEntry)) {
             obsFileNameList.add(new FileEntry(file));
+        }
 
     }
 
@@ -164,6 +170,9 @@ public class CreatorModel {
         return obsFileNameList.size();
     }
 
+    /**
+     * File entry class
+     */
     public class FileEntry  {
         private File file;
 
@@ -181,6 +190,15 @@ public class CreatorModel {
 
     }
 
+    private boolean entryExists(FileEntry fileEntry) {
+        for(FileEntry fileEntry1: obsFileNameList) {
+            if (fileEntry.getFile().getPath().equals(fileEntry.getFile().getPath())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     private ParameterSet addParameterFromPreferences(ParameterSet parameters) {
         Preferences preferences = JStesConfiguration.getPreferences();
 
@@ -206,16 +224,5 @@ public class CreatorModel {
         return parameters;
     }
 
-    public int compare(FileEntry obj1, FileEntry obj2) {
-        if (obj1.getName() == obj2.getName()) {
-            return 0;
-        }
-        if (obj1 == null) {
-            return -1;
-        }
-        if (obj2 == null) {
-            return 1;
-        }
-        return obj1.getName().compareTo(obj2.getName());
-    }
+
 }
