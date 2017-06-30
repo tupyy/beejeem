@@ -14,6 +14,8 @@ import stes.isami.core.parameters.ParameterSet;
 import stes.isami.bjm.gui.MainController;
 import stes.isami.bjm.gui.mainview.sidepanel.ComponentController;
 
+import java.util.UUID;
+
 /**
  * Created by tctupangiu on 17/03/2017.
  */
@@ -72,8 +74,11 @@ public class PropertyController implements ComponentController {
         if (job.isEditable()) {
             model.updateData(job.getParameters());
         }
+    }
 
-        propertySheet.setDisable(!job.isEditable());
+    @Override
+    public void setDisableJob(boolean state) {
+        propertySheet.setDisable(state);
     }
 
     @Override

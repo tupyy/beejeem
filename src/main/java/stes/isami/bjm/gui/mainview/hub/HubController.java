@@ -24,6 +24,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
+import org.controlsfx.control.action.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.core.JobListener;
@@ -122,26 +124,19 @@ public class HubController extends AbstractComponentEventHandler implements Init
     }
 
     @Override
-    public void jobUpdated(UUID id) {
-
-        Job j = getCoreEngine().getJob(id);
-        model.updateJob(j);
-
-        disableRunAllButton();
-        HubTableModel.JobData selection = (HubTableModel.JobData) getHubTable().getSelectionModel().getSelectedItem();
-        if (selection != null) {
-            if (selection.getId().equals(j.getID().toString())) {
-                runJobButton.setDisable(false);
-                setActionOnButton(runJobButton, getJobAction(JobState.toString(j.getState())).getActionType());
-            }
-
-        }
+    public void onJobUpdate(UUID id) {
+        updateJob(id);
     }
 
     @Override
-    public void jobCreated(UUID id) {
+    public void onJobCreate(UUID id) {
         model.addJob(getCoreEngine().getJob(id));
         runAllButton.setDisable(false);
+    }
+
+    @Override
+    public void onStatusChange(UUID id) {
+        updateJob(id);
     }
 
     /********************************************************************
@@ -487,6 +482,23 @@ public class HubController extends AbstractComponentEventHandler implements Init
         }
     }
 
+    /**
+     * Update job
+     */
+    private void updateJob(UUID id) {
+        Job j = getCoreEngine().getJob(id);
+
+        model.updateJob(j);
+
+        disableRunAllButton();
+        HubTableModel.JobData selection = (HubTableModel.JobData) getHubTable().getSelectionModel().getSelectedItem();
+        if (selection != null) {
+            if (selection.getId().equals(j.getID().toString())) {
+                runJobButton.setDisable(false);
+                setActionOnButton(runJobButton, getJobAction(JobState.toString(j.getState())).getActionType());
+            }
+        }
+    }
 
     private Stage getStage() {
         return (Stage) getHubTable().getScene().getWindow();

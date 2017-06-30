@@ -93,7 +93,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     }
 
     @Override
-    public void jobUpdated(UUID id) {
+    public void onJobUpdate(UUID id) {
         if (currentJobID == id) {
             for (ComponentController componentController: componentControllerList) {
                 componentController.updateJob(JStesCore.getCoreEngine().getJob(id));
@@ -102,9 +102,17 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     }
 
     @Override
-    public void jobCreated(UUID id) {
+    public void onJobCreate(UUID id) {
         for (ComponentController componentController: componentControllerList) {
             componentController.updateJob(JStesCore.getCoreEngine().getJob(id));
+        }
+    }
+
+    @Override
+    public void onStatusChange(UUID id) {
+       Job j = JStesCore.getCoreEngine().getJob(id);
+        for (ComponentController componentController: componentControllerList) {
+            componentController.setDisableJob(!j.isEditable());
         }
     }
 

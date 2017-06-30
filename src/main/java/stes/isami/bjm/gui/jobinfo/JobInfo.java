@@ -73,15 +73,20 @@ public class JobInfo extends AbstractComponentEventHandler implements JobListene
     }
 
     @Override
-    public void jobUpdated(UUID id) {
-        if (job.getID() == id) {
-            jobInfoController.setJobEditable(job.isEditable());
-        }
+    public void onJobUpdate(UUID id) {
+
     }
 
     @Override
-    public void jobCreated(UUID id) {
+    public void onJobCreate(UUID id) {
 
+    }
+
+    @Override
+    public void onStatusChange(UUID id) {
+        if (job.getID() == id) {
+            jobInfoController.setJobEditable(job.isEditable());
+        }
     }
 
     /**

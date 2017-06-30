@@ -41,6 +41,10 @@ public class HubTableModel {
         modelWorker.onUpdateJob(j);
     }
 
+    public void updateStatus(Job job) {
+
+    }
+
     public ObservableList<JobData> getData() {
         return data;
     }
@@ -122,6 +126,9 @@ public class HubTableModel {
             this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
         }
 
+        public void updateStatus(JobState newStatus) {
+            this.status.set(newStatus.toString());
+        }
 
         public String getName() {
             return name.get();
