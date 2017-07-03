@@ -13,19 +13,24 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.materialExplorer.business.Material;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
-import stes.isami.bjm.materialExplorer.presenter.actions.ButtonAction;
+import stes.isami.bjm.materialExplorer.presenter.actions.ExportToXmlAction;
+import stes.isami.bjm.materialExplorer.presenter.actions.ImportAction;
+import stes.isami.bjm.materialExplorer.presenter.actions.LoadAction;
 
+import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -49,10 +54,11 @@ public class MaterialExplorerController implements Initializable {
             new Material("User","Incolnel","AIMS03-55-007"));
     SortedList<Material> sortedList;
     private SimpleBooleanProperty canSelectProperty = new SimpleBooleanProperty(true);
-    private ButtonAction loadMaterialsActions;
-    private ButtonAction importAction;
-    private ButtonAction export2ExcelAction;
-    private ButtonAction export2XMLAction;
+
+    private EventHandler loadMaterialsActions;
+    private EventHandler importAction;
+    private EventHandler export2XMLAction;
+
     private MaterialExplorerHandler handler;
 
 
@@ -68,6 +74,9 @@ public class MaterialExplorerController implements Initializable {
         createActions(handler);
     }
 
+    public ObservableList<Material> getData() {
+        return data;
+    }
 
     /********************************************************************
      *
@@ -81,16 +90,13 @@ public class MaterialExplorerController implements Initializable {
      * @param handler
      */
     private void createActions(MaterialExplorerHandler handler) {
-        loadMaterialsActions = new ButtonAction(handler, ButtonAction.Actions.LOAD_MATERIALS);
+        loadMaterialsActions = new LoadAction(handler);
         loadMaterialsButtton.setOnAction(loadMaterialsActions);
 
-        importAction = new ButtonAction(handler, ButtonAction.Actions.IMPORT);
+        importAction = new ImportAction(handler);
         importButton.setOnAction(importAction);
 
-        export2ExcelAction = new ButtonAction(handler, ButtonAction.Actions.EXPORT_TO_EXCEL);
-        export2ExcelButton.setOnAction(export2ExcelAction);
-
-        export2XMLAction = new ButtonAction(handler, ButtonAction.Actions.EXPORT_TO_XML);
+        export2XMLAction = new ExportToXmlAction(handler,this);
         export2XMLButton.setOnAction(export2XMLAction);
 
         closeButton.setOnAction(event -> {
