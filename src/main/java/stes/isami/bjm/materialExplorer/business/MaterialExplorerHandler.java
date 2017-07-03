@@ -1,7 +1,9 @@
 package stes.isami.bjm.materialExplorer.business;
 
 import com.google.common.eventbus.EventBus;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobException;
 
@@ -15,10 +17,9 @@ import static stes.isami.bjm.main.JStesCore.getCoreEngine;
  */
 public class MaterialExplorerHandler {
 
-    private final EventBus eventBus;
+    private final EventBus eventBus = new EventBus();
 
-    public MaterialExplorerHandler(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public MaterialExplorerHandler() {
     }
 
     /**
@@ -64,7 +65,25 @@ public class MaterialExplorerHandler {
         }
     }
 
+    /**
+     * Create and run the loading materials job
+     */
+    public void doLoadAction() {
+    }
 
+    /**
+     * Stop the loading job if any
+     */
+    public void stopLoadingJob() {
+    }
+
+    /**
+     * Register eventHandler to eventBus
+     * @param eventHandler
+     */
+    public void register(EventHandler eventHandler) {
+        eventBus.register(eventHandler);
+    }
     /********************************************************************
      *
      *                              PRIVATE
@@ -85,5 +104,6 @@ public class MaterialExplorerHandler {
 
         return stringBuilder.toString().substring(0, stringBuilder.toString().length() - 1);
     }
+
 
 }

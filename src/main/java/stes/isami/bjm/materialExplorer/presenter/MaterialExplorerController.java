@@ -18,6 +18,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -40,13 +42,14 @@ public class MaterialExplorerController implements Initializable {
 
     @FXML private TableView materialTable;
     @FXML private HBox hbox;
-    @FXML private HBox statusHBox;
     @FXML private TextField filterTextBox;
     @FXML private Button loadMaterialsButtton;
     @FXML private Button importButton;
     @FXML private Button export2XMLButton;
     @FXML private Button export2ExcelButton;
     @FXML private Button closeButton;
+    @FXML private StackPane mainPane;
+    @FXML private HBox statusHBox;
 
     ObservableList<Material> data = FXCollections.observableArrayList(
             new Material("Refence","Ti-6AV","AIMS03-18-007"),
@@ -78,6 +81,14 @@ public class MaterialExplorerController implements Initializable {
         return data;
     }
 
+    public StackPane getMainPane() {
+        return mainPane;
+    }
+
+    public HBox getStatusPane() {
+        return statusHBox;
+    }
+
     /********************************************************************
      *
      *                              PRIVATE
@@ -90,7 +101,7 @@ public class MaterialExplorerController implements Initializable {
      * @param handler
      */
     private void createActions(MaterialExplorerHandler handler) {
-        loadMaterialsActions = new LoadAction(handler);
+        loadMaterialsActions = new LoadAction(handler,this);
         loadMaterialsButtton.setOnAction(loadMaterialsActions);
 
         importAction = new ImportAction(handler);
@@ -236,4 +247,6 @@ public class MaterialExplorerController implements Initializable {
         tableView.setContextMenu(contextMenu);
 
     }
+
+
 }

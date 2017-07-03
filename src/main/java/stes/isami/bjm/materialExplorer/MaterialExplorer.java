@@ -16,7 +16,6 @@ public class MaterialExplorer {
     Pane rootPane;
     private MaterialExplorerHandler materialExplorerHandler;
     private MaterialExplorerController controller;
-    private EventBus eventBus = new EventBus();
 
     public MaterialExplorer() throws IOException {
 
@@ -25,10 +24,8 @@ public class MaterialExplorer {
         rootPane = fxmlLoader.load();
         controller = (MaterialExplorerController) fxmlLoader.getController();
 
-        materialExplorerHandler = new MaterialExplorerHandler(eventBus);
+        materialExplorerHandler = new MaterialExplorerHandler();
         controller.setHandler(materialExplorerHandler);
-
-        eventBus.register(controller);
     }
 
     /**
