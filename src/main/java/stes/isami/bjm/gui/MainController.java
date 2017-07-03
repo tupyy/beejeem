@@ -16,10 +16,12 @@ import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.eventbus.JobEvent;
 import stes.isami.bjm.eventbus.DefaultJobEvent;
 import stes.isami.bjm.eventbus.JobEvent.JobEventType;
+import stes.isami.bjm.exportMaterial.ExportDialog;
 import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.gui.mainview.sidepanel.SidePanelController;
 import stes.isami.bjm.main.JStesCore;
@@ -43,6 +45,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     @FXML
     private Button deleteButton;
+    @FXML private Button exportMaterialButton;
 
     @FXML
     private SplitPane splitPane;
@@ -276,6 +279,29 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             }
             catch (IOException e) {
                 logger.error(e.getMessage());
+            }
+        });
+
+        exportMaterialButton.setOnAction(event -> {
+
+            if (JStesConfiguration.getPreferences().isExistJobType("Export material")) {
+                Stage dialog = new Stage();
+                ExportDialog exportDialog = new ExportDialog();
+                Scene scene = new Scene(exportDialog.getRootPane());
+                dialog.setScene(scene);
+                dialog.initOwner((Stage) borderHubPane.getScene().getWindow());
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.setTitle("Export material from ISAMI");
+                dialog.setWidth(700);
+                dialog.setHeight(520);
+                dialog.setResizable(false);
+                dialog.showAndWait();
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Export material template cannot be found");
+                alert.setContentText("Please put the export_material template in the template folder");
+                alert.showAndWait();
             }
         });
 

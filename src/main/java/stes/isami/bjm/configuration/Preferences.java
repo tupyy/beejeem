@@ -23,6 +23,8 @@ public interface Preferences {
 
     public JobDefinition getJobDefinition(String jobType);
 
+    public boolean isExistJobType(String typeName);
+
     public void setJobDefinitions(List<JobDefinition> jobDefinitionList);
 
     public void addJobDefinition(JobDefinition jobDefinition);
