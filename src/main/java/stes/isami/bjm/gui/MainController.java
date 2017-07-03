@@ -20,7 +20,6 @@ import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.eventbus.JobEvent;
 import stes.isami.bjm.eventbus.DefaultJobEvent;
 import stes.isami.bjm.eventbus.JobEvent.JobEventType;
-import stes.isami.bjm.gui.mainview.NotificationCenter;
 import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.gui.mainview.sidepanel.SidePanelController;
 import stes.isami.bjm.main.JStesCore;
@@ -75,12 +74,10 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     private HubController hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
-    private NotificationCenter notificationCenter;
 
     public MainController() {
         super();
         getCoreEngine().addJobListener(this);
-        notificationCenter = new NotificationCenter();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -106,18 +103,13 @@ public class MainController extends AbstractComponentEventHandler implements Ini
     }
 
     @Override
-    public void onJobUpdate(UUID id) {
+    public void jobUpdated(UUID id) {
 
     }
 
     @Override
-    public void onJobCreate(UUID id) {
+    public void jobCreated(UUID id) {
         deleteButton.setDisable(false);
-    }
-
-    @Override
-    public void onStatusChange(UUID id) {
-
     }
 
     /**

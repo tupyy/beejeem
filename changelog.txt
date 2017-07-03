@@ -1,21 +1,6 @@
-[0.7]
+[0.6.0]
 
-Road map:
-- reorganizare pachete: fiecare componenta cu pachetul ei (inclusiv .fxml)
-- adaugare componenta pentru JobLog
-- adaugare "creator" dialog pentru joburile care nu necesita fisere. Posibilitatea de a mentine dialog-ul deschis
-cand se vrea adaugarea a mai multor joburi: gen buton "Add"
-- adaugare system tray si notificari in urma evenimentelor de tip jobUpdated
+**ADD
+- add material feature
+- excel postprocessing module
 
-[0.6.0] 26/06/2017
-
-*** ADD ***
-- keymap Delete key to delete job action
-
-*** FIX ***
-- sort the job type list in the CreatorModel
-- check if a file is already added to the file list in CreatorModel
-
-*** MOD ***
-- splitpane-ul principalm este impartit in doua: masterpane si detail pane care poate fi ascuns.
-  Bare laterala adaugata pentru a controla "detailpane"
