@@ -6,8 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane fx:controller="stes.isami.bjm.materialExplorer.presenter.MaterialExplorerController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="755.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="755.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.bjm.materialExplorer.presenter.MaterialExplorerController">
     <top>
         <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
             <items>
@@ -19,7 +18,7 @@
                         <Separator prefWidth="10.0" visible="false" />
                         <Button fx:id="export2XMLButton" mnemonicParsing="false" prefWidth="100.0" text="Export to XML" />
                         <Separator prefWidth="10.0" visible="false" />
-                        <Button fx:id="export2ExcelButton" mnemonicParsing="false" prefWidth="100.0" text="Export to Excel" />
+                        <Button fx:id="export2ExcelButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Export to Excel" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_RIGHT" prefHeight="30.0">

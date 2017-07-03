@@ -12,11 +12,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import stes.isami.bjm.materialExplorer.business.Material;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
@@ -90,7 +93,11 @@ public class MaterialExplorerController implements Initializable {
         export2XMLAction = new ButtonAction(handler, ButtonAction.Actions.EXPORT_TO_XML);
         export2XMLButton.setOnAction(export2XMLAction);
 
-        closeButton.setOnAction(new ButtonAction(handler,ButtonAction.Actions.CLOSE));
+        closeButton.setOnAction(event -> {
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            stage.close();
+        });
     }
 
     /**

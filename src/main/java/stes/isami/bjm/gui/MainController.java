@@ -102,8 +102,11 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         addJobButton.setOnAction(newJobEventHandler);
 
         decorateButton(addJobButton,"images/newJob.png");
+        addJobButton.setTooltip(new Tooltip("Create job"));
         decorateButton(deleteButton,"images/remove.png");
+        deleteButton.setTooltip(new Tooltip("Delete selected jobs"));
         decorateButton(exportMaterialButton,"images/export-icon.png");
+        exportMaterialButton.setTooltip(new Tooltip("Material Explorer"));
 
     }
 

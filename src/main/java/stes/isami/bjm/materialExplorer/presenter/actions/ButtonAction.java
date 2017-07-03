@@ -2,6 +2,8 @@ package stes.isami.bjm.materialExplorer.presenter.actions;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.stage.Stage;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
 
 /**
@@ -19,7 +21,10 @@ public class ButtonAction implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
-        handler.doAction(action);
+
+        Node source = (Node)  event.getSource();
+        Stage stage  = (Stage) source.getScene().getWindow();
+        handler.doAction(action,stage);
     }
 
     public enum Actions {
