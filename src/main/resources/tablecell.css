@@ -1,0 +1,7 @@
+#materialTable .table-cell {
+    -fx-alignment: CENTER;
+}
+
+#materialTable .table-row-cell:filled:selected {
+    -fx-background-color: orange;
+}

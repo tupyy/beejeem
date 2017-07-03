@@ -26,6 +26,7 @@ import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.gui.mainview.sidepanel.SidePanelController;
 import stes.isami.bjm.main.JStesCore;
 import stes.isami.bjm.main.MainApp;
+import stes.isami.bjm.materialExplorer.MaterialExplorer;
 import stes.isami.core.JobListener;
 
 import java.io.IOException;
@@ -285,24 +286,22 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         exportMaterialButton.setOnAction(event -> {
 
-            if (JStesConfiguration.getPreferences().isExistJobType("Export material")) {
-                Stage dialog = new Stage();
-                ExportDialog exportDialog = new ExportDialog();
-                Scene scene = new Scene(exportDialog.getRootPane());
+            Stage dialog = new Stage();
+
+            try {
+                MaterialExplorer materialExplorer = new MaterialExplorer();
+                Scene scene = new Scene(materialExplorer.getRootPane());
                 dialog.setScene(scene);
                 dialog.initOwner((Stage) borderHubPane.getScene().getWindow());
                 dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.setTitle("Export material from ISAMI");
-                dialog.setWidth(700);
-                dialog.setHeight(520);
+                dialog.setTitle("Material explorer");
+                dialog.setWidth(800);
+                dialog.setHeight(640);
                 dialog.setResizable(false);
                 dialog.showAndWait();
             }
-            else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText("Export material template cannot be found");
-                alert.setContentText("Please put the export_material template in the template folder");
-                alert.showAndWait();
+            catch (IOException ex) {
+                logger.error(ex.getMessage());
             }
         });
 
