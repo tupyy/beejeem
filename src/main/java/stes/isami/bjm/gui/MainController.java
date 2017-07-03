@@ -102,6 +102,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         decorateButton(addJobButton,"images/newJob.png");
         decorateButton(deleteButton,"images/remove.png");
+        decorateButton(exportMaterialButton,"images/export-icon.png");
 
     }
 
