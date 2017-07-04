@@ -12,7 +12,7 @@
 
     <groupId>stes.isami</groupId>
     <artifactId>gui</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
     <packaging>jar</packaging>
 
     <build>

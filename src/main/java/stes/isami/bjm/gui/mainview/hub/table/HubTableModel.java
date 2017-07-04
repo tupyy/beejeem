@@ -70,7 +70,15 @@ public class HubTableModel {
         deleteService.start();
     }
 
+    public JobData getJobData(UUID id) {
+        for (JobData jobData: data) {
+            if (jobData.getId().equals(id.toString())) {
+                return jobData;
+            }
+        }
 
+        return null;
+    }
     //<editor-fold desc="Job Data">
     /**
      * Class which defines the model for the hub table
