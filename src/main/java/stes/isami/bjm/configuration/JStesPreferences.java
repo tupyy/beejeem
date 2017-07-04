@@ -107,6 +107,10 @@ public final class JStesPreferences  implements Preferences{
         return retJobTypes;
     }
 
+    public boolean isExistJobType(String typeName) {
+        JobDefinition jobDefinition = getJobDefinition(typeName);
+        return jobDefinition != null ? true: false;
+    }
     /**
      * Get a list of job configurations of type {@code jobType}
      * @param jobType of the job

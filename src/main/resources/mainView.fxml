@@ -35,6 +35,7 @@
                   <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New">
                   </Button>
             <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
+            <Button fx:id="exportMaterialButton" mnemonicParsing="false" prefWidth="100.0" text="Explorer" wrapText="true" />
               </items>
           </ToolBar>
       <BorderPane fx:id="borderHubPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">

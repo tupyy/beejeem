@@ -192,7 +192,7 @@ public class CreatorModel {
 
     private boolean entryExists(FileEntry fileEntry) {
         for(FileEntry fileEntry1: obsFileNameList) {
-            if (fileEntry.getFile().getPath().equals(fileEntry.getFile().getPath())) {
+            if (fileEntry1.getFile().getAbsolutePath().equals(fileEntry.getFile().getAbsolutePath())) {
                 return true;
             }
         }
