@@ -50,23 +50,14 @@ public class MaterialExplorerHandler implements JobListener{
      *
      * @param files
      */
-    public void doImportAction(List<File> files) {
+    public void doImportAction(List<File> files) throws JobException {
 
         MaterialJobFactory materialJobFactory = new MaterialJobFactory();
-        try {
-            Job importJob = materialJobFactory.createImportJob(files);
-            jobList.add(importJob.getID());
-            getCoreEngine().addJob(importJob);
-            getCoreEngine().executeJob(importJob.getID());
+        Job importJob = materialJobFactory.createImportJob(files);
+        jobList.add(importJob.getID());
+        getCoreEngine().addJob(importJob);
+        getCoreEngine().executeJob(importJob.getID());
 
-        } catch (JobException e) {
-            e.printStackTrace();
-        } catch (NullPointerException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error creating the import job");
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
-        }
     }
 
     /**
@@ -75,31 +66,22 @@ public class MaterialExplorerHandler implements JobListener{
      *
      * @param materialList
      */
-    public void doExportAction(List<Material> materialList) {
+    public void doExportAction(List<Material> materialList)throws JobException,NullPointerException {
         MaterialJobFactory materialJobFactory = new MaterialJobFactory();
-        try {
-            String materialListString = createMaterialList(materialList);
-            Job importJob = materialJobFactory.createExportJob(materialListString);
+        String materialListString = createMaterialList(materialList);
+        Job importJob = materialJobFactory.createExportJob(materialListString);
 
-            jobList.add(importJob.getID());
-            getCoreEngine().addJob(importJob);
-            getCoreEngine().executeJob(importJob.getID());
-        } catch (JobException e) {
-            e.printStackTrace();
-        } catch (NullPointerException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error creating the import job");
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
-        }
+        jobList.add(importJob.getID());
+        getCoreEngine().addJob(importJob);
+        getCoreEngine().executeJob(importJob.getID());
+
     }
 
     /**
      * Create and run the loading materials job
      */
-    public void doLoadAction() {
+    public void doLoadAction() throws JobException,NullPointerException {
         MaterialJobFactory materialJobFactory = new MaterialJobFactory();
-        try {
             Job loadJob = materialJobFactory.createLoadJob();
             getCoreEngine().addJob(loadJob);
             getCoreEngine().executeJob(loadJob.getID());
@@ -107,14 +89,7 @@ public class MaterialExplorerHandler implements JobListener{
             setCurrentLoadJob(loadJob);
             currentStep = 1;
             eventBus.post(new LoadLibraryEvent("Job created",getProgressValue(currentStep)));
-        } catch (JobException e) {
-            e.printStackTrace();
-        } catch (NullPointerException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error creating the load job");
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
-        }
+
     }
 
 

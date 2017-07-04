@@ -17,6 +17,7 @@ import org.controlsfx.control.MaskerPane;
 import stes.isami.bjm.materialExplorer.business.LoadLibraryEvent;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
 import stes.isami.bjm.materialExplorer.presenter.MaterialExplorerController;
+import stes.isami.core.job.JobException;
 
 /**
  * Handle load material list action
@@ -25,8 +26,8 @@ public class LoadAction implements EventHandler<ActionEvent> {
 
     private final MaterialExplorerHandler handler;
     private final MaterialExplorerController controller;
-    private SimpleDoubleProperty loadingProgress = new SimpleDoubleProperty(85);
-    private SimpleStringProperty textProgress = new SimpleStringProperty("loading");
+    private SimpleDoubleProperty loadingProgress = new SimpleDoubleProperty();
+    private SimpleStringProperty textProgress = new SimpleStringProperty();
     private MaskerPane maskerPane;
 
     public LoadAction(MaterialExplorerHandler handler, MaterialExplorerController controller) {
@@ -64,9 +65,19 @@ public class LoadAction implements EventHandler<ActionEvent> {
     }
 
     private void startAction() {
-        disableMainPane();
-        showProgressbar(controller.getStatusPane());
-        handler.doLoadAction();
+        try {
+            handler.doLoadAction();
+            disableMainPane();
+            showProgressbar(controller.getStatusPane());
+        }
+        catch (JobException e) {
+            e.printStackTrace();
+        } catch (NullPointerException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Error creating the load job");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        }
     }
 
     /**
