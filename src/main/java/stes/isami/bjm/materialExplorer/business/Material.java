@@ -12,12 +12,33 @@ public class Material {
     private final SimpleStringProperty libraryName;
     private final SimpleStringProperty materialName;
     private final SimpleStringProperty referenceName;
+    private final SimpleStringProperty uuid;
 
-    public Material(String libraryName, String materialName, String referenceName) {
+    public Material(String libraryName, String materialName, String referenceName,String uuid) {
         this.selectedProperty = new SimpleBooleanProperty(false);
         this.libraryName = new SimpleStringProperty(libraryName);
         this.materialName = new SimpleStringProperty(materialName);
         this.referenceName = new SimpleStringProperty(referenceName);
+        this.uuid = new SimpleStringProperty(uuid);
+    }
+
+    public Material() {
+        selectedProperty = new SimpleBooleanProperty(false);
+        libraryName = new SimpleStringProperty();
+        materialName = new SimpleStringProperty();
+        referenceName = new SimpleStringProperty();
+        uuid = new SimpleStringProperty();
+    }
+
+    /**
+     * Return true if the name,uuid and library are set
+     * @return
+     */
+    public boolean isValid() {
+
+        return (!materialName.get().isEmpty()
+                && !libraryName.get().isEmpty()
+                && !uuid.isEmpty().get());
     }
 
 
@@ -43,5 +64,9 @@ public class Material {
 
     public String getReferenceName() {
         return referenceName.getValue();
+    }
+
+    public SimpleStringProperty getUuid() {
+        return uuid;
     }
 }
