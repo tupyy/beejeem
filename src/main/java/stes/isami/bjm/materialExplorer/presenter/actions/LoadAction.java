@@ -32,25 +32,25 @@ public class LoadAction implements EventHandler<ActionEvent> {
     public LoadAction(MaterialExplorerHandler handler, MaterialExplorerController controller) {
         this.handler = handler;
         this.controller = controller;
+        handler.register(this);
     }
 
     @Override
     public void handle(ActionEvent event) {
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Do you want to load the libray?", ButtonType.YES, ButtonType.NO);
-        alert.showAndWait();
+        if (controller.getData().size() > 0) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to load the libray?", ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
 
-        if (alert.getResult() == ButtonType.YES) {
-
-            disableMainPane();
-            showProgressbar(controller.getStatusPane());
-
-            handler.register(this);
-            handler.doLoadAction();
-
+            if (alert.getResult() == ButtonType.YES) {
+                controller.clearData();
+                startAction();
+            } else {
+                alert.close();
+            }
         }
         else {
-            alert.close();
+            startAction();
         }
     }
 
@@ -61,6 +61,12 @@ public class LoadAction implements EventHandler<ActionEvent> {
         if (event.getMessage().equalsIgnoreCase("finished")) {
             hideProgressbar(controller.getStatusPane());
         }
+    }
+
+    private void startAction() {
+        disableMainPane();
+        showProgressbar(controller.getStatusPane());
+        handler.doLoadAction();
     }
 
     /**
