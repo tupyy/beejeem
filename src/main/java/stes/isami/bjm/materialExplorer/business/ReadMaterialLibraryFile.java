@@ -72,7 +72,7 @@ public class ReadMaterialLibraryFile implements Supplier<List<Material>> {
      */
     private Material createMaterial(String line) {
         Material material;
-        String[] buff = line.split(" ");
+        String[] buff = line.split("/");
 
         try {
             if (buff.length == 4) {

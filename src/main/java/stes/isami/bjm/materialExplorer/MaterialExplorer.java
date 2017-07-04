@@ -24,7 +24,7 @@ public class MaterialExplorer {
         rootPane = fxmlLoader.load();
         controller = (MaterialExplorerController) fxmlLoader.getController();
 
-        materialExplorerHandler = new MaterialExplorerHandler();
+        materialExplorerHandler = new MaterialExplorerHandler(controller);
         controller.setHandler(materialExplorerHandler);
     }
 

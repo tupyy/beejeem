@@ -66,7 +66,7 @@ public class Material {
         return referenceName.getValue();
     }
 
-    public SimpleStringProperty getUuid() {
-        return uuid;
+    public String getId() {
+        return uuid.get();
     }
 }

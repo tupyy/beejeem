@@ -51,10 +51,7 @@ public class MaterialExplorerController implements Initializable {
     @FXML private StackPane mainPane;
     @FXML private HBox statusHBox;
 
-    ObservableList<Material> data = FXCollections.observableArrayList(
-            new Material("Refence","Ti-6AV","AIMS03-18-007"),
-            new Material("Refence","Ti-6AVab","AIMS08-15-007"),
-            new Material("User","Incolnel","AIMS03-55-007"));
+    ObservableList<Material> data = FXCollections.observableArrayList();
     SortedList<Material> sortedList;
     private SimpleBooleanProperty canSelectProperty = new SimpleBooleanProperty(true);
 
@@ -114,6 +111,20 @@ public class MaterialExplorerController implements Initializable {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
             stage.close();
+
+            if (handler.countJobs() > 0) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete the job created?", ButtonType.YES, ButtonType.NO);
+                alert.showAndWait();
+
+                if (alert.getResult() == ButtonType.YES) {
+                    handler.close(true);
+                } else {
+                    handler.close(false);
+                }
+            }
+            else {
+                handler.close(false);
+            }
         });
     }
 

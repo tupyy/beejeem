@@ -300,7 +300,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
                 dialog.setTitle("Material explorer");
                 dialog.setWidth(800);
                 dialog.setHeight(640);
-                dialog.setResizable(false);
+                dialog.setResizable(true);
                 dialog.showAndWait();
             }
             catch (IOException ex) {

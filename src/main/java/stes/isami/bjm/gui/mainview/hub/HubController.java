@@ -1,6 +1,8 @@
 package stes.isami.bjm.gui.mainview.hub;
 
+import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -43,6 +45,7 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 import static stes.isami.bjm.main.JStesCore.getCoreEngine;
+import static stes.isami.bjm.main.JStesCore.getEventBus;
 
 /**
  * CreatorController for the hubView
@@ -74,6 +77,7 @@ public class HubController extends AbstractComponentEventHandler implements Init
     public HubController() {
         super();
         getCoreEngine().addJobListener(this);
+        getEventBus().register(this);
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -114,6 +118,18 @@ public class HubController extends AbstractComponentEventHandler implements Init
         switch (action.getEvent()) {
             case DELETE:
                 onDeleteAction(getHubTable().getSelectionModel().getSelectedItems());
+        }
+    }
+
+    /**
+     * Patch to be able to delete job from others classes
+     * @param jobID
+     */
+    @Subscribe
+    public void onDeleteJobHack(UUID jobID) {
+        HubTableModel.JobData jobData = model.getJobData(jobID);
+        if (jobData != null) {
+            onDeleteAction(FXCollections.observableArrayList(jobData));
         }
     }
 

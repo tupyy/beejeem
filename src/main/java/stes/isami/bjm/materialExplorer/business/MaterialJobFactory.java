@@ -107,6 +107,38 @@ public class MaterialJobFactory {
 
         return jobs.get(0);
     }
+
+    /**
+     * Create the job for loading the material library
+     * @return {@link Job} job created
+     */
+    public Job createLoadJob() {
+
+        JobDefinition importJobDefinition;
+        List<Job> jobs = null;
+
+        importJobDefinition = JStesConfiguration.getPreferences().getJobDefinition("Load materials");
+
+        if (importJobDefinition == null) {
+            throw new NullPointerException("Cannot find the template for importing materials job");
+        }
+        //get the type of the job
+        try {
+
+            Creator creator = CreatorFactory.getCreator("basicPlugin.creator.BasicCreator");
+            ParameterSet parameters = importJobDefinition.getParameters();
+            jobs = creator.createJobs(Optional.empty(),addParameterFromPreferences(parameters),importJobDefinition.getModuleElements());
+
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            logger.error(e.getMessage());
+            throw new NullPointerException("Cannot create loading job: " + e.getMessage());
+        }catch (IOException | IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            throw new NullPointerException("Cannot create loading job: " + e.getMessage());
+        }
+
+        return jobs.get(0);
+    }
     /**
      * Add the parameters from the Preferences.
      * The parameters to be added are: localFolder and destinationFolder which are global
