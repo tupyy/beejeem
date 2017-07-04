@@ -16,11 +16,11 @@
                         <items>
                             <HBox fx:id="hbox" alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0">
                                 <children>
-                                    <Button fx:id="loadMaterialsButtton" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="100.0" text="Load materials" />
+                                    <Button fx:id="loadMaterialsButtton" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Load" />
                                     <Separator prefWidth="10.0" visible="false" />
-                                    <Button fx:id="importButton" mnemonicParsing="false" prefWidth="100.0" text="Import" />
+                                    <Button fx:id="importButton" maxHeight="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Import" />
                                     <Separator prefWidth="10.0" visible="false" />
-                                    <Button fx:id="export2XMLButton" mnemonicParsing="false" prefWidth="100.0" text="Export to XML" />
+                                    <Button fx:id="export2XMLButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Export XML" />
                                     <Separator prefWidth="10.0" visible="false" />
                                     <Button fx:id="export2ExcelButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Export to Excel" />
                                 </children>

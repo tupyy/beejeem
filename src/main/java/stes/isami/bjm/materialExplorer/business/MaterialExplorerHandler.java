@@ -172,9 +172,6 @@ public class MaterialExplorerHandler implements JobListener{
         return stringBuilder.toString().substring(0, stringBuilder.toString().length() - 1);
     }
 
-
-
-
     @Override
     public void jobUpdated(UUID id) {
         String eventMessage = "";

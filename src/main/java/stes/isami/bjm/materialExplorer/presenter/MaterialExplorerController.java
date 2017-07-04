@@ -16,6 +16,8 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -24,6 +26,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import stes.isami.bjm.configuration.JStesConfiguration;
+import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.materialExplorer.business.Material;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
 import stes.isami.bjm.materialExplorer.presenter.actions.ExportToXmlAction;
@@ -72,6 +75,10 @@ public class MaterialExplorerController implements Initializable {
     public void setHandler(MaterialExplorerHandler handler) {
         this.handler = handler;
         createActions(handler);
+
+        decorateButton(loadMaterialsButtton,"images/loadIcon.png");
+        decorateButton(importButton,"images/importIcon.png");
+        decorateButton(export2XMLButton,"images/export-icon.png");
     }
 
     public ObservableList<Material> getData() {
@@ -84,6 +91,10 @@ public class MaterialExplorerController implements Initializable {
 
     public HBox getStatusPane() {
         return statusHBox;
+    }
+
+    public void clearData() {
+        data.clear();
     }
 
     /********************************************************************
@@ -258,6 +269,18 @@ public class MaterialExplorerController implements Initializable {
         tableView.setContextMenu(contextMenu);
 
     }
+
+    /**
+     * Add icons to buttons
+     */
+    private void decorateButton(Button button,String imagePath) {
+        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        ImageView imageView = new ImageView(new Image(s.toString()));
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        button.setGraphic(imageView);
+    }
+
 
 
 }

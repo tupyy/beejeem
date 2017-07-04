@@ -105,7 +105,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         addJobButton.setTooltip(new Tooltip("Create job"));
         decorateButton(deleteButton,"images/remove.png");
         deleteButton.setTooltip(new Tooltip("Delete selected jobs"));
-        decorateButton(exportMaterialButton,"images/export-icon.png");
+        decorateButton(exportMaterialButton,"images/explorer.png");
         exportMaterialButton.setTooltip(new Tooltip("Material Explorer"));
 
     }
@@ -298,8 +298,8 @@ public class MainController extends AbstractComponentEventHandler implements Ini
                 dialog.initOwner((Stage) borderHubPane.getScene().getWindow());
                 dialog.initModality(Modality.APPLICATION_MODAL);
                 dialog.setTitle("Material explorer");
-                dialog.setWidth(800);
-                dialog.setHeight(640);
+                dialog.setWidth(950);
+                dialog.setHeight(700);
                 dialog.setResizable(true);
                 dialog.showAndWait();
             }
