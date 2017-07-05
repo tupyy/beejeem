@@ -194,9 +194,8 @@ public class MaterialExplorerHandler implements JobListener{
     }
 
     private int getProgressValue(int currentStepValue) {
-        final int MAX_STEP = 8;
-
-        return 100/(MAX_STEP-currentStepValue);
+       final int MAX_STEP = 7;
+       return 100/(MAX_STEP-currentStepValue);
     }
 
     private void populateMaterialList(File materialListFile) {
@@ -208,7 +207,7 @@ public class MaterialExplorerHandler implements JobListener{
                 ObservableList<Material> data =  controller.getData();
                 data.addAll(materialList);
 
-                eventBus.post(new LoadLibraryEvent("Finished", getProgressValue(++currentStep)));
+                eventBus.post(new LoadLibraryEvent("Finished", getProgressValue(currentStep)));
                 deleteJobFromCore(getCurrentLoadJob().getID());
                 setCurrentLoadJob(null);
             });

@@ -85,10 +85,11 @@ public class MaterialExplorerController implements Initializable {
         return data;
     }
 
-    public StackPane getMainPane() {
-        return mainPane;
+    public void setDisableButton(boolean disable) {
+        loadMaterialsButtton.setDisable(disable);
+        importButton.setDisable(disable);
+        export2XMLButton.setDisable(disable);
     }
-
     public HBox getStatusPane() {
         return statusHBox;
     }

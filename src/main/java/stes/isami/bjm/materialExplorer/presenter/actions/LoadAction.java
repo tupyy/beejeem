@@ -67,7 +67,7 @@ public class LoadAction implements EventHandler<ActionEvent> {
     private void startAction() {
         try {
             handler.doLoadAction();
-            disableMainPane();
+            controller.setDisableButton(true);
             showProgressbar(controller.getStatusPane());
         }
         catch (JobException e) {
@@ -78,13 +78,6 @@ public class LoadAction implements EventHandler<ActionEvent> {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
-    }
-
-    /**
-     * Show the masker pane
-     */
-    private void disableMainPane() {
-        controller.getMainPane().setDisable(true);
     }
 
     /**
@@ -113,7 +106,7 @@ public class LoadAction implements EventHandler<ActionEvent> {
 
     private void hideProgressbar(HBox statusBox) {
         Platform.runLater(() -> {
-            controller.getMainPane().setDisable(false);
+            controller.setDisableButton(false);
             statusBox.getChildren().clear();
         });
 
