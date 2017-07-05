@@ -66,7 +66,7 @@ public class LoadAction implements EventHandler<ActionEvent> {
 
     private void startAction() {
         try {
-            handler.doLoadAction();
+            handler.doLoadAction(controller.getIsamiVersion());
             controller.setDisableButton(true);
             showProgressbar(controller.getStatusPane());
         }

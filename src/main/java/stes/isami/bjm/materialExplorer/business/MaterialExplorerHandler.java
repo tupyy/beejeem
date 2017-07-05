@@ -50,10 +50,10 @@ public class MaterialExplorerHandler implements JobListener{
      *
      * @param files
      */
-    public void doImportAction(List<File> files) throws JobException {
+    public void doImportAction(List<File> files,String isamiVersion) throws JobException {
 
         MaterialJobFactory materialJobFactory = new MaterialJobFactory();
-        Job importJob = materialJobFactory.createImportJob(files);
+        Job importJob = materialJobFactory.createImportJob(files,isamiVersion);
         jobList.add(importJob.getID());
         getCoreEngine().addJob(importJob);
         getCoreEngine().executeJob(importJob.getID());
@@ -66,10 +66,10 @@ public class MaterialExplorerHandler implements JobListener{
      *
      * @param materialList
      */
-    public void doExportAction(List<Material> materialList)throws JobException,NullPointerException {
+    public void doExportAction(List<Material> materialList,String isamiVersion)throws JobException,NullPointerException {
         MaterialJobFactory materialJobFactory = new MaterialJobFactory();
         String materialListString = createMaterialList(materialList);
-        Job importJob = materialJobFactory.createExportJob(materialListString);
+        Job importJob = materialJobFactory.createExportJob(materialListString,isamiVersion);
 
         jobList.add(importJob.getID());
         getCoreEngine().addJob(importJob);
@@ -80,9 +80,9 @@ public class MaterialExplorerHandler implements JobListener{
     /**
      * Create and run the loading materials job
      */
-    public void doLoadAction() throws JobException,NullPointerException {
-        MaterialJobFactory materialJobFactory = new MaterialJobFactory();
-            Job loadJob = materialJobFactory.createLoadJob();
+    public void doLoadAction(String isamiVersion) throws JobException,NullPointerException {
+            MaterialJobFactory materialJobFactory = new MaterialJobFactory();
+            Job loadJob = materialJobFactory.createLoadJob(isamiVersion);
             getCoreEngine().addJob(loadJob);
             getCoreEngine().executeJob(loadJob.getID());
 
@@ -168,7 +168,7 @@ public class MaterialExplorerHandler implements JobListener{
                         break;
                     case JobState.RUN:
                     case JobState.WAITING:
-                        if (currentStep < 5) {
+                        if (currentStep < 4) {
                             eventMessage = JobState.toString(getCurrentLoadJob().getState());
                             currentStep++;
                         }

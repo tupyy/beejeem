@@ -54,6 +54,7 @@ public class MaterialExplorerController implements Initializable {
     @FXML private Button closeButton;
     @FXML private StackPane mainPane;
     @FXML private HBox statusHBox;
+    @FXML private ComboBox isamiVersionCombo;
 
     private TextField filterTextBox = TextFields.createClearableTextField();
 
@@ -80,6 +81,15 @@ public class MaterialExplorerController implements Initializable {
         filterTextBox.setPrefWidth(200);
         filterTextBox.setPromptText("Filter");
         toolBar.getItems().add(filterHBox);
+
+        isamiVersionCombo.setItems(FXCollections.observableArrayList(
+                "v7.2.1_a350",
+                "v8.1.0_a350-1000",
+                "v8.2.0_a350-1000",
+                "v8.2.1_a350-1000",
+                "v9.2.0",
+                "v9.4.0"));
+        isamiVersionCombo.getSelectionModel().select(5);
     }
 
     public void setHandler(MaterialExplorerHandler handler) {
@@ -108,6 +118,13 @@ public class MaterialExplorerController implements Initializable {
         data.clear();
     }
 
+    /**
+     * Return the isami version choose by the user
+     * @return
+     */
+    public String getIsamiVersion() {
+        return (String) isamiVersionCombo.getSelectionModel().getSelectedItem();
+    }
     /********************************************************************
      *
      *                              PRIVATE
@@ -123,7 +140,7 @@ public class MaterialExplorerController implements Initializable {
         loadMaterialsActions = new LoadAction(handler,this);
         loadMaterialsButtton.setOnAction(loadMaterialsActions);
 
-        importAction = new ImportAction(handler);
+        importAction = new ImportAction(handler,this);
         importButton.setOnAction(importAction);
 
         export2XMLAction = new ExportToXmlAction(handler,this);

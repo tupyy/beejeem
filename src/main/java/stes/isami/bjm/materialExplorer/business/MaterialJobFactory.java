@@ -44,7 +44,7 @@ public class MaterialJobFactory {
      * @param materialList list of materials as following: "Materialname_1,Reference_1/Materialname_2,Reference2..
      * @return {@link Job} created
      */
-    public Job createExportJob(String materialList) throws NullPointerException {
+    public Job createExportJob(String materialList,String isamiVersion) throws NullPointerException {
 
         JobDefinition exportMaterialDefinition;
         List<Job> jobs = null;
@@ -61,6 +61,7 @@ public class MaterialJobFactory {
             ParameterSet parameters = exportMaterialDefinition.getParameters();
             parameters.getParameter("name").setValue("export_materials");
             parameters.getParameter("materialList").setValue(materialList);
+            parameters.getParameter("isamiVersion").setValue(isamiVersion);
             jobs = creator.createJobs(Optional.empty(),addParameterFromPreferences(parameters),exportMaterialDefinition.getModuleElements());
 
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -79,7 +80,7 @@ public class MaterialJobFactory {
      * @param files list of xml format
      * @return {@link Job} job created
      */
-    public Job createImportJob(List<File> files) {
+    public Job createImportJob(List<File> files,String isamiVersion) {
 
         JobDefinition importJobDefinition;
         List<Job> jobs = null;
@@ -95,6 +96,7 @@ public class MaterialJobFactory {
             Creator creator = CreatorFactory.getCreator("materialPlugin2.creator.MaterialCreator");
             ParameterSet parameters = importJobDefinition.getParameters();
             parameters.getParameter("name").setValue("import_material");
+            parameters.getParameter("isamiVersion").setValue(isamiVersion);
             jobs = creator.createJobs(Optional.of(files),addParameterFromPreferences(parameters),importJobDefinition.getModuleElements());
 
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -112,7 +114,7 @@ public class MaterialJobFactory {
      * Create the job for loading the material library
      * @return {@link Job} job created
      */
-    public Job createLoadJob() {
+    public Job createLoadJob(String isamiVersion) {
 
         JobDefinition importJobDefinition;
         List<Job> jobs = null;
@@ -127,6 +129,7 @@ public class MaterialJobFactory {
 
             Creator creator = CreatorFactory.getCreator("basicPlugin.creator.BasicCreator");
             ParameterSet parameters = importJobDefinition.getParameters();
+            parameters.getParameter("isamiVersion").setValue(isamiVersion);
             jobs = creator.createJobs(Optional.empty(),addParameterFromPreferences(parameters),importJobDefinition.getModuleElements());
 
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {

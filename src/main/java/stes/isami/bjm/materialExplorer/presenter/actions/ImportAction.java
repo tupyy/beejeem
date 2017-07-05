@@ -7,7 +7,9 @@ import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import stes.isami.bjm.configuration.JStesConfiguration;
+import stes.isami.bjm.materialExplorer.MaterialExplorer;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
+import stes.isami.bjm.materialExplorer.presenter.MaterialExplorerController;
 import stes.isami.core.job.JobException;
 
 import java.io.File;
@@ -20,9 +22,11 @@ import java.util.List;
 public class ImportAction implements EventHandler<ActionEvent> {
 
      private final MaterialExplorerHandler handler;
+    private final MaterialExplorerController controller;
 
-    public ImportAction(MaterialExplorerHandler handler) {
+    public ImportAction(MaterialExplorerHandler handler, MaterialExplorerController controller) {
         this.handler = handler;
+        this.controller = controller;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class ImportAction implements EventHandler<ActionEvent> {
         List<File> files = fileChooser.showOpenMultipleDialog(stage);
         if (files != null) {
             try {
-                handler.doImportAction(files);
+                handler.doImportAction(files,controller.getIsamiVersion());
             }
             catch (JobException ex) {
 

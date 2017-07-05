@@ -47,7 +47,7 @@ public class ExportToXmlAction implements EventHandler<ActionEvent> {
         }
         else {
             try {
-                handler.doExportAction(materialToExport);
+                handler.doExportAction(materialToExport,controller.getIsamiVersion());
             }
             catch (JobException | NullPointerException ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
