@@ -92,6 +92,10 @@ public class MaterialExplorerController implements Initializable {
         isamiVersionCombo.getSelectionModel().select(5);
     }
 
+    /**
+     * Set handler
+     * @param handler
+     */
     public void setHandler(MaterialExplorerHandler handler) {
         this.handler = handler;
         createActions(handler);
@@ -101,14 +105,20 @@ public class MaterialExplorerController implements Initializable {
         decorateButton(export2XMLButton,"images/export-icon.png");
     }
 
+    /**
+     * Return data
+     * @return
+     */
     public ObservableList<Material> getData() {
         return data;
     }
 
-    public void setDisableButton(boolean disable) {
-        loadMaterialsButtton.setDisable(disable);
-        importButton.setDisable(disable);
-        export2XMLButton.setDisable(disable);
+    /**
+     * Disable toolbar
+     * @param disable
+     */
+    public void setDisableToolbar(boolean disable) {
+       toolBar.setDisable(disable);
     }
     public HBox getStatusPane() {
         return statusHBox;

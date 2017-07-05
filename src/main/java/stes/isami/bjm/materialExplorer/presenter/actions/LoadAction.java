@@ -67,7 +67,7 @@ public class LoadAction implements EventHandler<ActionEvent> {
     private void startAction() {
         try {
             handler.doLoadAction(controller.getIsamiVersion());
-            controller.setDisableButton(true);
+            controller.setDisableToolbar(true);
             showProgressbar(controller.getStatusPane());
         }
         catch (JobException e) {
@@ -106,7 +106,7 @@ public class LoadAction implements EventHandler<ActionEvent> {
 
     private void hideProgressbar(HBox statusBox) {
         Platform.runLater(() -> {
-            controller.setDisableButton(false);
+            controller.setDisableToolbar(false);
             statusBox.getChildren().clear();
         });
 
