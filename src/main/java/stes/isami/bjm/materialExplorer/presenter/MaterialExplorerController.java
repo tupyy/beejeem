@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
@@ -25,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.controlsfx.control.textfield.TextFields;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.materialExplorer.business.Material;
@@ -45,14 +47,15 @@ public class MaterialExplorerController implements Initializable {
 
     @FXML private TableView materialTable;
     @FXML private HBox hbox;
-    @FXML private TextField filterTextBox;
+    @FXML private ToolBar toolBar;
     @FXML private Button loadMaterialsButtton;
     @FXML private Button importButton;
     @FXML private Button export2XMLButton;
-    @FXML private Button export2ExcelButton;
     @FXML private Button closeButton;
     @FXML private StackPane mainPane;
     @FXML private HBox statusHBox;
+
+    private TextField filterTextBox = TextFields.createClearableTextField();
 
     ObservableList<Material> data = FXCollections.observableArrayList();
     SortedList<Material> sortedList;
@@ -70,6 +73,13 @@ public class MaterialExplorerController implements Initializable {
         initializeTable();
         HBox.setHgrow(hbox, Priority.ALWAYS);
         HBox.setHgrow(statusHBox,Priority.ALWAYS);
+
+        HBox filterHBox = new HBox();
+        filterHBox.getChildren().add(filterTextBox);
+        filterHBox.setAlignment(Pos.CENTER_RIGHT);
+        filterTextBox.setPrefWidth(200);
+        filterTextBox.setPromptText("Filter");
+        toolBar.getItems().add(filterHBox);
     }
 
     public void setHandler(MaterialExplorerHandler handler) {
