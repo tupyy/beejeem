@@ -5,10 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
-import stes.isami.bjm.materialExplorer.MaterialExplorer;
 import stes.isami.bjm.materialExplorer.business.Material;
 import stes.isami.bjm.materialExplorer.business.MaterialExplorerHandler;
 import stes.isami.bjm.materialExplorer.presenter.MaterialExplorerController;
+import stes.isami.core.job.JobException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,16 @@ public class ExportToXmlAction implements EventHandler<ActionEvent> {
             alert.showAndWait();
         }
         else {
-            handler.doExportAction(materialToExport);
+            try {
+                handler.doExportAction(materialToExport,controller.getIsamiVersion());
+            }
+            catch (JobException | NullPointerException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Error creating the export job");
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
+            }
+
         }
 
     }

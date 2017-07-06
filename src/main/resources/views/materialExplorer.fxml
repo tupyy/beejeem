@@ -12,7 +12,7 @@
          <children>
             <VBox>
                <children>
-                    <ToolBar prefHeight="40.0">
+                    <ToolBar fx:id="toolBar" prefHeight="40.0">
                         <items>
                             <HBox fx:id="hbox" alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0">
                                 <children>
@@ -22,12 +22,7 @@
                                     <Separator prefWidth="10.0" visible="false" />
                                     <Button fx:id="export2XMLButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Export XML" />
                                     <Separator prefWidth="10.0" visible="false" />
-                                    <Button fx:id="export2ExcelButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Export to Excel" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_RIGHT" prefHeight="30.0">
-                                <children>
-                                    <TextField fx:id="filterTextBox" maxWidth="-Infinity" prefWidth="200.0" promptText="Filter table" />
+                              <ComboBox fx:id="isamiVersionCombo" prefHeight="30.0" prefWidth="150.0" promptText="Isami version" HBox.hgrow="NEVER" />
                                 </children>
                             </HBox>
                         </items>

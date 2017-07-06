@@ -21,7 +21,6 @@ import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.eventbus.JobEvent;
 import stes.isami.bjm.eventbus.DefaultJobEvent;
 import stes.isami.bjm.eventbus.JobEvent.JobEventType;
-import stes.isami.bjm.exportMaterial.ExportDialog;
 import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.gui.mainview.sidepanel.SidePanelController;
 import stes.isami.bjm.main.JStesCore;

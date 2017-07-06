@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
@@ -25,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.controlsfx.control.textfield.TextFields;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.gui.mainview.hub.HubController;
 import stes.isami.bjm.materialExplorer.business.Material;
@@ -45,14 +47,16 @@ public class MaterialExplorerController implements Initializable {
 
     @FXML private TableView materialTable;
     @FXML private HBox hbox;
-    @FXML private TextField filterTextBox;
+    @FXML private ToolBar toolBar;
     @FXML private Button loadMaterialsButtton;
     @FXML private Button importButton;
     @FXML private Button export2XMLButton;
-    @FXML private Button export2ExcelButton;
     @FXML private Button closeButton;
     @FXML private StackPane mainPane;
     @FXML private HBox statusHBox;
+    @FXML private ComboBox isamiVersionCombo;
+
+    private TextField filterTextBox = TextFields.createClearableTextField();
 
     ObservableList<Material> data = FXCollections.observableArrayList();
     SortedList<Material> sortedList;
@@ -70,8 +74,28 @@ public class MaterialExplorerController implements Initializable {
         initializeTable();
         HBox.setHgrow(hbox, Priority.ALWAYS);
         HBox.setHgrow(statusHBox,Priority.ALWAYS);
+
+        HBox filterHBox = new HBox();
+        filterHBox.getChildren().add(filterTextBox);
+        filterHBox.setAlignment(Pos.CENTER_RIGHT);
+        filterTextBox.setPrefWidth(200);
+        filterTextBox.setPromptText("Filter");
+        toolBar.getItems().add(filterHBox);
+
+        isamiVersionCombo.setItems(FXCollections.observableArrayList(
+                "v7.2.1_a350",
+                "v8.1.0_a350-1000",
+                "v8.2.0_a350-1000",
+                "v8.2.1_a350-1000",
+                "v9.2.0",
+                "v9.4.0"));
+        isamiVersionCombo.getSelectionModel().select(5);
     }
 
+    /**
+     * Set handler
+     * @param handler
+     */
     public void setHandler(MaterialExplorerHandler handler) {
         this.handler = handler;
         createActions(handler);
@@ -81,14 +105,21 @@ public class MaterialExplorerController implements Initializable {
         decorateButton(export2XMLButton,"images/export-icon.png");
     }
 
+    /**
+     * Return data
+     * @return
+     */
     public ObservableList<Material> getData() {
         return data;
     }
 
-    public StackPane getMainPane() {
-        return mainPane;
+    /**
+     * Disable toolbar
+     * @param disable
+     */
+    public void setDisableToolbar(boolean disable) {
+       toolBar.setDisable(disable);
     }
-
     public HBox getStatusPane() {
         return statusHBox;
     }
@@ -97,6 +128,13 @@ public class MaterialExplorerController implements Initializable {
         data.clear();
     }
 
+    /**
+     * Return the isami version choose by the user
+     * @return
+     */
+    public String getIsamiVersion() {
+        return (String) isamiVersionCombo.getSelectionModel().getSelectedItem();
+    }
     /********************************************************************
      *
      *                              PRIVATE
@@ -112,7 +150,7 @@ public class MaterialExplorerController implements Initializable {
         loadMaterialsActions = new LoadAction(handler,this);
         loadMaterialsButtton.setOnAction(loadMaterialsActions);
 
-        importAction = new ImportAction(handler);
+        importAction = new ImportAction(handler,this);
         importButton.setOnAction(importAction);
 
         export2XMLAction = new ExportToXmlAction(handler,this);
