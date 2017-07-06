@@ -108,6 +108,11 @@ public class SidePanelController extends AbstractComponentEventHandler implement
         }
     }
 
+    @Override
+    public void onStateChanged(UUID id, int newState) {
+
+    }
+
 
     @Override
     public void onJobEvent(JobEvent event) {

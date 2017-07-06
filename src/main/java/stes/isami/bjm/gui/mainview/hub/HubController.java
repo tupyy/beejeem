@@ -160,6 +160,12 @@ public class HubController extends AbstractComponentEventHandler implements Init
         runAllButton.setDisable(false);
     }
 
+    @Override
+    public void onStateChanged(UUID id, int newState) {
+        Job j = getCoreEngine().getJob(id);
+        model.updateState(id,newState);
+    }
+
     /********************************************************************
      *
      *                          P R I V A T E
@@ -199,16 +205,11 @@ public class HubController extends AbstractComponentEventHandler implements Init
         batchIDCol.setPrefWidth(100);
         batchIDCol.setResizable(false);
 
-
-        TableColumn aircraftCol = new TableColumn("Aircraft");
-        aircraftCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("aircraft"));
-        aircraftCol.setVisible(false);
-
         TableColumn idCol = new TableColumn("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<HubTableModel.JobData,String>("id"));
         idCol.setVisible(false);
 
-        getHubTable().getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,aircraftCol,idCol);
+        getHubTable().getColumns().addAll(nameCol,localFolderCol,destinationCol,typeCol,statusCol,batchIDCol,idCol);
         getHubTable().setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         //Wrap the ObservableList in a FilteredList (initially display all data).

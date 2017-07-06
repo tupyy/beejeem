@@ -148,7 +148,7 @@ public class MaterialExplorerHandler implements JobListener{
     }
 
     @Override
-    public void jobUpdated(UUID id) {
+    public void onStateChanged(UUID id, int newState) {
         String eventMessage = "";
 
         if (getCurrentLoadJob() != null) {
@@ -182,6 +182,11 @@ public class MaterialExplorerHandler implements JobListener{
 
     @Override
     public void jobCreated(UUID id) {
+
+    }
+
+    @Override
+    public void jobUpdated(UUID id) {
 
     }
 
