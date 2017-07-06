@@ -1,9 +1,15 @@
 package stes.isami.core;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import stes.isami.core.creator.CreatorFactory;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobException;
 import stes.isami.core.job.JobState;
+import stes.isami.core.job.event.CreateJobEvent;
+import stes.isami.core.job.event.JobEvent;
+import stes.isami.core.job.event.JobStateChangedEvent;
+import stes.isami.core.job.event.UpdateJobEvent;
 import stes.isami.core.plugin.PluginLoader;
 import stes.isami.core.ssh.SshFactory;
 import stes.isami.core.ssh.SshListener;
@@ -22,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
  * This class implements the Core interface. It represents the stes.isami.main class of the app.
  * <br> It extends Observable to notify the observer when a job
  */
-public final class CoreEngine extends AbstractCoreEngine implements Core, Observer,SshListener {
+public final class CoreEngine extends AbstractCoreEngine implements Core,SshListener {
 
 
     private final QStatManager qstatManager;
@@ -34,6 +40,8 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     private final Logger logger = LoggerFactory.getLogger(CoreEngine.class);
 
     private final ModuleExecutor executor;
+
+    private EventBus coreEventBus = new EventBus();
 
     /**
      * Holds the jobs. The {@code Boolean} is for marking the job as deleted.
@@ -66,6 +74,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
 
         //init the states
         JobState jobState = new JobState();
+        coreEventBus.register(this);
     }
 
     /**
@@ -107,11 +116,11 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
             throw new JobException(JobException.JOB_EXISTS,"Job ".concat(j.getID().toString()).concat(" already exists"));
         }
 
-        j.addObserver(this);
+        j.setEventBus(getCoreEventBus());
         jobList.put(j,false);
 
         logger.info("Job created: {}",j.getName());
-        fireJobEvent(JobEvent.JOB_CREATED,j.getID());
+        fireJobEvent(new CreateJobEvent(j.getID()));
 
         return true;
     }
@@ -207,34 +216,6 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        Job j = (Job) o;
-
-             switch (j.getState()) {
-
-                case JobState.FINISHED:
-                    finishedJobs++;
-                    logger.info("Finished jobs: {}", finishedJobs);
-                    break;
-
-                case JobState.STOP:
-                    try {
-//                        garbageCollector.registerJobForDeletion(j.getID(), (String) j.getParameters().getParameter("batchID").getValue());
-                        if (isMarkedForDeletion(j)) {
-                            logger.info("Job {} stopped. It is marked for deletion");
-                            jobList.remove(j);
-                            return;
-                        }
-                    } catch (IllegalArgumentException ex) {
-                        ;
-                    }
-            }
-
-        fireJobEvent(JobEvent.JOB_UPDATED, j.getID());
-
-    }
-
-    @Override
     public ArrayList<UUID> getJobIDList() {
         ArrayList<UUID> idList = new ArrayList<>();
 
@@ -251,6 +232,40 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
     public void shutdown() {
         qstatManager.stop();
         executor.shutDownExecutor();
+    }
+
+    /**
+     * Return the event bus used by the job to send events
+     * @return
+     */
+    public EventBus getCoreEventBus() {
+        return coreEventBus;
+    }
+
+    @Subscribe
+    public void onJobStateChanged(JobStateChangedEvent event) {
+
+        Job j = getJob(event.getId());
+        switch (j.getState()) {
+            case JobState.STOP:
+                try {
+                    if (isMarkedForDeletion(j)) {
+                        logger.info("Job {} stopped. It is marked for deletion");
+                        jobList.remove(j);
+                        return;
+                    }
+                } catch (IllegalArgumentException ex) {
+                    ;
+                }
+        }
+
+        fireJobEvent(event);
+
+    }
+
+    @Subscribe
+    public void onJobUpdate(UpdateJobEvent event) {
+        fireJobEvent(event);
     }
 
     /***********************************************************************************
@@ -308,6 +323,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         return false;
     }
 
+
     /***********************************************************************************
      *
      *
@@ -355,24 +371,5 @@ public final class CoreEngine extends AbstractCoreEngine implements Core, Observ
         }
 
     }
-
-    /**
-     * Get the job even is is marked for deletion
-     * @param id
-     * @return
-     */
-    private Job getJobInternally(UUID id) {
-        ArrayList<UUID> idList = new ArrayList<>();
-
-        for (Map.Entry<Job,Boolean> entry: jobList.entrySet()) {
-            if (entry.getKey().equals(id)) {
-               return entry.getKey();
-            }
-        }
-
-        return null;
-    }
-
-
 
 }

@@ -2,7 +2,10 @@ package stes.isami.core.job;
 
 import com.github.oxo42.stateless4j.StateMachineConfig;
 import com.github.oxo42.stateless4j.delegates.Action;
+import com.google.common.eventbus.EventBus;
 import com.sshtools.ssh.SshException;
+import stes.isami.core.job.event.JobStateChangedEvent;
+import stes.isami.core.job.event.UpdateJobEvent;
 import stes.isami.core.modules.MethodResult;
 import stes.isami.core.modules.Module;
 import stes.isami.core.modules.ModuleException;
@@ -78,7 +81,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure READY state
          */
         defaultConfiguration.configure(JobState.READY)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .permit(Trigger.doPreprocessing,JobState.PREPROCESSING)
                 .ignore(Trigger.doStop)
                 .permit(Trigger.doError,JobState.ERROR);
@@ -90,7 +93,7 @@ public class DefaultJob extends AbstractJob implements Job {
              ModuleAction preprocessingModuleAction = new ModuleAction(this,modules.get(JobState.PREPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doSubmit,Trigger.doError));
              moduleActionList.add(preprocessingModuleAction);
              defaultConfiguration.configure(JobState.PREPROCESSING)
-                    .onEntry(new NotifyAction())
+                    .onEntry(new StateChangedNotification())
                     .onEntry(preprocessingModuleAction)
                     .permit(Trigger.doSubmit,JobState.SUBMITTING)
                     .permit(Trigger.doStop,JobState.STOP)
@@ -104,7 +107,7 @@ public class DefaultJob extends AbstractJob implements Job {
             ModuleAction processingModuleAction = new ModuleAction(this,modules.get(JobState.SUBMITTING),new FutureCallback(),new StageCompletion(Trigger.doProcessing,Trigger.doError));
             moduleActionList.add(processingModuleAction);
             defaultConfiguration.configure(JobState.SUBMITTING)
-                    .onEntry(new NotifyAction())
+                    .onEntry(new StateChangedNotification())
                     .onEntry(processingModuleAction)
                     .permit(Trigger.doProcessing,JobState.SUBMITTED)
                     .permit(Trigger.doStop,JobState.STOP)
@@ -116,7 +119,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Set the submitted flag to true
          */
         defaultConfiguration.configure(JobState.SUBMITTED)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .onEntry(() -> setSubmitted(true))
                 .ignore(Trigger.evUnknown)
                 .permit(Trigger.evWaiting,JobState.WAITING)
@@ -133,7 +136,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure RUN STATE
          */
         defaultConfiguration.configure(JobState.RUN)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .ignore(Trigger.evRunning)
                 .ignore(Trigger.evUnknown)
                 .permit(Trigger.evWaiting,JobState.WAITING)
@@ -148,7 +151,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure WAITING STATE
          */
         defaultConfiguration.configure(JobState.WAITING)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .ignore(Trigger.evWaiting)
                 .ignore(Trigger.evUnknown)
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
@@ -163,7 +166,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure SUSPENDED STATE
          */
         defaultConfiguration.configure(JobState.SUSPENDED)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .ignore(Trigger.evSuspended)
                 .ignore(Trigger.evUnknown)
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
@@ -178,7 +181,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure TRANSFERRING STATE
          */
         defaultConfiguration.configure(JobState.TRANSFERRING)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .ignore(Trigger.evTransferring)
                 .ignore(Trigger.evUnknown)
                 .permit(Trigger.evRestarted,JobState.RESTARTED)
@@ -198,7 +201,7 @@ public class DefaultJob extends AbstractJob implements Job {
              ModuleAction postProcessingModuleAction = new ModuleAction(this,modules.get(JobState.POSTPROCESSING),new FutureCallback(),new StageCompletion(Trigger.doFinish,Trigger.doError));
              moduleActionList.add(postProcessingModuleAction);
              defaultConfiguration.configure(JobState.POSTPROCESSING)
-                    .onEntry(new NotifyAction())
+                    .onEntry(new StateChangedNotification())
                     .onEntry(() -> setSubmitted(false))
                     .onEntry(postProcessingModuleAction)
                     .permit(Trigger.doFinish,JobState.FINISHED)
@@ -212,7 +215,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * to delete the job from batch
          */
         defaultConfiguration.configure(JobState.STOP)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .onEntry(() -> {
 
                     /**
@@ -245,7 +248,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure RESTARTING state
          */
         defaultConfiguration.configure(JobState.RESTARTING)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .onEntry(new ModuleAction(this,new CleaningModule(),new FutureCallback(),new StageCompletion(Trigger.doPreprocessing,Trigger.doError)))
                 .onEntry(() -> setSubmitted(false))
                 .ignore(Trigger.doRestart)
@@ -255,7 +258,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure ERROR state
          */
         defaultConfiguration.configure(JobState.ERROR)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .onEntry(() -> setSubmitted(false))
                 .permit(Trigger.doRestart,JobState.RESTARTING);
 
@@ -263,7 +266,7 @@ public class DefaultJob extends AbstractJob implements Job {
          * Configure FINISHED state
          */
         defaultConfiguration.configure(JobState.FINISHED)
-                .onEntry(new NotifyAction())
+                .onEntry(new StateChangedNotification())
                 .onEntry(() -> setSubmitted(false))
                 .permit(Trigger.doRestart,JobState.RESTARTING);
 
@@ -322,8 +325,9 @@ public class DefaultJob extends AbstractJob implements Job {
             Parameter parameterToUpdate = getParameterSet().getParameter(parameterName);
             parameterToUpdate.setValue(parameterValue);
 
-            setChanged();
-            notifyObservers();
+            if (getCoreEventBus() != null) {
+                getCoreEventBus().post(new UpdateJobEvent(getID()));
+            }
 
             return true;
         }
@@ -337,8 +341,9 @@ public class DefaultJob extends AbstractJob implements Job {
         if (isEditable()) {
             setParameterSet(parameters);
 
-            setChanged();
-            notifyObservers();
+            if (getCoreEventBus() != null) {
+                getCoreEventBus().post(new UpdateJobEvent(getID()));
+            }
             
             return true;
         }
@@ -365,6 +370,11 @@ public class DefaultJob extends AbstractJob implements Job {
         };
 
         t.start();
+    }
+
+    @Override
+    public void setEventBus(EventBus coreEventBus) {
+        setCoreEventBus(coreEventBus);
     }
 
     @Override
@@ -426,12 +436,13 @@ public class DefaultJob extends AbstractJob implements Job {
      * This class has to be put in every {@code onEntry}.
      * At the entrance of a state, the observer will be notified
      */
-    private class NotifyAction implements Action {
+    private class StateChangedNotification implements Action {
 
         @Override
         public void doIt() {
-            setChanged();
-            notifyObservers();
+           if (getCoreEventBus() != null) {
+               getCoreEventBus().post(new JobStateChangedEvent(getID(),getState()));
+           }
         }
     }
 
@@ -479,8 +490,13 @@ public class DefaultJob extends AbstractJob implements Job {
                 catch (IllegalArgumentException ex) {
                     logger.info("Method {} New parameter found: {}",methodResult.getMethodName(),parameter.getName());
                     getParameterSet().addParameter(parameter);
+                }
+                finally {
+                    if (getCoreEventBus() != null) {
+                        getCoreEventBus().post(new UpdateJobEvent(getID()));
                     }
                 }
+            }
             return true;
         }
 

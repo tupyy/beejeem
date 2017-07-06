@@ -1,5 +1,10 @@
 package stes.isami.core;
 
+import stes.isami.core.job.event.CreateJobEvent;
+import stes.isami.core.job.event.JobEvent;
+import stes.isami.core.job.event.JobStateChangedEvent;
+import stes.isami.core.job.event.UpdateJobEvent;
+
 import java.util.Enumeration;
 import java.util.UUID;
 import java.util.Vector;
@@ -39,7 +44,7 @@ public abstract class AbstractCoreEngine implements Core {
     /**
      * Fire JobEvent to all registered listeners
      */
-    protected void fireJobEvent(JobEvent action, UUID id) {
+    protected void fireJobEvent(JobEvent event) {
         // if we have no listeners, do nothing...
         if (jobListeners != null && !jobListeners.isEmpty()) {
 
@@ -55,13 +60,14 @@ public abstract class AbstractCoreEngine implements Core {
             Enumeration e = targets.elements();
             while (e.hasMoreElements()) {
                 JobListener l = (JobListener) e.nextElement();
-                switch (action) {
-                    case JOB_UPDATED:
-                        l.jobUpdated(id);
-                        break;
-                    case JOB_CREATED:
-                        l.jobCreated(id);
-                        break;
+                if (event instanceof CreateJobEvent) {
+                    l.jobCreated(event.getId());
+                }
+                else if (event instanceof UpdateJobEvent) {
+                    l.jobUpdated(event.getId());
+                }
+                else if (event instanceof JobStateChangedEvent) {
+                    l.onStateChanged(event.getId(),((JobStateChangedEvent) event).getNewState());
                 }
             }
         }

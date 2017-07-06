@@ -32,7 +32,6 @@ public class TestDefaultJob implements Observer {
         moduleHashMap.put(JobState.STOP,new TestModule("Cleaning"));
 
         job = new DefaultJob(parameters,moduleHashMap);
-        job.addObserver(this);
 
 
         try {
