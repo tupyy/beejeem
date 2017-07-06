@@ -2,6 +2,7 @@ package stes.isami.bjm.gui.jobinfo;
 
 import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
+import stes.isami.core.job.JobState;
 import stes.isami.core.parameters.Parameter;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.gui.MainController;
@@ -74,14 +75,22 @@ public class JobInfo extends AbstractComponentEventHandler implements JobListene
 
     @Override
     public void jobUpdated(UUID id) {
-        if (job.getID() == id) {
-            jobInfoController.setJobEditable(job.isEditable());
-        }
+
     }
 
     @Override
     public void jobCreated(UUID id) {
 
+    }
+
+    @Override
+    public void onStateChanged(UUID id, int newState) {
+
+        if (job.getID() == id) {
+            if (newState == JobState.FINISHED || newState == JobState.ERROR) {
+                    jobInfoController.setJobEditable(job.isEditable());
+                }
+        }
     }
 
     /**

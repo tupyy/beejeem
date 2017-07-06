@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import stes.isami.bjm.notifications.NotificationCenter;
 import stes.isami.core.Core;
 import stes.isami.core.CoreEngine;
 import stes.isami.core.job.Job;
@@ -29,6 +30,7 @@ public class JStesCore implements SshListener,ComponentEventHandler {
     private final static Core coreEngine = CoreEngine.getInstance();
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     private final TcpServer tcpServer;
+    private final NotificationCenter notificationCenter;
     private Thread readerThread;
 
     private LinkedBlockingDeque<ClientMessage> tcpClientOutputQueue = new LinkedBlockingDeque<>();
@@ -50,6 +52,9 @@ public class JStesCore implements SshListener,ComponentEventHandler {
 
         readerThread = new Thread(new TcpMessageReader(tcpClientOutputQueue));
         readerThread.start();
+
+        notificationCenter = new NotificationCenter();
+        getCoreEngine().addJobListener(notificationCenter);
 
 
     }

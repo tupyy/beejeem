@@ -119,6 +119,11 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         deleteButton.setDisable(false);
     }
 
+    @Override
+    public void onStateChanged(UUID id, int newState) {
+
+    }
+
     /**
      * On job event handler
      * @param event
