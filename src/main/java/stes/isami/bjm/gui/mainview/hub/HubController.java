@@ -28,6 +28,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stes.isami.bjm.notifications.NotificationEvent;
 import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobState;
@@ -164,6 +165,18 @@ public class HubController extends AbstractComponentEventHandler implements Init
     public void onStateChanged(UUID id, int newState) {
         Job j = getCoreEngine().getJob(id);
         model.updateState(id,newState);
+
+        //show notification
+        if (newState == JobState.FINISHED) {
+            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.INFORMATION,
+                    "Job " + j.getName(),
+                    "Job \"" + j.getName() + "\" has finished"));
+        }
+        else if (newState == JobState.ERROR) {
+            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.ERROR,
+                    "Job " + j.getName(),
+                    "Job \"" + j.getName() + "\" has finished with error"));
+        }
     }
 
     /********************************************************************

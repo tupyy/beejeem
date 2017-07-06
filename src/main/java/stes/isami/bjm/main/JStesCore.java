@@ -54,7 +54,7 @@ public class JStesCore implements SshListener,ComponentEventHandler {
         readerThread.start();
 
         notificationCenter = new NotificationCenter();
-        getCoreEngine().addJobListener(notificationCenter);
+        eventBus.register(notificationCenter);
 
 
     }
@@ -168,6 +168,10 @@ public class JStesCore implements SshListener,ComponentEventHandler {
                 break;
         }
 
+    }
+
+    public NotificationCenter getNotificationCenter() {
+        return notificationCenter;
     }
 
     /**
