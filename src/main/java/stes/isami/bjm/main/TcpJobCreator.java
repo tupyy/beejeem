@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.configuration.JobDefinition;
 import stes.isami.bjm.configuration.Preferences;
+import stes.isami.bjm.notifications.NotificationEvent;
 import stes.isami.core.creator.Creator;
 import stes.isami.core.creator.CreatorFactory;
 import stes.isami.core.job.Job;
 import stes.isami.core.parameters.Parameter;
 import stes.isami.core.parameters.ParameterSet;
+import stes.isami.core.parameters.parametertypes.BooleanParameter;
 import stes.isami.core.parameters.parametertypes.StringParameter;
 import stes.isami.core.util.XMLWorker;
 import org.w3c.dom.Element;
@@ -156,13 +158,18 @@ public class TcpJobCreator {
         if (jobDefinition != null) {
             ParameterSet parameters = jobDefinition.getParameters();
             addParameterFromPreferences(parameters);
-
             List<Element> moduleElement = jobDefinition.getModuleElements();
 
             Job job = creator.createJob(Optional.ofNullable(file), parameterValues, parameters, moduleElement);
+            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.INFORMATION,
+                    "Excel2Isami",
+                    "Job \""+job.getName()+"\" has been created"));
             return job;
         }
         else {
+            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.ERROR,
+                    "Excel2Isami",
+                    "No creator for creator.getClass().getName()"));
             throw new IllegalArgumentException("No job definition for creator: " + creator.getClass().getName());
         }
 

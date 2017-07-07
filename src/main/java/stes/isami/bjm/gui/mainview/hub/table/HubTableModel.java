@@ -79,13 +79,19 @@ public class HubTableModel {
 
         return null;
     }
+
+    public void updateState(UUID id, int newState) {
+        JobData jobData = getJobData(id);
+        if (jobData != null) {
+            jobData.status.setValue(JobState.toString(newState));
+        }
+    }
     //<editor-fold desc="Job Data">
     /**
      * Class which defines the model for the hub table
      */
     public class JobData {
 
-        private SimpleStringProperty aircraft;
         private SimpleStringProperty batchID;
         private SimpleStringProperty name;
         private SimpleStringProperty destinationFolder;
@@ -114,7 +120,6 @@ public class HubTableModel {
 
                 this.localFolder = new SimpleStringProperty(getParameterValue(parameterSet,"localFolder"));
                 this.batchID = new SimpleStringProperty(getParameterValue(parameterSet,"batchID"));
-                this.aircraft = new SimpleStringProperty(getParameterValue(parameterSet,"aircraft"));
                 this.status = new SimpleStringProperty(JobState.toString(job.getState()));
                 this.id = new SimpleStringProperty(job.getID().toString());
             }
@@ -126,6 +131,7 @@ public class HubTableModel {
         public void updateJob(Job j) {
             this.name.set((String) j.getParameters().getParameter("name").getValue());
             this.destinationFolder.set((String) j.getParameters().getParameter("destinationFolder").getValue());
+            this.localFolder.set((String) j.getParameters().getParameter("localFolder").getValue());
             this.status.set(JobState.toString(j.getState()));
             this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
         }
@@ -155,15 +161,8 @@ public class HubTableModel {
             return id.get();
         }
 
-        public SimpleStringProperty statusProperty() {
-            return status;
-        }
-
         public SimpleStringProperty nameProperty() {
             return name;
-        }
-        public SimpleStringProperty aircraftProperty() {
-            return aircraft;
         }
         public SimpleStringProperty destinationFolderProperty() {
             return destinationFolder;
@@ -172,6 +171,8 @@ public class HubTableModel {
         public SimpleStringProperty batchIDProperty() {
             return batchID;
         }
+        public SimpleStringProperty statusProperty() { return status;};
+        public SimpleStringProperty localFolderProperty() {return localFolder;}
 
         private String getParameterValue(ParameterSet parameters, String parameterName) {
             try {
@@ -181,6 +182,7 @@ public class HubTableModel {
                 return "";
             }
         }
+
     }
     //</editor-fold>
 
