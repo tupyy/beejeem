@@ -105,6 +105,9 @@ public class QStatManager {
             if (qstatOutputP.getValue().isEmpty()) {
                 missFired--;
             }
+            else {
+                missFired = 3;
+            }
         }
         else {
             logger.error("QStat error. Stopping qstat modules");
