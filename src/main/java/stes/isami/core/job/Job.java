@@ -1,5 +1,6 @@
 package stes.isami.core.job;
 
+import com.google.common.eventbus.EventBus;
 import stes.isami.core.modules.MethodResult;
 import stes.isami.core.parameters.Parameter;
 import stes.isami.core.parameters.ParameterSet;
@@ -88,9 +89,9 @@ public interface Job extends Executable {
     public void setQstatResult(MethodResult qstatOutput);
 
     /**
-     * Add observer
-     * @param observer
+     * Set the core event bus
+     * @param coreEventBus
      */
-    public void addObserver(Observer observer);
+    public void setEventBus(EventBus coreEventBus);
 
 }

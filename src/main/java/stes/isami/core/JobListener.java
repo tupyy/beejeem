@@ -1,5 +1,7 @@
 package stes.isami.core;
 
+import stes.isami.core.job.JobState;
+
 import java.util.UUID;
 
 /**
@@ -16,4 +18,9 @@ public interface JobListener {
 
     void jobCreated(UUID id);
 
+    /**
+     * The state changed
+     * @param id
+     */
+    void onStateChanged(UUID id,int newState);
 }

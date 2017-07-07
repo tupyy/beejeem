@@ -2,6 +2,7 @@ package stes.isami.core.job;
 
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
+import com.google.common.eventbus.EventBus;
 import stes.isami.core.modules.MethodResult;
 import stes.isami.core.parameters.Parameter;
 import stes.isami.core.parameters.ParameterSet;
@@ -19,7 +20,7 @@ import java.util.function.Consumer;
  * <p>This class provides function for consuming the Qstat messages.</p>
  *
  */
-public abstract class AbstractJob extends Observable {
+public abstract class AbstractJob  {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractJob.class);
 
@@ -31,6 +32,8 @@ public abstract class AbstractJob extends Observable {
      * Parameter set
      */
     private ParameterSet parameterSet;
+
+    private EventBus coreEventBus;
 
     /**
      * State machine
@@ -156,6 +159,24 @@ public abstract class AbstractJob extends Observable {
         }
     }
 
+
+    public EventBus getCoreEventBus() {
+        return coreEventBus;
+    }
+
+    public void setCoreEventBus(EventBus coreEventBus) {
+        this.coreEventBus = coreEventBus;
+    }
+
+
+    /*****************************************************************************************************
+     *
+     *
+     *                                      PRIVATE
+     *
+     */
+
+
     /**
      * Parse the qstat output to get the status of the job in the batch system
      * <br>If the batchID is not found in the output and it is set in the job, it means that the
@@ -212,6 +233,8 @@ public abstract class AbstractJob extends Observable {
 
         return 0;
     }
+
+
 
     /**
      * This class is used to trigger an event after the completion of the
