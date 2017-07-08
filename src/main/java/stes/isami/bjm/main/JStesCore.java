@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import stes.isami.bjm.notifications.NotificationCenter;
+import stes.isami.bjm.components.notifications.NotificationCenter;
 import stes.isami.core.Core;
 import stes.isami.core.CoreEngine;
 import stes.isami.core.job.Job;

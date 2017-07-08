@@ -189,7 +189,7 @@ public class MainApp extends Application {
             while (resEnum.hasMoreElements()) {
                 try {
                     URL url = (URL)resEnum.nextElement();
-                    if (url.getPath().contains("gui")) {
+                    if (url.getPath().contains("components")) {
                         InputStream is = url.openStream();
                         if (is != null) {
                             Manifest manifest = new Manifest(is);
