@@ -36,7 +36,7 @@ import java.util.UUID;
 import static stes.isami.bjm.main.JStesCore.getCoreEngine;
 
 
-public class MainController extends AbstractComponentEventHandler implements Initializable,JobListener {
+public class MainController extends AbstractComponentEventHandler implements Initializable {
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
 
@@ -76,7 +76,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     public MainController() {
         super();
-        getCoreEngine().addJobListener(this);
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -100,21 +99,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         addJobButton.setTooltip(new Tooltip("Create job"));
         decorateButton(exportMaterialButton,"images/explorer.png");
         exportMaterialButton.setTooltip(new Tooltip("Material Explorer"));
-
-    }
-
-    @Override
-    public void jobUpdated(UUID id) {
-
-    }
-
-    @Override
-    public void jobCreated(UUID id) {
-
-    }
-
-    @Override
-    public void onStateChanged(UUID id, int newState) {
 
     }
 
