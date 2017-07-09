@@ -11,7 +11,7 @@ import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobException;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
-import stes.isami.bjm.eventbus.JobEvent;
+import stes.isami.bjm.eventbus.ComponentEvent;
 import stes.isami.bjm.components.propertySheet.PropertyController;
 import stes.isami.bjm.components.propertySheet.PropertyEvent;
 import stes.isami.bjm.components.propertySheet.PropertyListener;
@@ -115,7 +115,7 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
 
     @Override
-    public void onJobEvent(JobEvent event) {
+    public void onComponentEvent(ComponentEvent event) {
 
         switch (event.getEvent()) {
             case SELECT:

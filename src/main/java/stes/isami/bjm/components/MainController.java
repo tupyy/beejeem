@@ -16,10 +16,11 @@ import javafx.stage.Stage;
 import org.controlsfx.control.MasterDetailPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stes.isami.bjm.components.hub.Hub;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
-import stes.isami.bjm.eventbus.JobEvent;
-import stes.isami.bjm.eventbus.DefaultJobEvent;
-import stes.isami.bjm.eventbus.JobEvent.JobEventType;
+import stes.isami.bjm.eventbus.ComponentEvent;
+import stes.isami.bjm.eventbus.DefaultComponentEvent;
+import stes.isami.bjm.eventbus.ComponentEvent.JobEventType;
 import stes.isami.bjm.components.hub.HubController;
 import stes.isami.bjm.components.sidepanel.SidePanelController;
 import stes.isami.bjm.main.JStesCore;
@@ -127,7 +128,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
      * On job event handler
      * @param event
      */
-    public void onJobEvent(JobEvent event) {
+    public void onComponentEvent(ComponentEvent event) {
 
         switch (event.getEvent()) {
             case DESELECT:
@@ -170,14 +171,12 @@ public class MainController extends AbstractComponentEventHandler implements Ini
      * @param parentNode
      */
     private void createHubView(MasterDetailPane parentNode) {
+        Hub hub = new Hub();
+
         try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainController.class.getClassLoader().getResource("views/hub.fxml"));
-            VBox hubPane = (VBox) loader.load();
-            parentNode.setMasterNode(hubPane);
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
+            parentNode.setMasterNode(hub.getRootPane());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -262,7 +261,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         deleteButton.setOnAction(event -> {
 
-            JStesCore.getEventBus().post(new DefaultJobEvent(JobEventType.DELETE));
+            JStesCore.getEventBus().post(new DefaultComponentEvent(JobEventType.DELETE));
 
         });
 

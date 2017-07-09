@@ -121,7 +121,7 @@ public class StatusBarController implements Initializable, ComponentEventHandler
     }
 
     @Override
-    public void onJobEvent(JobEvent event) {
+    public void onComponentEvent(ComponentEvent event) {
 
     }
 

@@ -8,7 +8,7 @@ import com.google.common.eventbus.Subscribe;
 public interface ComponentEventHandler {
 
     @Subscribe
-    public void onJobEvent(JobEvent event);
+    public void onComponentEvent(ComponentEvent event);
 
     @Subscribe
     public void onCoreEvent(CoreEvent event);

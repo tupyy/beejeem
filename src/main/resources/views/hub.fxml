@@ -7,19 +7,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="460.0" prefWidth="461.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.bjm.components.hub.HubController">
+<VBox fx:id="mainPane" prefHeight="460.0" prefWidth="461.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.bjm.components.hub.HubView">
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" prefWidth="200.0">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="runJobButton" disable="true" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Run job" />
+                  <Button id="runJobButton" fx:id="runJobButton" disable="true" mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" text="Run job" />
                   <Separator prefWidth="10.0" visible="false" HBox.hgrow="NEVER" />
-                  <Button fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
+                  <Button id="runAllButton" fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
                   <Separator layoutX="110.0" layoutY="29.0" prefWidth="10.0" visible="false" />
                </children>
             </HBox>
-            <TextField fx:id="filterField" promptText="Filter">
+            <TextField id="filterField" fx:id="filterField" promptText="Filter">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -31,7 +31,7 @@
       </HBox>
       <VBox VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="hubTable" stylesheets="@../css/hubTable.css" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <TableView id="hubTable" fx:id="hubTable" stylesheets="@../css/hubTable.css" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

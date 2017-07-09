@@ -22,9 +22,9 @@ public class ModelWorker implements Runnable {
 
     private BlockingQueue<MyBeanAction> queue = new LinkedBlockingQueue<>();
 
-    private final ObservableList<HubTableModel.JobData> data;
+    private final ObservableList<JobData> data;
 
-    public ModelWorker(ObservableList<HubTableModel.JobData> data) {
+    public ModelWorker(ObservableList<JobData> data) {
         this.data = data;
     }
 
@@ -35,6 +35,7 @@ public class ModelWorker implements Runnable {
     public void onUpdateJob(Job j) {
         queue.add(new MyBeanAction(UPDATE_ACTION,j));
     }
+
 
     public void onAddJob(Job job) {
         queue.add(new MyBeanAction(ADD_ACTION,job));
@@ -48,7 +49,7 @@ public class ModelWorker implements Runnable {
                 switch (myBeanAction.getAction()) {
                     case DELETE_ACTION:
                         logger.info("Delete job: {}",myBeanAction.getId());
-                        for (HubTableModel.JobData jobdata : data) {
+                        for (JobData jobdata : data) {
                             if (jobdata.getId().equals(myBeanAction.getId().toString())) {
                                 data.remove(jobdata);
                                 break;
@@ -56,7 +57,7 @@ public class ModelWorker implements Runnable {
                         }
                         break;
                     case UPDATE_ACTION:
-                        for(HubTableModel.JobData jobData: data) {
+                        for(JobData jobData: data) {
                             if (jobData.getId().equals(myBeanAction.getId().toString())) {
                                 jobData.updateJob(myBeanAction.getJob());
                             }

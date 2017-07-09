@@ -12,7 +12,7 @@ public abstract class AbstractComponentEventHandler implements ComponentEventHan
     }
 
     @Override
-    public void onJobEvent(JobEvent event) {
+    public void onComponentEvent(ComponentEvent event) {
 
     }
 

@@ -6,7 +6,7 @@ import java.util.UUID;
 /**
  * Created by tctupangiu on 27/04/2017.
  */
-public interface JobEvent {
+public interface ComponentEvent {
 
 
     public JobEventType getEvent();

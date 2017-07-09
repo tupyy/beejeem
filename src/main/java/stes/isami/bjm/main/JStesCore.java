@@ -125,7 +125,7 @@ public class JStesCore implements SshListener,ComponentEventHandler {
     //<editor-fold desc="ComponentEventHandler">
 
     @Override
-    public void onJobEvent(JobEvent event) {
+    public void onComponentEvent(ComponentEvent event) {
 
     }
 
