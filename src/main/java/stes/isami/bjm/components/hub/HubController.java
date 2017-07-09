@@ -48,6 +48,9 @@ public class HubController extends AbstractComponentEventHandler implements JobL
     private final IHubView view;
 
     private final String HUB_TABLE_ID = "hubTable";
+    private final String RUN_BUTTON_ID = "runJobButton";
+    private final String RUN_ALL_BUTTON_ID="runAllButton";
+    private final String DELETE_BUTTON_ID = "deleteButton";
     private TableView hubTable;
     /**
      * Service to update the job data in separate thread
@@ -79,11 +82,11 @@ public class HubController extends AbstractComponentEventHandler implements JobL
 
         //bind the disable property for the buttons
         try {
-            Button b = (Button) view.getControl("runJobButton");
+            Button b = (Button) view.getControl(RUN_BUTTON_ID);
             b.disableProperty().bind(runJobButtonProperty);
 
-            view.getControl("runAllButton").disableProperty().bind(runAllJobProperty);
-            view.getControl("deleteButton").disableProperty().bind(disableDeleteProperty);
+            view.getControl(RUN_ALL_BUTTON_ID).disableProperty().bind(runAllJobProperty);
+            view.getControl(DELETE_BUTTON_ID).disableProperty().bind(disableDeleteProperty);
         }
         catch (NullPointerException e) {
             logger.error("Cannot find run buttons",e.getMessage());
@@ -102,42 +105,17 @@ public class HubController extends AbstractComponentEventHandler implements JobL
     public void onCoreEvent(CoreEvent event) {
         if (event.getEventName() == CoreEvent.CoreEventType.SHUTDOWN) {
             shutdownWorker();
-
-//            if (deleteService != null) {
-//                if (deleteService.isRunning()) {
-//                    deleteService.cancel();
-//                }
-//            }
         }
         else if (event.getEventName() == CoreEvent.CoreEventType.SSH_CLIENT_DISCONNECTED) {
             runAllJobProperty.set(true);
             runJobButtonProperty.set(true);
+            disableDeleteProperty.set(true);
         }
         else if (event.getEventName() == CoreEvent.CoreEventType.SSH_CLIENT_AUTHENTICATED) {
             if (getCoreEngine().count() > 0 ) {
                 runAllJobProperty.set(false);
             }
         }
-    }
-
-    @Override
-    public void onComponentEvent(ComponentEvent componentEvent) {
-        switch (componentEvent.getEvent()) {
-            case DELETE:
-                onDeleteAction(getHubTable().getSelectionModel().getSelectedItems());
-        }
-    }
-
-    /**
-     * Patch to be able to delete job from others classes
-     * @param jobID
-     */
-    @Subscribe
-    public void onDeleteJobHack(UUID jobID) {
-//        JobData jobData = model.getJobData(jobID);
-//        if (jobData != null) {
-//            onDeleteAction(FXCollections.observableArrayList(jobData));
-//        }
     }
 
     @Override
@@ -151,6 +129,7 @@ public class HubController extends AbstractComponentEventHandler implements JobL
         if (selection != null) {
             if (selection.getId().equals(j.getID().toString())) {
                 runJobButtonProperty.set(false);
+                disableDeleteProperty.set(false);
                 runButtonActionTypeProperty.set(getActionFromJobState(JobState.toString(j.getState())));
             }
 
@@ -180,6 +159,11 @@ public class HubController extends AbstractComponentEventHandler implements JobL
                     "Job " + j.getName(),
                     "Job \"" + j.getName() + "\" has finished with error"));
         }
+    }
+
+    @Override
+    public void jobDeleted(UUID id) {
+        modelWorker.onDeleteJob(id);
     }
 
     /********************************************************************
@@ -242,18 +226,18 @@ public class HubController extends AbstractComponentEventHandler implements JobL
         });
 
 
-        view.setActionEventHandler("runAllButton", event -> {
+        view.setActionEventHandler(RUN_ALL_BUTTON_ID, event -> {
             getCoreEngine().executeAll();
         });
 
         myEventHandler = new HubActionEventHandler(runButtonActionTypeProperty, (TableView) view.getControl(HUB_TABLE_ID));
-        view.setActionEventHandler("runJobButton",myEventHandler);
-
+        view.setActionEventHandler(RUN_BUTTON_ID,myEventHandler);
 
         //setup key events
         deleteActionHandler = new HubActionEventHandler(new SimpleIntegerProperty(HubActionEventHandler.DELETE_ACTION),(TableView) view.getControl(HUB_TABLE_ID));
-        view.setActionEventHandler("deleteButton",deleteActionHandler);
-        view.setKeyEventHandler(HUB_TABLE_ID, "deleteButton",KeyCode.DELETE);
+        view.setActionEventHandler(DELETE_BUTTON_ID,deleteActionHandler);
+        view.setKeyEventHandler(HUB_TABLE_ID, DELETE_BUTTON_ID,KeyCode.DELETE);
+        view.setKeyEventHandler(HUB_TABLE_ID,RUN_BUTTON_ID,KeyCode.ENTER);
 
         /**
          * Set mouse event on the row. On double-click show the jobbInfoDialog
@@ -280,6 +264,14 @@ public class HubController extends AbstractComponentEventHandler implements JobL
     public void shutdownWorker() {
         modelWorkderThread.interrupt();
     }
+
+    /**
+     *
+     *
+     *                          PRIVATE
+     *
+     */
+
 
     /**
      * Return an action (i.e. run or stop) based on the state of the job
@@ -329,34 +321,6 @@ public class HubController extends AbstractComponentEventHandler implements JobL
     }
 
     /**
-     * Perform the delete action
-     * @param selectedJobs
-     */
-    private void onDeleteAction(ObservableList<HubTableModel.JobData> selectedJobs) {
-
-//        deleteService = new DeleteService();
-//        deleteService.setJobToDelete(new ArrayList<>(selectedJobs));
-//        deleteService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-//            @Override
-//            public void handle(WorkerStateEvent event) {
-//                if ( (Boolean) event.getSource().getValue()) {
-////                    JStesCore.getEventBus().post(new DefaultComponentEvent(ComponentEvent.JobEventType.DESELECT));
-//                 }
-//
-//                hubTable.requestFocus();
-//                setDeleteInProgress(false);
-//
-//                HubTableModel.JobData jobData = (HubTableModel.JobData) hubTable.getSelectionModel().getSelectedItem();
-//                onJobSelection(jobData);
-//
-//            }
-//        });
-//
-//        setDeleteInProgress(true);
-//        deleteService.start();
-    }
-
-    /**
      * Perform action when a job has been selected in the hubTable
      * @param data
      */
@@ -390,41 +354,5 @@ public class HubController extends AbstractComponentEventHandler implements JobL
         }
         return hubTable;
     }
-//    /**
-//     * Delete a list of jobs from source.
-//     * Return true if there is no job left in the coreEngine
-//     */
-//    private class DeleteService extends Service<Boolean> {
-//
-//        private List<JobData> list;
-//
-//        public void setJobToDelete(List<JobData> list) {
-//            this.list = list;
-//        }
-//        @Override
-//        protected Task<Boolean> createTask() {
-//            return new Task<Boolean>() {
-//                @Override
-//                protected Boolean call() throws Exception {
-//
-//                    for (JobData jobData : list) {
-//                        if (getCoreEngine().deleteJob(UUID.fromString(jobData.getId()))) {
-//                            model.deleteJob(jobData);
-//                        }
-//                    }
-//
-//                    if (getCoreEngine().count() == 0) {
-//                        runAllJobProperty.set(true);
-//                        runJobButtonProperty.set(true);
-//
-//                       setActionOnButton(runJobButton,MyEventHandler.RUN_ACTION);
-//                        return true;
-//                    }
-//
-//                    return false;
-//                }
-//            };
-//        }
-//    }
 
 }
