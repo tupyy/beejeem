@@ -7,7 +7,6 @@ import javafx.scene.input.MouseEvent;
 import stes.isami.bjm.components.ComponentView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import stes.isami.bjm.components.hub.table.HubActionEventHandler;
 
 
 /**

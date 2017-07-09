@@ -1,10 +1,11 @@
-package stes.isami.bjm.components.hub.table;
+package stes.isami.bjm.components.hub;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableView;
+import stes.isami.bjm.components.hub.table.JobData;
 
 import java.util.UUID;
 

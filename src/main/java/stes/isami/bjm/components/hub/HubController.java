@@ -4,11 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -22,7 +18,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import stes.isami.bjm.components.hub.table.HubActionEventHandler;
 import stes.isami.bjm.components.hub.table.JobData;
 import stes.isami.bjm.components.hub.table.ModelWorker;
 import stes.isami.bjm.components.notifications.NotificationEvent;
@@ -36,8 +31,6 @@ import stes.isami.bjm.main.JStesCore;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static stes.isami.bjm.main.JStesCore.getCoreEngine;
@@ -54,6 +47,7 @@ public class HubController extends AbstractComponentEventHandler implements JobL
     private final IHubView view;
 
     private final String HUB_TABLE_ID = "hubTable";
+    private TableView hubTable;
     /**
      * Service to update the job data in separate thread
      */
@@ -375,7 +369,7 @@ public class HubController extends AbstractComponentEventHandler implements JobL
             if (runJobButtonProperty.get()) {
                 runJobButtonProperty.set(false);
             }
-//            setActionOnButton(runJobButton, getActionFromJobState(data.getStatus()).getActionType());
+            runButtonActionTypeProperty.set(getActionFromJobState(data.getStatus()));
             JStesCore.getEventBus().post(new DefaultComponentEvent(HubController.this, ComponentEvent.JobEventType.SELECT, UUID.fromString(data.getId())));
         }
         else {
@@ -393,7 +387,10 @@ public class HubController extends AbstractComponentEventHandler implements JobL
      * @return
      */
     private TableView getHubTable() {
-        return (TableView) view.getControl(HUB_TABLE_ID);
+        if (hubTable == null) {
+            hubTable = (TableView) view.getControl(HUB_TABLE_ID);
+        }
+        return hubTable;
     }
 //    /**
 //     * Delete a list of jobs from source.

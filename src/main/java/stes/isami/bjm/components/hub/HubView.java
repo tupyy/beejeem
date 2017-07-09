@@ -11,7 +11,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -20,7 +19,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import stes.isami.bjm.components.hub.table.HubActionEventHandler;
 import stes.isami.bjm.components.hub.table.JobData;
 
 import java.net.URL;
@@ -67,8 +65,8 @@ public class HubView implements Initializable,IHubView<JobData> {
     }
 
     @Override
-    public void setActionEventHandler(String buttonName,EventHandler<ActionEvent> actionEventEventHandler) {
-        Button button = (Button) mainPane.lookup(buttonName);
+    public void setActionEventHandler(String buttonID,EventHandler<ActionEvent> actionEventEventHandler) {
+        Button button = (Button)getControl(mainPane,buttonID);
         if (button != null) {
             button.setOnAction(actionEventEventHandler);
 
@@ -91,16 +89,16 @@ public class HubView implements Initializable,IHubView<JobData> {
     }
 
     @Override
-    public void setKeyEventHandler(String controlName, EventHandler<KeyEvent> keyEventEventHandler) {
-        Control control = (Control) mainPane.lookup(controlName);
+    public void setKeyEventHandler(String controlID, EventHandler<KeyEvent> keyEventEventHandler) {
+        Control control = getControl(mainPane,controlID);
         if (control != null) {
             control.setOnKeyReleased(keyEventEventHandler);
         }
     }
 
     @Override
-    public void setMouseEventHandler(String controlName, EventHandler<MouseEvent> mouseEventEventHandler) {
-        Control control = (Control) mainPane.lookup(controlName);
+    public void setMouseEventHandler(String controlID, EventHandler<MouseEvent> mouseEventEventHandler) {
+        Control control = getControl(mainPane,controlID);
         if (control != null) {
             control.setOnMouseClicked(mouseEventEventHandler);
         }
