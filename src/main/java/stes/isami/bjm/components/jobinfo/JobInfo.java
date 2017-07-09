@@ -93,6 +93,11 @@ public class JobInfo extends AbstractComponentEventHandler implements JobListene
         }
     }
 
+    @Override
+    public void jobDeleted(UUID id) {
+        //TODO
+    }
+
     /**
      * Get the root pane
      * @return null if the rootPane cannot be initialized

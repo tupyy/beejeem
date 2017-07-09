@@ -181,6 +181,11 @@ public class MaterialExplorerHandler implements JobListener{
     }
 
     @Override
+    public void jobDeleted(UUID id) {
+        //TODO
+    }
+
+    @Override
     public void jobCreated(UUID id) {
 
     }

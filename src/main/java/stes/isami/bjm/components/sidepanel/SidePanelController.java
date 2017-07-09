@@ -113,6 +113,11 @@ public class SidePanelController extends AbstractComponentEventHandler implement
 
     }
 
+    @Override
+    public void jobDeleted(UUID id) {
+
+    }
+
 
     @Override
     public void onComponentEvent(ComponentEvent event) {

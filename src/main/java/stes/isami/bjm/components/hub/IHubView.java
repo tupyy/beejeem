@@ -11,23 +11,9 @@ import javafx.event.EventHandler;
 
 
 /**
- * Created by cosmin2 on 09/07/2017.
+ * Interface to be implentated by the HubView
  */
-public interface IHubView<T> extends ComponentView {
+public interface IHubView extends ComponentView {
 
-    public ObservableList<T> getData();
 
-    public void setActionEventHandler(String buttonName,EventHandler<ActionEvent> actionEventEventHandler);
-
-    /**
-     * Set a key event to control. The key event will be bind to a actionevent
-     * @param controlID
-     * @param bindControlID control whose {@link ActionEvent} will be bind to key event
-     * @param keyCode
-     */
-    public void setKeyEventHandler(String controlID,String bindControlID,KeyCode keyCode);
-
-    public void setMouseEventHandler(String controlName, EventHandler<MouseEvent> mouseEventEventHandler);
-
-    public Control getControl(String controlID);
 }
