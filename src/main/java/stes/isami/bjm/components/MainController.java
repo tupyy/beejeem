@@ -19,21 +19,14 @@ import org.slf4j.LoggerFactory;
 import stes.isami.bjm.components.hub.Hub;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.eventbus.ComponentEvent;
-import stes.isami.bjm.eventbus.DefaultComponentEvent;
-import stes.isami.bjm.eventbus.ComponentEvent.JobEventType;
-import stes.isami.bjm.components.hub.HubController;
+import stes.isami.bjm.components.hub.presenter.HubController;
 import stes.isami.bjm.components.sidepanel.SidePanelController;
-import stes.isami.bjm.main.JStesCore;
 import stes.isami.bjm.main.MainApp;
 import stes.isami.bjm.components.materialExplorer.MaterialExplorer;
-import stes.isami.core.JobListener;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.UUID;
-
-import static stes.isami.bjm.main.JStesCore.getCoreEngine;
 
 
 public class MainController extends AbstractComponentEventHandler implements Initializable {

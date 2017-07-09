@@ -1,4 +1,4 @@
-package stes.isami.bjm.components.hub.table;
+package stes.isami.bjm.components.hub.logic;
 
 import stes.isami.core.job.Job;
 import javafx.collections.ObservableList;
@@ -40,6 +40,7 @@ public class ModelWorker implements Runnable {
     public void onAddJob(Job job) {
         queue.add(new MyBeanAction(ADD_ACTION,job));
     }
+
     @Override
     public void run() {
 
@@ -48,8 +49,7 @@ public class ModelWorker implements Runnable {
                 MyBeanAction myBeanAction = queue.take();
                 switch (myBeanAction.getAction()) {
                     case DELETE_ACTION:
-                        logger.info("Delete job: {}",myBeanAction.getId());
-                        for (JobData jobdata : data) {
+                         for (JobData jobdata : data) {
                             if (jobdata.getId().equals(myBeanAction.getId().toString())) {
                                 data.remove(jobdata);
                                 break;

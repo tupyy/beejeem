@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import stes.isami.bjm.components.materialExplorer.presenter.MaterialExplorerController;
 import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
+import stes.isami.core.job.JobEvent;
 import stes.isami.core.job.JobException;
 import stes.isami.core.job.JobState;
 
@@ -147,52 +148,39 @@ public class MaterialExplorerHandler implements JobListener{
         return stringBuilder.toString().substring(0, stringBuilder.toString().length() - 1);
     }
 
-    @Override
-    public void onStateChanged(UUID id, int newState) {
-        String eventMessage = "";
 
-        if (getCurrentLoadJob() != null) {
-            if (id.equals(getCurrentLoadJob().getID())) {
-                switch (getCurrentLoadJob().getState()) {
-                    case JobState.SUBMITTING:
-                    case JobState.SUBMITTED:
-                    case JobState.POSTPROCESSING:
-                        eventMessage = JobState.toString(getCurrentLoadJob().getState());
-                        currentStep++;
-                        break;
-                    case JobState.FINISHED:
-                        currentStep++;
-                        eventMessage = "Reading material list file";
-                        Path filePath  = Paths.get((String)getCurrentLoadJob().getParameters().getParameter("localFolder").getValue(),"material_list.txt");
-                        populateMaterialList(filePath.toFile());
-                        break;
-                    case JobState.RUN:
-                    case JobState.WAITING:
-                        if (currentStep < 4) {
+    @Override
+    public void onJobEvent(JobEvent event) {
+        if (event.getEventType() == JobEvent.JobEventType.STATE_CHANGED) {
+            String eventMessage = "";
+
+            if (getCurrentLoadJob() != null) {
+                if (event.getId().equals(getCurrentLoadJob().getID())) {
+                    switch (getCurrentLoadJob().getState()) {
+                        case JobState.SUBMITTING:
+                        case JobState.SUBMITTED:
+                        case JobState.POSTPROCESSING:
                             eventMessage = JobState.toString(getCurrentLoadJob().getState());
                             currentStep++;
-                        }
-                        break;
+                            break;
+                        case JobState.FINISHED:
+                            currentStep++;
+                            eventMessage = "Reading material list file";
+                            Path filePath  = Paths.get((String)getCurrentLoadJob().getParameters().getParameter("localFolder").getValue(),"material_list.txt");
+                            populateMaterialList(filePath.toFile());
+                            break;
+                        case JobState.RUN:
+                        case JobState.WAITING:
+                            if (currentStep < 4) {
+                                eventMessage = JobState.toString(getCurrentLoadJob().getState());
+                                currentStep++;
+                            }
+                            break;
+                    }
+                    eventBus.post(new LoadLibraryEvent(eventMessage, getProgressValue(currentStep)));
                 }
-
-               eventBus.post(new LoadLibraryEvent(eventMessage, getProgressValue(currentStep)));
             }
         }
-    }
-
-    @Override
-    public void jobDeleted(UUID id) {
-        //TODO
-    }
-
-    @Override
-    public void jobCreated(UUID id) {
-
-    }
-
-    @Override
-    public void jobUpdated(UUID id) {
-
     }
 
     private Job getCurrentLoadJob() {
@@ -235,6 +223,7 @@ public class MaterialExplorerHandler implements JobListener{
     private void deleteJobFromCore(UUID id) {
         getEventBus().post(id);
     }
+
 
 
 }

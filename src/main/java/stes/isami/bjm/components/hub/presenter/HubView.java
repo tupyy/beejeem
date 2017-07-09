@@ -1,4 +1,4 @@
-package stes.isami.bjm.components.hub;
+package stes.isami.bjm.components.hub.presenter;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -10,17 +10,19 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import stes.isami.bjm.components.hub.table.JobData;
+import org.controlsfx.control.MaskerPane;
+import stes.isami.bjm.components.hub.logic.JobData;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,7 +30,7 @@ import java.util.ResourceBundle;
 /**
  * Hub view class
  */
-public class HubView implements Initializable,IHubView<JobData> {
+public class HubView implements Initializable,IHubView {
 
     @FXML private TableView hubTable;
 
@@ -74,7 +76,7 @@ public class HubView implements Initializable,IHubView<JobData> {
         if (button != null) {
             button.setOnAction(actionEventEventHandler);
 
-            if (actionEventEventHandler instanceof HubActionEventHandler) {
+            if (actionEventEventHandler instanceof HubActionEventHandler && buttonID.equals("runJobButton")) {
                 HubActionEventHandler hubActionEventHandler = (HubActionEventHandler) actionEventEventHandler;
                 hubActionEventHandler.getActionProperty().addListener((observable, oldValue, newValue) -> {
                     Platform.runLater(() -> {
@@ -120,6 +122,16 @@ public class HubView implements Initializable,IHubView<JobData> {
          return getControl(mainPane,controlID);
     }
 
+
+    @Override
+    public void onStartDeletion() {
+        mainPane.setDisable(true);
+    }
+
+    @Override
+    public void onEndDeletion() {
+        mainPane.setDisable(false);
+    }
 
     /**
      *
@@ -288,5 +300,6 @@ public class HubView implements Initializable,IHubView<JobData> {
         imageView.setFitWidth(20);
         button.setGraphic(imageView);
     }
+
 
 }

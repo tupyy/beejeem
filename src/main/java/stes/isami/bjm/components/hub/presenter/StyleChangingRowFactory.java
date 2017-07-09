@@ -1,4 +1,4 @@
-package stes.isami.bjm.components.hub.table;
+package stes.isami.bjm.components.hub.presenter;
 
 import java.util.Collections;
 

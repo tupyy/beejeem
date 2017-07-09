@@ -1,4 +1,4 @@
-package stes.isami.bjm.components.hub.table;
+package stes.isami.bjm.components.hub.logic;
 
 import javafx.beans.property.SimpleStringProperty;
 import stes.isami.core.job.Job;

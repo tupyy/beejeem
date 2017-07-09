@@ -25,7 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
-import stes.isami.bjm.components.hub.HubController;
+import stes.isami.bjm.components.hub.presenter.HubController;
 import stes.isami.bjm.components.materialExplorer.business.Material;
 import stes.isami.bjm.components.materialExplorer.business.MaterialExplorerHandler;
 import stes.isami.bjm.components.materialExplorer.presenter.actions.ExportToXmlAction;

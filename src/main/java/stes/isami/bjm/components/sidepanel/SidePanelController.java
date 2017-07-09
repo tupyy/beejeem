@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
+import stes.isami.core.job.JobEvent;
 import stes.isami.core.job.JobException;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.eventbus.ComponentEvent;
@@ -93,31 +94,20 @@ public class SidePanelController extends AbstractComponentEventHandler implement
     }
 
     @Override
-    public void jobUpdated(UUID id) {
-        if (currentJobID == id) {
-            for (ComponentController componentController: componentControllerList) {
-                componentController.updateJob(JStesCore.getCoreEngine().getJob(id));
-            }
+    public void onJobEvent(JobEvent event) {
+        switch (event.getEventType()) {
+            case CREATE:
+            case UPDATE:
+                for (ComponentController componentController: componentControllerList) {
+                    componentController.updateJob(JStesCore.getCoreEngine().getJob(event.getId()));
+                }
+                break;
+            case DELETE:
+                if (event.getId().equals(currentJobID)) {
+                    clear();
+                }
         }
     }
-
-    @Override
-    public void jobCreated(UUID id) {
-        for (ComponentController componentController: componentControllerList) {
-            componentController.updateJob(JStesCore.getCoreEngine().getJob(id));
-        }
-    }
-
-    @Override
-    public void onStateChanged(UUID id, int newState) {
-
-    }
-
-    @Override
-    public void jobDeleted(UUID id) {
-
-    }
-
 
     @Override
     public void onComponentEvent(ComponentEvent event) {

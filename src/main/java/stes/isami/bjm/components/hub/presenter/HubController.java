@@ -1,33 +1,27 @@
-package stes.isami.bjm.components.hub;
+package stes.isami.bjm.components.hub.presenter;
 
-import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import stes.isami.bjm.components.hub.table.JobData;
-import stes.isami.bjm.components.hub.table.ModelWorker;
+import stes.isami.bjm.components.hub.logic.JobData;
+import stes.isami.bjm.components.hub.logic.ModelWorker;
 import stes.isami.bjm.components.notifications.NotificationEvent;
 import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
+import stes.isami.core.job.JobEvent;
 import stes.isami.core.job.JobState;
 import stes.isami.bjm.eventbus.*;
 import stes.isami.bjm.components.jobinfo.JobInfo;
-import stes.isami.bjm.components.hub.table.HubTableModel;
 import stes.isami.bjm.main.JStesCore;
 
 import java.io.File;
@@ -82,9 +76,7 @@ public class HubController extends AbstractComponentEventHandler implements JobL
 
         //bind the disable property for the buttons
         try {
-            Button b = (Button) view.getControl(RUN_BUTTON_ID);
-            b.disableProperty().bind(runJobButtonProperty);
-
+            view.getControl(RUN_BUTTON_ID).disableProperty().bind(runJobButtonProperty);
             view.getControl(RUN_ALL_BUTTON_ID).disableProperty().bind(runAllJobProperty);
             view.getControl(DELETE_BUTTON_ID).disableProperty().bind(disableDeleteProperty);
         }
@@ -118,53 +110,38 @@ public class HubController extends AbstractComponentEventHandler implements JobL
         }
     }
 
+
     @Override
-    public void jobUpdated(UUID id) {
-
-        Job j = getCoreEngine().getJob(id);
-        modelWorker.onUpdateJob(j);
-
-        disableRunAllButton();
-        JobData selection = (JobData) getHubTable().getSelectionModel().getSelectedItem();
-        if (selection != null) {
-            if (selection.getId().equals(j.getID().toString())) {
-                runJobButtonProperty.set(false);
-                disableDeleteProperty.set(false);
-                runButtonActionTypeProperty.set(getActionFromJobState(JobState.toString(j.getState())));
-            }
-
+    public void onJobEvent(JobEvent event) {
+        switch (event.getEventType()) {
+            case CREATE:
+                jobCreated(event.getId());
+                break;
+            case UPDATE:
+                jobUpdated(event.getId());
+                break;
+            case STATE_CHANGED:
+                onStateChanged(event.getId());
+                break;
+            case START_DELETE:
+                view.onStartDeletion();
+                break;
+            case END_DELETE:
+                view.onEndDeletion();
+                break;
+            case DELETE:
+                jobDeleted(event.getId());
+                break;
         }
     }
 
-    @Override
-    public void jobCreated(UUID id) {
-        Job job  = getCoreEngine().getJob(id);
-        view.getData().add(new JobData(job));
-        runAllJobProperty.set(false);
+    /**
+     * Shutdown the thread of the modelWorker
+     */
+    public void shutdownWorker() {
+        modelWorkderThread.interrupt();
     }
 
-    @Override
-    public void onStateChanged(UUID id, int newState) {
-        Job j = getCoreEngine().getJob(id);
-        modelWorker.onUpdateJob(j);
-
-        //show notification
-        if (newState == JobState.FINISHED) {
-            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.INFORMATION,
-                    "Job " + j.getName(),
-                    "Job \"" + j.getName() + "\" has finished"));
-        }
-        else if (newState == JobState.ERROR) {
-            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.ERROR,
-                    "Job " + j.getName(),
-                    "Job \"" + j.getName() + "\" has finished with error"));
-        }
-    }
-
-    @Override
-    public void jobDeleted(UUID id) {
-        modelWorker.onDeleteJob(id);
-    }
 
     /********************************************************************
      *
@@ -259,18 +236,63 @@ public class HubController extends AbstractComponentEventHandler implements JobL
     }
 
     /**
-     * Shutdown the thread of the modelWorker
+     * Handler for CREATE job event
+     * @param id
      */
-    public void shutdownWorker() {
-        modelWorkderThread.interrupt();
+    private void jobCreated(UUID id) {
+        Job job  = getCoreEngine().getJob(id);
+        view.getData().add(new JobData(job));
+        runAllJobProperty.set(false);
     }
 
     /**
-     *
-     *
-     *                          PRIVATE
-     *
+     * Handler for {@link stes.isami.core.job.JobEvent.JobEventType} state change
+     * @param id
      */
+    private void onStateChanged(UUID id) {
+        Job j = getCoreEngine().getJob(id);
+        modelWorker.onUpdateJob(j);
+
+        //show notification
+        if (j.getState() == JobState.FINISHED) {
+            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.INFORMATION,
+                    "Job " + j.getName(),
+                    "Job \"" + j.getName() + "\" has finished"));
+        }
+        else if (j.getState() == JobState.ERROR) {
+            JStesCore.getEventBus().post(new NotificationEvent(NotificationEvent.NotiticationType.ERROR,
+                    "Job " + j.getName(),
+                    "Job \"" + j.getName() + "\" has finished with error"));
+        }
+    }
+
+    /**
+     * Handler for {@link stes.isami.core.job.JobEvent.JobEventType} update
+     * @param id
+     */
+    private void jobUpdated(UUID id) {
+
+        Job j = getCoreEngine().getJob(id);
+        modelWorker.onUpdateJob(j);
+
+        disableRunAllButton();
+        JobData selection = (JobData) getHubTable().getSelectionModel().getSelectedItem();
+        if (selection != null) {
+            if (selection.getId().equals(j.getID().toString())) {
+                runJobButtonProperty.set(false);
+                disableDeleteProperty.set(false);
+                runButtonActionTypeProperty.set(getActionFromJobState(JobState.toString(j.getState())));
+            }
+
+        }
+    }
+
+    /**
+     * Handler for {@link stes.isami.core.job.JobEvent.JobEventType} DELETE
+     */
+    private void jobDeleted(UUID id) {
+        modelWorker.onDeleteJob(id);
+    }
 
 
     /**
@@ -354,5 +376,6 @@ public class HubController extends AbstractComponentEventHandler implements JobL
         }
         return hubTable;
     }
+
 
 }

@@ -1,10 +1,6 @@
-package stes.isami.bjm.components.hub.table;
+package stes.isami.bjm.components.hub.logic;
 
-import stes.isami.bjm.components.ComponentView;
 import stes.isami.core.job.Job;
-import stes.isami.core.job.JobState;
-import stes.isami.core.parameters.ParameterSet;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
