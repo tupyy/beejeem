@@ -34,7 +34,6 @@
               <items>
                   <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New">
                   </Button>
-            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
             <Button fx:id="exportMaterialButton" mnemonicParsing="false" prefWidth="100.0" text="Explorer" wrapText="true" />
               </items>
           </ToolBar>

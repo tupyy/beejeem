@@ -43,9 +43,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
     @FXML
     private Button addJobButton;
 
-    @FXML
-    private Button deleteButton;
-    @FXML private Button exportMaterialButton;
+   @FXML private Button exportMaterialButton;
 
     @FXML
     private SplitPane splitPane;
@@ -54,8 +52,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
     private BorderPane borderHubPane;
 
     private MasterDetailPane masterDetailPane;
-
-    private VBox detailPane;
 
     @FXML private ToggleButton showParameterView;
 
@@ -102,8 +98,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         decorateButton(addJobButton,"images/newJob.png");
         addJobButton.setTooltip(new Tooltip("Create job"));
-        decorateButton(deleteButton,"images/remove.png");
-        deleteButton.setTooltip(new Tooltip("Delete selected jobs"));
         decorateButton(exportMaterialButton,"images/explorer.png");
         exportMaterialButton.setTooltip(new Tooltip("Material Explorer"));
 
@@ -116,7 +110,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     @Override
     public void jobCreated(UUID id) {
-        deleteButton.setDisable(false);
+
     }
 
     @Override
@@ -132,12 +126,10 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
         switch (event.getEvent()) {
             case DESELECT:
-                deleteButton.setDisable(true);
                 break;
             case DELETE:
                 break;
             case SELECT:
-                deleteButton.setDisable(false);
                 break;
         }
     }
@@ -259,11 +251,11 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             }
         };
 
-        deleteButton.setOnAction(event -> {
-
-            JStesCore.getEventBus().post(new DefaultComponentEvent(JobEventType.DELETE));
-
-        });
+//        deleteButton.setOnAction(event -> {
+//
+//            JStesCore.getEventBus().post(new DefaultComponentEvent(JobEventType.DELETE));
+//
+//        });
 
         preferencesMenuItem.setOnAction(event -> {
 

@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -34,6 +35,7 @@ public class HubView implements Initializable,IHubView<JobData> {
     @FXML private Button runJobButton;
 
     @FXML private Button runAllButton;
+    @FXML private Button deleteButton;
 
     @FXML private TextField filterField;
 
@@ -53,6 +55,8 @@ public class HubView implements Initializable,IHubView<JobData> {
 
         decorateButton(runJobButton,"images/start-icon.png");
         decorateButton(runAllButton,"images/start-icon.png");
+        decorateButton(deleteButton,"images/remove.png");
+        deleteButton.setTooltip(new Tooltip("Delete selected jobs"));
 
         controller = new HubController(this);
         setupTable(hubTable);
@@ -89,10 +93,17 @@ public class HubView implements Initializable,IHubView<JobData> {
     }
 
     @Override
-    public void setKeyEventHandler(String controlID, EventHandler<KeyEvent> keyEventEventHandler) {
+    public void setKeyEventHandler(String controlID,String bindControlID,KeyCode keyCode) {
         Control control = getControl(mainPane,controlID);
         if (control != null) {
-            control.setOnKeyReleased(keyEventEventHandler);
+            control.setOnKeyReleased(event -> {
+                if (event.getCode() == keyCode) {
+                   Button button = (Button) getControl(mainPane,bindControlID);
+                   if (button != null) {
+                       button.fire();
+                   }
+                }
+            });
         }
     }
 

@@ -17,6 +17,7 @@
                   <Separator prefWidth="10.0" visible="false" HBox.hgrow="NEVER" />
                   <Button id="runAllButton" fx:id="runAllButton" disable="true" mnemonicParsing="false" prefWidth="100.0" text="Run all" />
                   <Separator layoutX="110.0" layoutY="29.0" prefWidth="10.0" visible="false" />
+                  <Button id="deleteButton" fx:id="deleteButton" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
                </children>
             </HBox>
             <TextField id="filterField" fx:id="filterField" promptText="Filter">

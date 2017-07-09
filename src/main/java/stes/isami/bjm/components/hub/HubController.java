@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -64,6 +65,8 @@ public class HubController extends AbstractComponentEventHandler implements JobL
      */
     SimpleBooleanProperty runJobButtonProperty = new SimpleBooleanProperty(true);
     SimpleBooleanProperty runAllJobProperty = new SimpleBooleanProperty(true);
+    SimpleBooleanProperty disableDeleteProperty = new SimpleBooleanProperty(true);
+    private EventHandler deleteActionHandler;
 
 //    private DeleteService deleteService;
 
@@ -80,6 +83,7 @@ public class HubController extends AbstractComponentEventHandler implements JobL
             b.disableProperty().bind(runJobButtonProperty);
 
             view.getControl("runAllButton").disableProperty().bind(runAllJobProperty);
+            view.getControl("deleteButton").disableProperty().bind(disableDeleteProperty);
         }
         catch (NullPointerException e) {
             logger.error("Cannot find run buttons",e.getMessage());
@@ -242,21 +246,14 @@ public class HubController extends AbstractComponentEventHandler implements JobL
             getCoreEngine().executeAll();
         });
 
-
         myEventHandler = new HubActionEventHandler(runButtonActionTypeProperty, (TableView) view.getControl(HUB_TABLE_ID));
         view.setActionEventHandler("runJobButton",myEventHandler);
 
-        //setup key events
-        view.setKeyEventHandler(HUB_TABLE_ID, new EventHandler<KeyEvent>() {
-            final KeyCombination keyComb1 = new KeyCodeCombination(KeyCode.DELETE);
 
-            @Override
-            public void handle(KeyEvent event) {
-                if (keyComb1.match(event)) {
-//                    this.onComponentEvent(new DefaultComponentEvent(ComponentEvent.JobEventType.DELETE));
-                }
-            }
-        });
+        //setup key events
+        deleteActionHandler = new HubActionEventHandler(new SimpleIntegerProperty(HubActionEventHandler.DELETE_ACTION),(TableView) view.getControl(HUB_TABLE_ID));
+        view.setActionEventHandler("deleteButton",deleteActionHandler);
+        view.setKeyEventHandler(HUB_TABLE_ID, "deleteButton",KeyCode.DELETE);
 
         /**
          * Set mouse event on the row. On double-click show the jobbInfoDialog
@@ -370,6 +367,7 @@ public class HubController extends AbstractComponentEventHandler implements JobL
                 runJobButtonProperty.set(false);
             }
             runButtonActionTypeProperty.set(getActionFromJobState(data.getStatus()));
+            disableDeleteProperty.set(false);
             JStesCore.getEventBus().post(new DefaultComponentEvent(HubController.this, ComponentEvent.JobEventType.SELECT, UUID.fromString(data.getId())));
         }
         else {
