@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import stes.isami.bjm.components.hub.Hub;
 import stes.isami.bjm.eventbus.AbstractComponentEventHandler;
 import stes.isami.bjm.eventbus.ComponentEvent;
-import stes.isami.bjm.components.hub.presenter.HubController;
+import stes.isami.bjm.components.hub.presenter.HubControllerImpl;
 import stes.isami.bjm.components.sidepanel.SidePanelController;
 import stes.isami.bjm.main.MainApp;
 import stes.isami.bjm.components.materialExplorer.MaterialExplorer;
@@ -64,7 +64,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     private SidePanelController sidePanelController;
 
-    private HubController hubController;
+    private HubControllerImpl hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
 
     public MainController() {
@@ -286,7 +286,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
      * Add icons to buttons
      */
     private void decorateButton(Button button,String imagePath) {
-        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        URL s = HubControllerImpl.class.getClassLoader().getResource(imagePath);
         ImageView imageView = new ImageView(new Image(s.toString()));
         imageView.setFitHeight(20);
         imageView.setFitWidth(20);

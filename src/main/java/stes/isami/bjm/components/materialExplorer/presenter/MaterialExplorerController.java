@@ -25,7 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
-import stes.isami.bjm.components.hub.presenter.HubController;
+import stes.isami.bjm.components.hub.presenter.HubControllerImpl;
 import stes.isami.bjm.components.materialExplorer.business.Material;
 import stes.isami.bjm.components.materialExplorer.business.MaterialExplorerHandler;
 import stes.isami.bjm.components.materialExplorer.presenter.actions.ExportToXmlAction;
@@ -307,7 +307,7 @@ public class MaterialExplorerController implements Initializable {
      * Add icons to buttons
      */
     private void decorateButton(Button button,String imagePath) {
-        URL s = HubController.class.getClassLoader().getResource(imagePath);
+        URL s = HubControllerImpl.class.getClassLoader().getResource(imagePath);
         ImageView imageView = new ImageView(new Image(s.toString()));
         imageView.setFitHeight(20);
         imageView.setFitWidth(20);

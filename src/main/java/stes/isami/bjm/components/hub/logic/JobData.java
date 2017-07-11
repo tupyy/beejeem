@@ -5,10 +5,12 @@ import stes.isami.core.job.Job;
 import stes.isami.core.job.JobState;
 import stes.isami.core.parameters.ParameterSet;
 
+import java.util.Observable;
+
 /**
- * Model class for the HubView
+ * Model class for the HubViewImpl
  */
-public class JobData {
+public class JobData extends Observable {
 
     private SimpleStringProperty batchID;
     private SimpleStringProperty name;
@@ -52,6 +54,9 @@ public class JobData {
         this.localFolder.set((String) j.getParameters().getParameter("localFolder").getValue());
         this.status.set(JobState.toString(j.getState()));
         this.batchID.set(getParameterValue(j.getParameters(),"batchID"));
+
+        setChanged();
+        notifyObservers();
     }
 
 
