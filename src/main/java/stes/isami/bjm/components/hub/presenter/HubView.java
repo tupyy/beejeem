@@ -57,4 +57,6 @@ public interface HubView  {
      * @return
      */
     public List<UUID> getSelectedJobs();
+
+    public void shutdown();
 }

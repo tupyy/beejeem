@@ -98,7 +98,6 @@ public class HubViewImpl implements Initializable,HubView,Observer {
         if (hubTable.getSelectionModel().getSelectedItems().indexOf(jobData) >= 0) {
             disableRunStopButton();
         }
-
     }
 
 
@@ -170,6 +169,12 @@ public class HubViewImpl implements Initializable,HubView,Observer {
     }
 
 
+    /**
+     * Handle the shutdown event from app
+     */
+    public void shutdown() {
+        jobStateThread.interrupt();
+    }
     /************************************************
      *
      *

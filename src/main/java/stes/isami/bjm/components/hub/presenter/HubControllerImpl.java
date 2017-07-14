@@ -53,6 +53,7 @@ public class HubControllerImpl extends AbstractComponentEventHandler implements 
     public void onCoreEvent(CoreEvent event) {
         if (event.getEventName() == CoreEvent.CoreEventType.SHUTDOWN) {
             model.shutdown();
+            view.shutdown();
         }
         else if (event.getEventName() == CoreEvent.CoreEventType.SSH_CLIENT_DISCONNECTED) {
             view.onSshDisconnect();
