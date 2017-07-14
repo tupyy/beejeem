@@ -120,7 +120,7 @@ public class HubViewImpl implements Initializable,HubView,Observer {
     public void setData(ObservableList<JobData> data) {
         this.modelData = data;
         setupTable(hubTable);
-        setDataToTable(hubTable);
+        setFilter(hubTable,modelData);
 
         /**
          * Add listener to model.
@@ -205,9 +205,13 @@ public class HubViewImpl implements Initializable,HubView,Observer {
 
     }
 
-    private void setDataToTable(TableView tableView) {
+    /**
+     * Create and set the filter for the table data
+     * @param tableView
+     */
+    private void setFilter(TableView tableView,ObservableList<JobData> data) {
         //Wrap the ObservableList in a FilteredList (initially display all data).
-        FilteredList filteredData = new FilteredList<>(modelData,p-> true);
+        FilteredList filteredData = new FilteredList<>(data,p-> true);
 
         filterField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(jobData -> {
@@ -249,6 +253,9 @@ public class HubViewImpl implements Initializable,HubView,Observer {
         tableView.setItems(sortedData);
     }
 
+    /**
+     * Set the table listeners
+     */
     private void setupTableListeners() {
 
 
