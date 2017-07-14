@@ -1,7 +1,7 @@
 package stes.isami.bjm.components.hub.presenter;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -41,28 +41,31 @@ public class HubViewImpl implements Initializable,HubView,Observer {
     private static final Logger logger = LoggerFactory
             .getLogger(HubViewImpl.class);
 
+    private final JobStateTask jobStateTask;
+    private final Thread jobStateThread;
+
     @FXML private TableView hubTable;
-
     @FXML private Button runJobButton;
-
+    @FXML private Button stopButton;
     @FXML private Button runAllButton;
     @FXML private Button deleteButton;
-
     @FXML private TextField filterField;
-
     @FXML private StackPane mainPane;
 
-    private SimpleIntegerProperty buttonActionType;
+    private SimpleBooleanProperty disableRunButton = new SimpleBooleanProperty(true);
+    private SimpleBooleanProperty disableRunAllButton = new SimpleBooleanProperty(true);
+    private SimpleBooleanProperty disableStopButton = new SimpleBooleanProperty(true);
+    private SimpleBooleanProperty disableDeleteButton = new SimpleBooleanProperty(true);
 
     private HubController controller;
     private ObservableList<JobData> modelData;
     private MaskerPane maskerPane = new MaskerPane();
 
-    private static final int RUN_ACTION = 200;
-    private static final int STOP_ACTION = 100;
-
     public HubViewImpl() {
-
+        jobStateTask = new JobStateTask(disableRunButton, disableStopButton);
+        jobStateTask.setSelectionList(new ArrayList<>());
+        jobStateThread = new Thread(jobStateTask);
+        jobStateThread.start();
     }
 
     @Override
@@ -72,17 +75,30 @@ public class HubViewImpl implements Initializable,HubView,Observer {
         decorateButton(runAllButton,"images/start-icon.png");
         decorateButton(deleteButton,"images/remove.png");
         deleteButton.setTooltip(new Tooltip("Delete selected jobs"));
-        setupTableListeners();
+        decorateButton(stopButton,"images/stop_red.png");
+        stopButton.setTooltip(new Tooltip("Stop selected jobs"));
+
+        createTableListeners();
+        createButtonActions();
+
+        runJobButton.disableProperty().bind(disableRunButton);
+        runAllButton.disableProperty().bind(disableRunAllButton);
+        stopButton.disableProperty().bind(disableStopButton);
+        deleteButton.disableProperty().bind(disableDeleteButton);
 
         maskerPane.setVisible(false);
         mainPane.getChildren().add(maskerPane);
-
     }
 
     @Override
     public void update(Observable o, Object arg) {
         JobData jobData = (JobData) o;
         sendNotification(jobData);
+
+        if (hubTable.getSelectionModel().getSelectedItems().indexOf(jobData) >= 0) {
+            disableRunStopButton();
+        }
+
     }
 
 
@@ -136,7 +152,8 @@ public class HubViewImpl implements Initializable,HubView,Observer {
                         additem.addObserver(this);
                     }
                 }
-                runAllButton.setDisable(false);
+                disableRunAllButton.set(false);
+                disableDeleteButton.set(false);
             }
         });
     }
@@ -256,21 +273,13 @@ public class HubViewImpl implements Initializable,HubView,Observer {
     /**
      * Set the table listeners
      */
-    private void setupTableListeners() {
+    private void createTableListeners() {
 
 
         hubTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                 deleteButton.setDisable(false);
-                 runJobButton.setDisable(false);
-                 controller.onJobSelection(UUID.fromString(((JobData) newValue).getId()));
-
-                 int action = STOP_ACTION;
-                 for(Object obj: hubTable.getSelectionModel().getSelectedItems()) {
-                     action = getActionFromJobState(((JobData) obj).getStatus());
-                 }
-                changeRunButtonDecoration(action);
-
+                controller.onJobSelection(UUID.fromString(((JobData) newValue).getId()));
+                disableRunStopButton();
             }
         });
 
@@ -303,66 +312,44 @@ public class HubViewImpl implements Initializable,HubView,Observer {
         button.setGraphic(imageView);
     }
 
-    private void changeRunButtonDecoration(int action) {
-        switch (action) {
-            case STOP_ACTION:
-                decorateButton(runJobButton,"images/stop_red.png");
-                runJobButton.setText("Stop job");
-                break;
-            case RUN_ACTION:
-                decorateButton(runJobButton,"images/start-icon.png");
-                runJobButton.setText("Run job");
-                break;
-        }
-    }
-
     /**
      * Disable all buttons
-     * @param disableAllButton
+     * @param value
      */
-    private void setDisableAllButton(boolean disableAllButton) {
-        runJobButton.setDisable(disableAllButton);
-        runAllButton.setDisable(disableAllButton);
-        deleteButton.setDisable(disableAllButton);
+    private void setDisableAllButton(boolean value) {
+       disableDeleteButton.set(true);
+       disableRunAllButton.set(true);
+       disableRunButton.set(true);
+       disableStopButton.set(true);
     }
-
     /**
-     * Disable runallButton
-     * If there is no job to be executed, the button will disable
+     * Create the action handlers for the buttons
      */
-    private void changeRunAllState() {
+    private void createButtonActions() {
+        runJobButton.setOnAction(event -> {
+            controller.onActionPerformed(HubView.RUN_JOB_ACTION);
+        });
 
-        Platform.runLater(() -> {
-            runAllButton.setDisable(true);
-            for (JobData jobData: modelData) {
-                String jobState = jobData.getStatus();
-                if (jobState.equals("Ready") ||
-                        jobState.equals("Stop")||
-                        jobState.equals("Error")
-                        || jobState.equals("Finished")) {
-                    runAllButton.setDisable(false);
-                    break;
-                }
-            }
+        runAllButton.setOnAction(event -> {
+            controller.onActionPerformed(HubView.RUN_ALL_ACTION);
+        });
+
+        stopButton.setOnAction(event -> {
+            controller.onActionPerformed(HubView.STOP_ACTION);
+        });
+
+        deleteButton.setOnAction(event -> {
+            controller.onActionPerformed(HubView.DELETE_ACTION);
         });
     }
 
     /**
-     * Return an action (i.e. run or stop) based on the state of the job
-     * @param state
-     * @return
+     * Get the list of selected jobs and feed it to the {@link JobStateTask} which will
+     * disable/enable the runJobButton and stopJobButton accordingly
      */
-    private Integer getActionFromJobState(String state) {
-
-        if (state.equals("Ready") || state.equals("Stop")
-                || state.equals("Finished")
-                || state.equals("Error")) {
-            return RUN_ACTION;
-        }
-
-        return STOP_ACTION;
+    private void disableRunStopButton() {
+        jobStateTask.setSelectionList(hubTable.getSelectionModel().getSelectedItems());
     }
-
     /**
      * Send notification when a job is finished
      * @param jobData

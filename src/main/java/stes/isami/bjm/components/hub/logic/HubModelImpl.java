@@ -12,7 +12,7 @@ import java.util.UUID;
 import static stes.isami.bjm.main.JStesCore.getCoreEngine;
 
 /**
- * Created by tctupangiu on 22/03/2017.
+ * Implementation of the {@link HubModel}
  */
 public class HubModelImpl implements HubModel,JobListener {
 

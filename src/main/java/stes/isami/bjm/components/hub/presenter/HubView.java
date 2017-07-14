@@ -17,6 +17,7 @@ public interface HubView  {
     public static int RUN_JOB_ACTION = 1;
     public static int RUN_ALL_ACTION = 2;
     public static int DELETE_ACTION = 3;
+    public static int STOP_ACTION = 4;
 
     /**
      * Called by controller when the deletion action has started in {@link stes.isami.core.CoreEngine}
