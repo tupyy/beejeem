@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane fx:id="mainPane" prefHeight="485.0" prefWidth="752.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.bjm.components.hub.presenter.HubViewImpl">
+<StackPane fx:id="mainPane" prefHeight="485.0" prefWidth="752.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stes.isami.bjm.ui.hub.presenter.HubViewImpl">
    <children>
       <VBox prefHeight="460.0" prefWidth="461.0" VBox.vgrow="ALWAYS">
          <children>

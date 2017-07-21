@@ -3,18 +3,17 @@ package stes.isami.bjm.main;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import stes.isami.bjm.components.hub.logic.JobData;
-import stes.isami.bjm.components.hub.presenter.JobStateTask;
+import stes.isami.bjm.ui.hub.logic.JobData;
+import stes.isami.bjm.ui.hub.presenter.JobStateTask;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobState;
 import stes.isami.core.parameters.ParameterSet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
 
 /**
- * Test for {@link stes.isami.bjm.components.hub.presenter.JobStateTask}
+ * Test for {@link stes.isami.bjm.ui.hub.presenter.JobStateTask}
  */
 public class TestJobState {
 

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import stes.isami.bjm.configuration.JStesConfiguration;
 import stes.isami.bjm.configuration.JobDefinition;
 import stes.isami.bjm.configuration.Preferences;
-import stes.isami.bjm.components.notifications.NotificationEvent;
+import stes.isami.bjm.ui.notifications.NotificationEvent;
 import stes.isami.core.creator.Creator;
 import stes.isami.core.creator.CreatorFactory;
 import stes.isami.core.job.Job;
