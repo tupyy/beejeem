@@ -12,12 +12,11 @@ import org.slf4j.LoggerFactory;
 import stes.isami.core.job.Job;
 import stes.isami.core.parameters.ParameterSet;
 import stes.isami.bjm.ui.MainController;
-import stes.isami.bjm.ui.sidepanel.ComponentController;
 
 /**
  * Created by tctupangiu on 17/03/2017.
  */
-public class PropertyController implements ComponentController {
+public class PropertyController  {
 
     private PropertySheet propertySheet;
     private PropertyModel model;
@@ -60,13 +59,11 @@ public class PropertyController implements ComponentController {
         return model.getData();
     }
 
-    @Override
     public void loadJob(Job j) {
         propertySheet.setDisable(!j.isEditable());
         model.setData(j.getParameters(),new ParameterChangeListener());
     }
 
-    @Override
     public void updateJob(Job job) {
 
         if (job.isEditable()) {
@@ -76,7 +73,6 @@ public class PropertyController implements ComponentController {
         propertySheet.setDisable(!job.isEditable());
     }
 
-    @Override
     public void clear() {
         model.clear();
     }

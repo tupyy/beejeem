@@ -18,6 +18,7 @@ public interface ComponentEvent {
     public List<UUID> getIds();
 
     public enum JobEventType {
+        UPDATE,
         DELETE,
         SELECT,
         DESELECT

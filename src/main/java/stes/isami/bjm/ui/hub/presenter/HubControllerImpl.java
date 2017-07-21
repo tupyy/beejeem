@@ -8,8 +8,7 @@ import stes.isami.bjm.ui.hub.logic.JobData;
 import stes.isami.bjm.eventbus.*;
 import stes.isami.bjm.main.JStesCore;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * CreatorController for the hubView
@@ -21,7 +20,6 @@ public class HubControllerImpl extends AbstractComponentEventHandler implements 
 
     private final HubView view;
     private final HubModel model;
-    private boolean suspendSelection;
 
     public HubControllerImpl(HubModel model, HubView view) {
         super();
@@ -89,6 +87,13 @@ public class HubControllerImpl extends AbstractComponentEventHandler implements 
     @Override
     public void onEndDelete() {
         view.onEndDeletion();
+        List<UUID> selection = view.getSelectedJobs();
+        if (selection.size() > 0) {
+            JStesCore.getEventBus().post(new DefaultComponentEvent(this, ComponentEvent.JobEventType.SELECT,selection.get(0)));
+        }
+        else {
+            JStesCore.getEventBus().post(new DefaultComponentEvent(this, ComponentEvent.JobEventType.DESELECT,UUID.randomUUID()));
+        }
     }
 
     /********************************************************************
