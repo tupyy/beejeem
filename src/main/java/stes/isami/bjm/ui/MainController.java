@@ -62,9 +62,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
 
     @FXML MenuItem aboutMenuItem;
 
-    private SidePanelController sidePanelController;
-
-    private HubControllerImpl hubController;
     private EventHandler<ActionEvent> newJobEventHandler;
 
     public MainController() {
@@ -126,8 +123,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainController.class.getClassLoader().getResource("views/sidepanel/sidePanel.fxml"));
             VBox detailPane = (VBox) loader.load();
-
-            sidePanelController = loader.getController();
             parentNode.setDetailNode(detailPane);
         }
         catch (IOException ex) {
@@ -141,7 +136,6 @@ public class MainController extends AbstractComponentEventHandler implements Ini
      */
     private void createHubView(MasterDetailPane parentNode) {
         Hub hub = new Hub();
-
         try {
             parentNode.setMasterNode(hub.getRootPane());
         } catch (IOException e) {

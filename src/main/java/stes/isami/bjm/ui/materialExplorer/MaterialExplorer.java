@@ -2,6 +2,7 @@ package stes.isami.bjm.ui.materialExplorer;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
+import stes.isami.bjm.ui.UIComponent;
 import stes.isami.bjm.ui.materialExplorer.business.MaterialExplorerHandler;
 import stes.isami.bjm.ui.materialExplorer.presenter.MaterialExplorerController;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by cosmin2 on 02/07/2017.
  */
-public class MaterialExplorer {
+public class MaterialExplorer implements UIComponent{
 
     Pane rootPane;
     private MaterialExplorerHandler materialExplorerHandler;
@@ -32,6 +33,7 @@ public class MaterialExplorer {
      * @return
      * @throws NullPointerException
      */
+    @Override
     public Pane getRootPane() throws NullPointerException {
         if (rootPane != null) {
             return rootPane;

@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Interface to be implemented by every component of the main window
  */
-public interface Component {
+public interface UIComponent {
 
     /**
      * Return the root pane of the component

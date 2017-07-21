@@ -1,5 +1,6 @@
 package stes.isami.bjm.ui.jobinfo;
 
+import stes.isami.bjm.ui.UIComponent;
 import stes.isami.core.JobListener;
 import stes.isami.core.job.Job;
 import stes.isami.core.job.JobEvent;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Created by tctupangiu on 17/05/2017.
  */
-public class JobInfo extends AbstractComponentEventHandler implements JobListener{
+public class JobInfo extends AbstractComponentEventHandler implements JobListener, UIComponent{
 
     private static final Logger logger = LoggerFactory
             .getLogger(MainController.class);
@@ -91,6 +92,7 @@ public class JobInfo extends AbstractComponentEventHandler implements JobListene
      * Get the root pane
      * @return null if the rootPane cannot be initialized
      */
+    @Override
     public Pane getRootPane() {
         return  rootPane;
     }

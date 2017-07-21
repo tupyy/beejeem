@@ -2,7 +2,7 @@ package stes.isami.bjm.ui.hub;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
-import stes.isami.bjm.ui.Component;
+import stes.isami.bjm.ui.UIComponent;
 import stes.isami.bjm.ui.hub.logic.HubModelImpl;
 import stes.isami.bjm.ui.hub.presenter.HubController;
 import stes.isami.bjm.ui.hub.presenter.HubControllerImpl;
@@ -15,7 +15,7 @@ import static stes.isami.bjm.main.JStesCore.getCoreEngine;
 /**
  * This class represents the Hub component.
  */
-public class Hub implements Component {
+public class Hub implements UIComponent {
 
     private final HubModelImpl model;
     private HubController controller;
