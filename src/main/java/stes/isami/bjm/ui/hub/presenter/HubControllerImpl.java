@@ -65,10 +65,14 @@ public class HubControllerImpl extends AbstractComponentEventHandler implements 
         List<UUID> selectedJobs = view.getSelectedJobs();
         switch (action) {
             case HubView.RUN_JOB_ACTION:
-                model.executeJob(selectedJobs);
+                if (selectedJobs.size() > 0) {
+                    model.executeJob(selectedJobs);
+                }
                 break;
             case HubView.DELETE_ACTION:
-                model.deleteJobs(selectedJobs);
+                if (selectedJobs.size() > 0) {
+                    model.deleteJobs(selectedJobs);
+                }
                 break;
             case HubView.RUN_ALL_ACTION:
                 model.executeAll();

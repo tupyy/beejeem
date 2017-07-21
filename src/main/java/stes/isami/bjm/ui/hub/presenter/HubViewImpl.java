@@ -14,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
@@ -294,6 +296,17 @@ public class HubViewImpl implements Initializable,HubView,Observer {
                 disableRunStopButton();
             }
         });
+
+         hubTable.setOnKeyPressed((KeyEvent e) -> {
+             if (e.getCode() == KeyCode.DELETE) {
+                 controller.onActionPerformed(DELETE_ACTION);
+             }
+             else if (e.getCode() == KeyCode.ENTER) {
+                 controller.onActionPerformed(RUN_JOB_ACTION);
+             }
+         });
+
+
 
         /**
          * Set mouse event on the row. On double-click show the jobbInfoDialog
