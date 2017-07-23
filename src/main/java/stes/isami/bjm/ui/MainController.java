@@ -34,7 +34,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
             .getLogger(MainController.class);
 
     @FXML
-    private Button addJobButton;
+    private ComboBox addJobButton;
 
    @FXML private Button exportMaterialButton;
 
@@ -85,7 +85,7 @@ public class MainController extends AbstractComponentEventHandler implements Ini
         setupMenuAction();
         addJobButton.setOnAction(newJobEventHandler);
 
-        decorateButton(addJobButton,"images/newJob.png");
+//        decorateButton(addJobButton,"images/newJob.png");
         addJobButton.setTooltip(new Tooltip("Create job"));
         decorateButton(exportMaterialButton,"images/explorer.png");
         exportMaterialButton.setTooltip(new Tooltip("Material Explorer"));

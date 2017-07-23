@@ -32,8 +32,7 @@
         </MenuBar>
           <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <Button fx:id="addJobButton" mnemonicParsing="false" prefWidth="100.0" text="New">
-                  </Button>
+            <ComboBox fx:id="addJobButton" prefWidth="100.0" promptText="New" />
             <Button fx:id="exportMaterialButton" mnemonicParsing="false" prefWidth="100.0" text="Explorer" wrapText="true" />
               </items>
           </ToolBar>
