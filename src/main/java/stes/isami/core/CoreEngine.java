@@ -3,13 +3,7 @@ package stes.isami.core;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import stes.isami.core.creator.CreatorFactory;
-import stes.isami.core.job.Job;
-import stes.isami.core.job.JobException;
-import stes.isami.core.job.JobState;
-import stes.isami.core.job.event.CreateJobEvent;
-import stes.isami.core.job.event.JobEvent;
-import stes.isami.core.job.event.JobStateChangedEvent;
-import stes.isami.core.job.event.UpdateJobEvent;
+import stes.isami.core.job.*;
 import stes.isami.core.plugin.PluginLoader;
 import stes.isami.core.ssh.SshFactory;
 import stes.isami.core.ssh.SshListener;
@@ -120,28 +114,20 @@ public final class CoreEngine extends AbstractCoreEngine implements Core,SshList
         jobList.put(j,false);
 
         logger.info("Job created: {}",j.getName());
-        fireJobEvent(new CreateJobEvent(j.getID()));
+        fireJobEvent(new JobEvent(j.getID(), JobEvent.JobEventType.CREATE));
 
         return true;
     }
 
     @Override
-    public boolean deleteJob(UUID id) {
-
-        Job j = getJob(id);
-        if (isJobRunning(j)) {
-            try {
-                markJobForDeletion(j);
-                j.stop();
-            } catch (IllegalArgumentException ex) {
-               return false;
+    public void deleteJobs(List<UUID> uuidList) {
+       List<UUID> deletedJobList = new ArrayList<>();
+       for(UUID id: uuidList) {
+            if (deleteJob(id)) {
+                deletedJobList.add(id);
             }
-        } else {
-            logger.info("Delete job {}", j.getID());
-            jobList.remove(j);
         }
-
-        return true;
+        fireJobEvent(new JobEvent(deletedJobList, JobEvent.JobEventType.DELETE));
     }
 
     @Override
@@ -250,8 +236,9 @@ public final class CoreEngine extends AbstractCoreEngine implements Core,SshList
             case JobState.STOP:
                 try {
                     if (isMarkedForDeletion(j)) {
-                        logger.info("Job {} stopped. It is marked for deletion");
+                        logger.info("Job {} stopped. It is marked for deletion",j.getName());
                         jobList.remove(j);
+                        fireJobEvent(new JobEvent(j.getID(), JobEvent.JobEventType.DELETE));
                         return;
                     }
                 } catch (IllegalArgumentException ex) {
@@ -264,7 +251,7 @@ public final class CoreEngine extends AbstractCoreEngine implements Core,SshList
     }
 
     @Subscribe
-    public void onJobUpdate(UpdateJobEvent event) {
+    public void onJobUpdate(JobEvent event) {
         fireJobEvent(event);
     }
 
@@ -370,6 +357,30 @@ public final class CoreEngine extends AbstractCoreEngine implements Core,SshList
             jobList.put(job,true);
         }
 
+    }
+
+    /**
+     * Delete job. return true if job deleted.
+     * A running job will be marked as deleted and stopped
+     * @param id
+     * @return
+     */
+    private boolean deleteJob(UUID id) {
+
+        Job j = getJob(id);
+        if (isJobRunning(j)) {
+            try {
+                markJobForDeletion(j);
+                j.stop();
+            } catch (IllegalArgumentException ex) {
+                return false;
+            }
+        }
+        else {
+            logger.info("Delete job {}", j.getID());
+            jobList.remove(j);
+        }
+        return true;
     }
 
 }

@@ -4,8 +4,6 @@ import com.github.oxo42.stateless4j.StateMachineConfig;
 import com.github.oxo42.stateless4j.delegates.Action;
 import com.google.common.eventbus.EventBus;
 import com.sshtools.ssh.SshException;
-import stes.isami.core.job.event.JobStateChangedEvent;
-import stes.isami.core.job.event.UpdateJobEvent;
 import stes.isami.core.modules.MethodResult;
 import stes.isami.core.modules.Module;
 import stes.isami.core.modules.ModuleException;
@@ -326,7 +324,7 @@ public class DefaultJob extends AbstractJob implements Job {
             parameterToUpdate.setValue(parameterValue);
 
             if (getCoreEventBus() != null) {
-                getCoreEventBus().post(new UpdateJobEvent(getID()));
+                getCoreEventBus().post(new JobEvent(getID(), JobEvent.JobEventType.UPDATE));
             }
 
             return true;
@@ -342,7 +340,7 @@ public class DefaultJob extends AbstractJob implements Job {
             setParameterSet(parameters);
 
             if (getCoreEventBus() != null) {
-                getCoreEventBus().post(new UpdateJobEvent(getID()));
+                getCoreEventBus().post(new JobEvent(getID(), JobEvent.JobEventType.UPDATE));
             }
             
             return true;
@@ -441,7 +439,7 @@ public class DefaultJob extends AbstractJob implements Job {
         @Override
         public void doIt() {
            if (getCoreEventBus() != null) {
-               getCoreEventBus().post(new JobStateChangedEvent(getID(),getState()));
+               getCoreEventBus().post(new JobEvent(getID(), JobEvent.JobEventType.STATE_CHANGED));
            }
         }
     }
@@ -493,7 +491,7 @@ public class DefaultJob extends AbstractJob implements Job {
                 }
                 finally {
                     if (getCoreEventBus() != null) {
-                        getCoreEventBus().post(new UpdateJobEvent(getID()));
+                        getCoreEventBus().post(new JobEvent(getID(), JobEvent.JobEventType.UPDATE));
                     }
                 }
             }

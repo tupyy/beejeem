@@ -6,6 +6,7 @@ import stes.isami.core.ssh.SshFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -28,13 +29,10 @@ public interface Core {
     public boolean addJob(Job job) throws JobException;
 
     /**
-     * Delete the job. A job which is running cannot be deleted immediately.
-     * <br>The job is marked for deletion and a QDel module is executed with the id of the job.
-     * <br>Once the job have been deleted from the batch system, the job can be safely deleted from jobList.
-     * @param id
-     * @throws JobException
+     * Delete a list of jobs
+     * @param uuidList
      */
-    public boolean deleteJob(UUID id);
+    public void deleteJobs(List<UUID> uuidList);
 
     /**
      * Stop job

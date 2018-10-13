@@ -1,12 +1,8 @@
 package stes.isami.core;
 
-import stes.isami.core.job.event.CreateJobEvent;
-import stes.isami.core.job.event.JobEvent;
-import stes.isami.core.job.event.JobStateChangedEvent;
-import stes.isami.core.job.event.UpdateJobEvent;
+import stes.isami.core.job.JobEvent;
 
 import java.util.Enumeration;
-import java.util.UUID;
 import java.util.Vector;
 
 /**
@@ -60,15 +56,7 @@ public abstract class AbstractCoreEngine implements Core {
             Enumeration e = targets.elements();
             while (e.hasMoreElements()) {
                 JobListener l = (JobListener) e.nextElement();
-                if (event instanceof CreateJobEvent) {
-                    l.jobCreated(event.getId());
-                }
-                else if (event instanceof UpdateJobEvent) {
-                    l.jobUpdated(event.getId());
-                }
-                else if (event instanceof JobStateChangedEvent) {
-                    l.onStateChanged(event.getId(),((JobStateChangedEvent) event).getNewState());
-                }
+                l.onJobEvent(event);
             }
         }
     }
