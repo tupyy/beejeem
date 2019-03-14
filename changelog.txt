@@ -3,4 +3,20 @@
 **ADD
 - add material feature
 - excel postprocessing module
+=======
+[0.3.2] 25/04/2017
+
+**FIX**
+
+- open channel exception when creating the SFTP client
+
+[0.5.0] 29/05/2017
+
+**ADD**
+- tcp server for the communication with excel
+- job info dialog window
+
+**FIX**
+cancel a module
+
 
