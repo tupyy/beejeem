@@ -20,6 +20,16 @@
     </properties>
 
     <build>
+        <directory>${project.basedir}/target</directory>
+        <outputDirectory>${project.build.directory}/classes</outputDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
+        <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -41,8 +51,6 @@
             <artifactId>controlsfx</artifactId>
             <version>8.40.12</version>
         </dependency>
-
-
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>

@@ -1,6 +1,6 @@
 package stes.isami.core;
 
-import com.sshtools.ssh.SshException;
+import com.sshtools.common.ssh.SshException;
 import stes.isami.core.job.Job;
 import stes.isami.core.modules.MethodResult;
 import stes.isami.core.modules.ModuleException;

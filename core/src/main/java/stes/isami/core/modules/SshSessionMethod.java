@@ -1,8 +1,8 @@
 package stes.isami.core.modules;
 
-import com.sshtools.ssh.SshClient;
-import com.sshtools.ssh.SshException;
-import com.sshtools.ssh.SshSession;
+import com.maverick.ssh.SshClient;
+import com.maverick.ssh.SshSession;
+import com.sshtools.common.ssh.SshException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

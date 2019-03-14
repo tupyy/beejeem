@@ -1,7 +1,7 @@
 package stes.isami.core.modules;
 
-import com.sshtools.ssh.SshClient;
-import com.sshtools.ssh.SshException;
+import com.maverick.ssh.SshClient;
+import com.sshtools.common.ssh.SshException;
 import stes.isami.core.parameters.parametertypes.StringParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

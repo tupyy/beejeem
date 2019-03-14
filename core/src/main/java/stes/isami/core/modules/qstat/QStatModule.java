@@ -1,6 +1,6 @@
 package stes.isami.core.modules.qstat;
 
-import com.sshtools.ssh.SshClient;
+import com.maverick.ssh.SshClient;
 import stes.isami.core.modules.ModuleException;
 import stes.isami.core.modules.SshModule;
 import stes.isami.core.parameters.ParameterSet;

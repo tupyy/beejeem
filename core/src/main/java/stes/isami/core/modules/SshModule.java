@@ -1,6 +1,6 @@
 package stes.isami.core.modules;
 
-import com.sshtools.ssh.SshClient;
+import com.maverick.ssh.SshClient;
 import stes.isami.core.parameters.ParameterSet;
 import stes.isami.core.tasks.ModuleTask;
 

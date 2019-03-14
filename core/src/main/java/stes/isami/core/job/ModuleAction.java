@@ -1,7 +1,7 @@
 package stes.isami.core.job;
 
 import com.github.oxo42.stateless4j.delegates.Action;
-import com.sshtools.ssh.SshException;
+import com.sshtools.common.ssh.SshException;
 import stes.isami.core.modules.*;
 import stes.isami.core.parameters.ParameterSet;
 import stes.isami.core.ssh.SshRemoteFactory;
