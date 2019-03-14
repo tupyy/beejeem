@@ -4,71 +4,71 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>stes.isami</groupId>
-        <artifactId>batchJobManager</artifactId>
-        <version>LATEST</version>
-    </parent>
-
     <groupId>stes.isami</groupId>
     <artifactId>beejeem</artifactId>
     <version>0.6.0</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>gui</module>
+        <module>core</module>
+    </modules>
+    <packaging>pom</packaging>
+    <name>Beejeem</name>
 
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 
->>>>>>> core/develop
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
-                    <archive>
-                        <index>true</index>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>stes.isami.bjm.main.MainApp</mainClass>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                    </archive>
-                    <finalName>beejeem</finalName>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <artifactId>sshLib</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-
-     
-		<dependency>
-            <artifactId>oro</artifactId>
-            <version>2.0.8</version>
-        </dependency>
-
 
         <dependency>
-            <groupId>stes.isami</groupId>
-            <artifactId>controlfx</artifactId>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
             <version>8.40.12</version>
         </dependency>
 
-		<dependency>
-            <artifactId>jzlib</artifactId>
-            <version>1.1.3</version>
+
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.1-jre</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
-            <groupId>com.github.oxo42</groupId>
-            <artifactId>stateless4j</artifactId>
-            <version>2.5.0</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.13</version>
         </dependency>
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>repo1-maven2</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>sshtools</id>
+            <name>sshtools-releases</name>
+            <url>http://artifactory.javassh.com/public-releases</url>
+        </repository>
+    </repositories>
 </project>
